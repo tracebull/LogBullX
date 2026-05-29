@@ -1,7 +1,6 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { App, Button, Spin, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
-import GitHubButton from 'react-github-btn';
 
 import { APP_VERSION } from '../../../constants';
 import { type DiskUsage, diskApi } from '../../../entity/disk';
@@ -134,41 +133,13 @@ export const MainScreenComponent = () => {
                 selectedProject={selectedProject}
                 onCreateProject={handleCreateProject}
                 onProjectSelect={setSelectedProject}
+                user={user}
+                globalSettings={globalSettings}
               />
             )}
           </div>
 
           <div className="mr-3 ml-auto flex items-center gap-5">
-            <a
-              className="!text-black hover:opacity-80"
-              href="https://logbull.com/installation/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Docs
-            </a>
-
-            <a
-              className="!text-black hover:opacity-80"
-              href="https://t.me/logbull_community"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Community
-            </a>
-
-            <div className="mt-1">
-              <GitHubButton
-                href="https://github.com/logbull/logbull"
-                data-icon="octicon-star"
-                data-size="large"
-                data-show-count="true"
-                aria-label="Star Log Bull on GitHub"
-              >
-                &nbsp;Star Log Bull on GitHub
-              </GitHubButton>
-            </div>
-
             {isUsedMoreThan95Percent && diskUsage && (
               <Tooltip title="To make backups locally and restore them, you need to have enough space on your disk. For restore, you need to have same amount of space that the backup size.">
                 <div
@@ -298,7 +269,9 @@ export const MainScreenComponent = () => {
               <SettingsComponent contentHeight={contentHeight} />
             )}
 
-            {selectedTab === 'users' && <UsersComponent contentHeight={contentHeight} />}
+            {selectedTab === 'users' && (
+              <UsersComponent contentHeight={contentHeight} globalSettings={globalSettings} user={user} />
+            )}
 
             {projects.length === 0 &&
             (selectedTab === 'search' ||
@@ -309,14 +282,17 @@ export const MainScreenComponent = () => {
                 className="flex grow items-center justify-center rounded pl-5"
                 style={{ height: contentHeight }}
               >
-                <Button
-                  type="primary"
-                  size="large"
-                  onClick={handleCreateProject}
-                  className="border-emerald-600 bg-emerald-600 hover:border-emerald-700 hover:bg-emerald-700"
-                >
-                  Create project
-                </Button>
+                {(user?.role === UserRole.ADMIN ||
+                  globalSettings?.isMemberAllowedToCreateProjects !== false) && (
+                  <Button
+                    type="primary"
+                    size="large"
+                    onClick={handleCreateProject}
+                    className="border-emerald-600 bg-emerald-600 hover:border-emerald-700 hover:bg-emerald-700"
+                  >
+                    Create project
+                  </Button>
+                )}
               </div>
             ) : (
               <>

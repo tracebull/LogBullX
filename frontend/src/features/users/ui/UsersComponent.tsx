@@ -8,12 +8,16 @@ import { userManagementApi } from '../../../entity/users/api/userManagementApi';
 import type { ChangeUserRoleRequest } from '../../../entity/users/model/ChangeUserRoleRequest';
 import type { ListUsersRequest } from '../../../entity/users/model/ListUsersRequest';
 import type { UserProfile } from '../../../entity/users/model/UserProfile';
+import type { UsersSettings } from '../../../entity/users/model/UsersSettings';
 import { UserRole } from '../../../entity/users/model/UserRole';
 import { getUserShortTimeFormat } from '../../../shared/time';
+import { BulkInviteComponent } from './BulkInviteComponent';
 import { UserAuditLogsSidebarComponent } from './UserAuditLogsSidebarComponent';
 
 interface Props {
   contentHeight: number;
+  globalSettings?: UsersSettings;
+  user?: UserProfile;
 }
 
 const getRoleColor = (role: UserRole): string => {
@@ -27,7 +31,7 @@ const getRoleColor = (role: UserRole): string => {
   }
 };
 
-export function UsersComponent({ contentHeight }: Props) {
+export function UsersComponent({ contentHeight, globalSettings, user }: Props) {
   const { message } = App.useApp();
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -44,6 +48,7 @@ export function UsersComponent({ contentHeight }: Props) {
 
   const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isBulkInviteOpen, setIsBulkInviteOpen] = useState(false);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const loadingRef = useRef(false);
@@ -300,8 +305,16 @@ export function UsersComponent({ contentHeight }: Props) {
         >
           <div className="mb-4 flex items-center justify-between">
             <h1 className="text-2xl font-bold">LogBull Users</h1>
-            <div className="text-sm text-gray-500">
-              {isLoading ? 'Loading...' : `${users.length} of ${total} users`}
+            <div className="flex items-center gap-3">
+              {(user?.role === UserRole.ADMIN ||
+                globalSettings?.isAllowMemberInvitations !== false) && (
+                <Button type="primary" onClick={() => setIsBulkInviteOpen(true)}>
+                  Bulk Invite
+                </Button>
+              )}
+              <div className="text-sm text-gray-500">
+                {isLoading ? 'Loading...' : `${users.length} of ${total} users`}
+              </div>
             </div>
           </div>
 
@@ -361,6 +374,12 @@ export function UsersComponent({ contentHeight }: Props) {
       >
         {selectedUser && <UserAuditLogsSidebarComponent user={selectedUser} />}
       </Drawer>
+
+      <BulkInviteComponent
+        open={isBulkInviteOpen}
+        onClose={() => setIsBulkInviteOpen(false)}
+        onInviteComplete={() => loadUsers(true)}
+      />
     </div>
   );
 }

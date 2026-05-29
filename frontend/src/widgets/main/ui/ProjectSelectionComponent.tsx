@@ -2,12 +2,17 @@ import { Button, Input } from 'antd';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { type ProjectResponse } from '../../../entity/projects';
+import type { UsersSettings } from '../../../entity/users';
+import type { UserProfile } from '../../../entity/users';
+import { UserRole } from '../../../entity/users';
 
 interface Props {
   projects: ProjectResponse[];
   selectedProject?: ProjectResponse;
   onCreateProject: () => void;
   onProjectSelect: (project: ProjectResponse) => void;
+  user?: UserProfile;
+  globalSettings?: UsersSettings;
 }
 
 export const ProjectSelectionComponent = ({
@@ -15,6 +20,8 @@ export const ProjectSelectionComponent = ({
   selectedProject,
   onCreateProject,
   onProjectSelect,
+  user,
+  globalSettings,
 }: Props) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [searchValue, setSearchValue] = useState('');
@@ -32,6 +39,9 @@ export const ProjectSelectionComponent = ({
     onProjectSelect?.(project);
   };
 
+  const canCreateProjects =
+    user?.role === UserRole.ADMIN || globalSettings?.isMemberAllowedToCreateProjects !== false;
+
   // Handle click outside dropdown
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -46,6 +56,16 @@ export const ProjectSelectionComponent = ({
   }, []);
 
   if (projects.length === 0) {
+    if (!canCreateProjects) {
+      return (
+        <div className="my-1 w-[250px] select-none">
+          <div className="mb-1 text-xs text-gray-400" style={{ lineHeight: 0.7 }}>
+            No projects
+          </div>
+        </div>
+      );
+    }
+
     return (
       <Button
         type="primary"
@@ -115,18 +135,20 @@ export const ProjectSelectionComponent = ({
             </div>
 
             {/* Create New Project Button - Fixed at bottom */}
-            <div className="border-t border-gray-100">
-              <div
-                className="cursor-pointer px-3 py-2 text-sm text-emerald-600 hover:bg-gray-50 hover:text-emerald-700"
-                onClick={() => {
-                  onCreateProject();
-                  setIsDropdownOpen(false);
-                  setSearchValue('');
-                }}
-              >
-                + Create new project
+            {canCreateProjects && (
+              <div className="border-t border-gray-100">
+                <div
+                  className="cursor-pointer px-3 py-2 text-sm text-emerald-600 hover:bg-gray-50 hover:text-emerald-700"
+                  onClick={() => {
+                    onCreateProject();
+                    setIsDropdownOpen(false);
+                    setSearchValue('');
+                  }}
+                >
+                  + Create new project
+                </div>
               </div>
-            </div>
+            )}
           </div>
         )}
       </div>
