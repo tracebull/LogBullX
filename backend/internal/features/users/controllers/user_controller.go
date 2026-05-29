@@ -25,6 +25,9 @@ func (c *UserController) RegisterRoutes(router *gin.RouterGroup) {
 	router.GET("/users/admin/has-password", c.IsAdminHasPassword)
 	router.POST("/users/admin/set-password", c.SetAdminPassword)
 
+	// Public settings (no auth required)
+	router.GET("/users/settings/public", c.GetPublicSettings)
+
 	// OAuth callbacks
 	router.POST("/auth/github/callback", c.HandleGitHubOAuth)
 	router.POST("/auth/google/callback", c.HandleGoogleOAuth)
@@ -35,10 +38,29 @@ func (c *UserController) RegisterProtectedRoutes(router *gin.RouterGroup) {
 	router.PUT("/users/me", c.UpdateUserInfo)
 	router.PUT("/users/change-password", c.ChangePassword)
 	router.POST("/users/invite", c.InviteUser)
+	router.POST("/users/bulk-invite", c.BulkInviteUsers)
 }
 
 func (c *UserController) SetSignInLimiter(limiter *rate.Limiter) {
 	c.signinLimiter = limiter
+}
+
+// GetPublicSettings
+// @Summary Get public settings
+// @Description Get public user settings (no authentication required)
+// @Tags settings
+// @Produce json
+// @Success 200 {object} map[string]bool
+// @Failure 500 {object} map[string]string
+// @Router /users/settings/public [get]
+func (c *UserController) GetPublicSettings(ctx *gin.Context) {
+	settings, err := c.userService.GetPublicSettings()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get settings"})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, settings)
 }
 
 // SignUp
@@ -199,6 +221,45 @@ func (c *UserController) InviteUser(ctx *gin.Context) {
 	}
 
 	response, err := c.userService.InviteUser(&request, user)
+	if err != nil {
+		if err.Error() == "insufficient permissions to invite users" {
+			ctx.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
+			return
+		}
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}
+
+// BulkInviteUsers
+// @Summary Bulk invite users
+// @Description Invite multiple users by email (requires invite permissions)
+// @Tags users
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body users_dto.BulkInviteRequestDTO true "Bulk invite data"
+// @Success 200 {object} users_dto.BulkInviteResponseDTO
+// @Failure 400 {object} map[string]string
+// @Failure 401 {object} map[string]string
+// @Failure 403 {object} map[string]string
+// @Router /users/bulk-invite [post]
+func (c *UserController) BulkInviteUsers(ctx *gin.Context) {
+	user, ok := user_middleware.GetUserFromContext(ctx)
+	if !ok {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
+		return
+	}
+
+	var request user_dto.BulkInviteRequestDTO
+	if err := ctx.ShouldBindJSON(&request); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request format"})
+		return
+	}
+
+	response, err := c.userService.BulkInviteUsers(request.Emails, user)
 	if err != nil {
 		if err.Error() == "insufficient permissions to invite users" {
 			ctx.JSON(http.StatusForbidden, gin.H{"error": err.Error()})

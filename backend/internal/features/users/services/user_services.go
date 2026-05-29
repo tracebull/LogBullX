@@ -244,6 +244,90 @@ func (s *UserService) GenerateAccessToken(user *users_models.User) (*users_dto.S
 	}, nil
 }
 
+func (s *UserService) BulkInviteUsers(
+	emails []string,
+	invitedBy *users_models.User,
+) (*users_dto.BulkInviteResponseDTO, error) {
+	settings, err := s.settingsService.GetSettings()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get settings: %w", err)
+	}
+
+	if !invitedBy.CanInviteUsers(settings) {
+		return nil, errors.New("insufficient permissions to invite users")
+	}
+
+	basicPlan, err := s.userPlanRepository.GetPlanByType(users_enums.UserPlanTypeDefault)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get default plan: %w", err)
+	}
+
+	var planID *uuid.UUID
+	if basicPlan != nil {
+		planID = &basicPlan.ID
+	}
+
+	var invited []users_dto.BulkInviteResultDTO
+	var skipped []users_dto.BulkInviteResultDTO
+
+	for _, email := range emails {
+		existingUser, err := s.userRepository.GetUserByEmail(email)
+		if err != nil {
+			return nil, fmt.Errorf("failed to check existing user %s: %w", email, err)
+		}
+
+		if existingUser != nil {
+			skipped = append(skipped, users_dto.BulkInviteResultDTO{Email: email})
+			continue
+		}
+
+		user := &users_models.User{
+			ID:                   uuid.New(),
+			Email:                email,
+			Name:                 "User",
+			HashedPassword:       nil,
+			PasswordCreationTime: time.Now().UTC(),
+			Role:                 users_enums.UserRoleMember,
+			PlanID:               planID,
+			Status:               users_enums.UserStatusInvited,
+			CreatedAt:            time.Now().UTC(),
+		}
+
+		if err := s.userRepository.CreateUser(user); err != nil {
+			return nil, fmt.Errorf("failed to create invited user %s: %w", email, err)
+		}
+
+		invited = append(invited, users_dto.BulkInviteResultDTO{
+			Email: email,
+			ID:    user.ID,
+		})
+	}
+
+	if len(invited) > 0 {
+		s.auditLogWriter.WriteAuditLog(
+			fmt.Sprintf("Bulk invited %d user(s)", len(invited)),
+			&invitedBy.ID,
+			nil,
+		)
+	}
+
+	return &users_dto.BulkInviteResponseDTO{
+		Invited: invited,
+		Skipped: skipped,
+	}, nil
+}
+
+func (s *UserService) GetPublicSettings() (map[string]bool, error) {
+	settings, err := s.settingsService.GetSettings()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get settings: %w", err)
+	}
+
+	return map[string]bool{
+		"isAllowExternalRegistrations": settings.IsAllowExternalRegistrations,
+	}, nil
+}
+
 func (s *UserService) CreateInitialAdmin() error {
 	return s.userRepository.CreateInitialAdmin()
 }

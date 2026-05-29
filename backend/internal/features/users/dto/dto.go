@@ -113,6 +113,20 @@ type CountByPlanResponseDTO struct {
 	Count int64 `json:"count"`
 }
 
+type BulkInviteRequestDTO struct {
+	Emails []string `json:"emails" binding:"required,min=1,dive,required,email"`
+}
+
+type BulkInviteResponseDTO struct {
+	Invited []BulkInviteResultDTO `json:"invited"`
+	Skipped []BulkInviteResultDTO `json:"skipped"`
+}
+
+type BulkInviteResultDTO struct {
+	Email string    `json:"email"`
+	ID    uuid.UUID `json:"id,omitempty"`
+}
+
 type OAuthCallbackRequestDTO struct {
 	Code        string `json:"code"        binding:"required"`
 	RedirectUri string `json:"redirectUri" binding:"required"`
