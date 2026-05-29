@@ -2,6 +2,8 @@ import { getApplicationServer } from '../../../constants';
 import RequestOptions from '../../../shared/api/RequestOptions';
 import { accessTokenHelper } from '../../../shared/api/accessTokenHelper';
 import { apiHelper } from '../../../shared/api/apiHelper';
+import type { BulkInviteRequest } from '../model/BulkInviteRequest';
+import type { BulkInviteResponse } from '../model/BulkInviteResponse';
 import type { ChangePasswordRequest } from '../model/ChangePasswordRequest';
 import type { InviteUserRequest } from '../model/InviteUserRequest';
 import type { InviteUserResponse } from '../model/InviteUserResponse';
@@ -93,6 +95,15 @@ export const userApi = {
     const requestOptions: RequestOptions = new RequestOptions();
     requestOptions.setBody(JSON.stringify(request));
     return apiHelper.fetchPostJson(`${getApplicationServer()}/api/v1/users/invite`, requestOptions);
+  },
+
+  async bulkInviteUsers(request: BulkInviteRequest): Promise<BulkInviteResponse> {
+    const requestOptions: RequestOptions = new RequestOptions();
+    requestOptions.setBody(JSON.stringify(request));
+    return apiHelper.fetchPostJson(
+      `${getApplicationServer()}/api/v1/users/bulk-invite`,
+      requestOptions,
+    );
   },
 
   async getCurrentUser(): Promise<UserProfile> {

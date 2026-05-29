@@ -1,6 +1,7 @@
 // APIs
 export { userApi } from './api/userApi';
 export { settingsApi } from './api/settingsApi';
+export type { PublicSettings } from './api/settingsApi';
 export { userManagementApi } from './api/userManagementApi';
 export { userPlanApi } from './api/userPlanApi';
 
@@ -19,6 +20,8 @@ export type { ListUsersRequest } from './model/ListUsersRequest';
 export type { ListUsersResponse } from './model/ListUsersResponse';
 export type { ChangeUserRoleRequest } from './model/ChangeUserRoleRequest';
 export type { UsersSettings } from './model/UsersSettings';
+export type { BulkInviteRequest } from './model/BulkInviteRequest';
+export type { BulkInviteResponse } from './model/BulkInviteResponse';
 export { UserRole } from './model/UserRole';
 export { ProjectRole } from './model/ProjectRole';
 export type { UserPlan } from './model/UserPlan';
