@@ -1,10 +1,13 @@
-package api_keys
+package api_keys_testing
 
 import (
 	"encoding/json"
 	"fmt"
 	"net/http"
 
+	api_keys "logbull/internal/features/api_keys"
+	api_keys_dto "logbull/internal/features/api_keys/dto"
+	api_keys_models "logbull/internal/features/api_keys/models"
 	projects_testing "logbull/internal/features/projects/testing"
 
 	"github.com/gin-gonic/gin"
@@ -12,13 +15,13 @@ import (
 )
 
 func CreateApiKeyTestRouter(additionalControllers ...projects_testing.ControllerInterface) *gin.Engine {
-	controllers := []projects_testing.ControllerInterface{GetApiKeyController()}
+	controllers := []projects_testing.ControllerInterface{api_keys.GetApiKeyController()}
 	controllers = append(controllers, additionalControllers...)
 	return projects_testing.CreateTestRouter(controllers...)
 }
 
-func CreateTestApiKey(name string, projectID uuid.UUID, ownerToken string, router *gin.Engine) *ApiKey {
-	request := CreateApiKeyRequestDTO{
+func CreateTestApiKey(name string, projectID uuid.UUID, ownerToken string, router *gin.Engine) *api_keys_models.ApiKey {
+	request := api_keys_dto.CreateApiKeyRequestDTO{
 		Name: name,
 	}
 
@@ -35,7 +38,7 @@ func CreateTestApiKey(name string, projectID uuid.UUID, ownerToken string, route
 		panic("Failed to create API key via API")
 	}
 
-	var response ApiKey
+	var response api_keys_models.ApiKey
 	if err := json.Unmarshal(w.Body.Bytes(), &response); err != nil {
 		panic(err)
 	}

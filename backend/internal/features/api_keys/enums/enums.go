@@ -1,4 +1,4 @@
-package api_keys
+package api_keys_enums
 
 type ApiKeyStatus string
 

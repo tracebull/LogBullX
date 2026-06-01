@@ -1,8 +1,10 @@
-package api_keys
+package api_keys_controllers
 
 import (
 	"net/http"
 
+	api_keys_dto "logbull/internal/features/api_keys/dto"
+	api_keys_services "logbull/internal/features/api_keys/services"
 	users_middleware "logbull/internal/features/users/middleware"
 
 	"github.com/gin-gonic/gin"
@@ -10,7 +12,7 @@ import (
 )
 
 type ApiKeyController struct {
-	apiKeyService *ApiKeyService
+	ApiKeyService *api_keys_services.ApiKeyService
 }
 
 func (c *ApiKeyController) RegisterRoutes(router *gin.RouterGroup) {
@@ -30,8 +32,8 @@ func (c *ApiKeyController) RegisterRoutes(router *gin.RouterGroup) {
 // @Produce json
 // @Security BearerAuth
 // @Param projectId path string true "Project ID"
-// @Param request body CreateApiKeyRequestDTO true "API key creation data"
-// @Success 200 {object} ApiKey
+// @Param request body api_keys_dto.CreateApiKeyRequestDTO true "API key creation data"
+// @Success 200 {object} api_keys_models.ApiKey
 // @Failure 400 {object} map[string]string
 // @Failure 401 {object} map[string]string
 // @Failure 403 {object} map[string]string
@@ -50,13 +52,13 @@ func (c *ApiKeyController) CreateApiKey(ctx *gin.Context) {
 		return
 	}
 
-	var request CreateApiKeyRequestDTO
+	var request api_keys_dto.CreateApiKeyRequestDTO
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request format"})
 		return
 	}
 
-	response, err := c.apiKeyService.CreateApiKey(projectID, &request, user)
+	response, err := c.ApiKeyService.CreateApiKey(projectID, &request, user)
 	if err != nil {
 		if err.Error() == "insufficient permissions to create API keys" {
 			ctx.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
@@ -76,7 +78,7 @@ func (c *ApiKeyController) CreateApiKey(ctx *gin.Context) {
 // @Produce json
 // @Security BearerAuth
 // @Param projectId path string true "Project ID"
-// @Success 200 {object} GetApiKeysResponseDTO
+// @Success 200 {object} api_keys_dto.GetApiKeysResponseDTO
 // @Failure 400 {object} map[string]string
 // @Failure 401 {object} map[string]string
 // @Failure 403 {object} map[string]string
@@ -95,7 +97,7 @@ func (c *ApiKeyController) GetApiKeys(ctx *gin.Context) {
 		return
 	}
 
-	response, err := c.apiKeyService.GetProjectApiKeys(projectID, user)
+	response, err := c.ApiKeyService.GetProjectApiKeys(projectID, user)
 	if err != nil {
 		if err.Error() == "insufficient permissions to view API keys" {
 			ctx.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
@@ -117,7 +119,7 @@ func (c *ApiKeyController) GetApiKeys(ctx *gin.Context) {
 // @Security BearerAuth
 // @Param projectId path string true "Project ID"
 // @Param apiKeyId path string true "API Key ID"
-// @Param request body UpdateApiKeyRequestDTO true "API key update data"
+// @Param request body api_keys_dto.UpdateApiKeyRequestDTO true "API key update data"
 // @Success 200 {object} map[string]string
 // @Failure 400 {object} map[string]string
 // @Failure 401 {object} map[string]string
@@ -144,13 +146,13 @@ func (c *ApiKeyController) UpdateApiKey(ctx *gin.Context) {
 		return
 	}
 
-	var request UpdateApiKeyRequestDTO
+	var request api_keys_dto.UpdateApiKeyRequestDTO
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request format"})
 		return
 	}
 
-	if err := c.apiKeyService.UpdateApiKey(projectID, apiKeyID, &request, user); err != nil {
+	if err := c.ApiKeyService.UpdateApiKey(projectID, apiKeyID, &request, user); err != nil {
 		if err.Error() == "insufficient permissions to update API keys" {
 			ctx.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
 			return
@@ -195,7 +197,7 @@ func (c *ApiKeyController) DeleteApiKey(ctx *gin.Context) {
 		return
 	}
 
-	if err := c.apiKeyService.DeleteApiKey(projectID, apiKeyID, user); err != nil {
+	if err := c.ApiKeyService.DeleteApiKey(projectID, apiKeyID, user); err != nil {
 		if err.Error() == "insufficient permissions to delete API keys" {
 			ctx.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
 			return

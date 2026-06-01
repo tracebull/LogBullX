@@ -1,6 +1,9 @@
-package api_keys
+package api_keys_dto
 
 import (
+	api_keys_enums "logbull/internal/features/api_keys/enums"
+	api_keys_models "logbull/internal/features/api_keys/models"
+
 	"github.com/google/uuid"
 )
 
@@ -9,12 +12,12 @@ type CreateApiKeyRequestDTO struct {
 }
 
 type GetApiKeysResponseDTO struct {
-	ApiKeys []*ApiKey `json:"apiKeys"`
+	ApiKeys []*api_keys_models.ApiKey `json:"apiKeys"`
 }
 
 type UpdateApiKeyRequestDTO struct {
-	Name   *string       `json:"name,omitempty"   binding:"omitempty,min=1,max=100"`
-	Status *ApiKeyStatus `json:"status,omitempty"`
+	Name   *string                    `json:"name,omitempty"   binding:"omitempty,min=1,max=100"`
+	Status *api_keys_enums.ApiKeyStatus `json:"status,omitempty"`
 }
 
 type ValidateTokenRequest struct {
@@ -29,7 +32,7 @@ type ValidateTokenResponse struct {
 }
 
 type CachedApiKey struct {
-	ID        uuid.UUID    `json:"id"`
-	ProjectID uuid.UUID    `json:"projectId"`
-	Status    ApiKeyStatus `json:"status"`
+	ID        uuid.UUID                `json:"id"`
+	ProjectID uuid.UUID                `json:"projectId"`
+	Status    api_keys_enums.ApiKeyStatus `json:"status"`
 }

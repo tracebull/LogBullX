@@ -1,4 +1,4 @@
-package api_keys
+package api_keys_services
 
 import (
 	"crypto/rand"
@@ -8,7 +8,11 @@ import (
 	"fmt"
 	"strings"
 
-	audit_logs "logbull/internal/features/audit_logs"
+	audit_logs_services "logbull/internal/features/audit_logs/services"
+	api_keys_dto "logbull/internal/features/api_keys/dto"
+	api_keys_enums "logbull/internal/features/api_keys/enums"
+	api_keys_models "logbull/internal/features/api_keys/models"
+	api_keys_repositories "logbull/internal/features/api_keys/repositories"
 	projects_services "logbull/internal/features/projects/services"
 	users_models "logbull/internal/features/users/models"
 	cache_utils "logbull/internal/util/cache"
@@ -18,12 +22,11 @@ import (
 )
 
 type ApiKeyService struct {
-	apiKeyRepository *ApiKeyRepository
-	projectService   *projects_services.ProjectService
-	auditLogService  *audit_logs.AuditLogService
-
-	apiKeyCacheUtil *cache_utils.CacheUtil[CachedApiKey]
-	singleflight    singleflight.Group // Prevents thundering herd on DB calls
+	ApiKeyRepository  *api_keys_repositories.ApiKeyRepository
+	ProjectService    *projects_services.ProjectService
+	AuditLogService   *audit_logs_services.AuditLogService
+	ApiKeyCacheUtil   *cache_utils.CacheUtil[api_keys_dto.CachedApiKey]
+	Singleflight      singleflight.Group
 }
 
 const (
@@ -33,10 +36,10 @@ const (
 
 func (s *ApiKeyService) CreateApiKey(
 	projectID uuid.UUID,
-	request *CreateApiKeyRequestDTO,
+	request *api_keys_dto.CreateApiKeyRequestDTO,
 	creator *users_models.User,
-) (*ApiKey, error) {
-	canManage, err := s.projectService.CanUserManageProject(projectID, creator)
+) (*api_keys_models.ApiKey, error) {
+	canManage, err := s.ProjectService.CanUserManageProject(projectID, creator)
 	if err != nil {
 		return nil, err
 	}
@@ -49,34 +52,32 @@ func (s *ApiKeyService) CreateApiKey(
 		return nil, fmt.Errorf("failed to generate token: %w", err)
 	}
 
-	apiKey := &ApiKey{
+	apiKey := &api_keys_models.ApiKey{
 		ID:          uuid.New(),
 		Name:        request.Name,
 		ProjectID:   projectID,
 		TokenPrefix: tokenPrefix,
 		TokenHash:   tokenHash,
-		Status:      ApiKeyStatusActive,
+		Status:      api_keys_enums.ApiKeyStatusActive,
 	}
 
-	if err := s.apiKeyRepository.CreateApiKey(apiKey); err != nil {
+	if err := s.ApiKeyRepository.CreateApiKey(apiKey); err != nil {
 		return nil, fmt.Errorf("failed to create API key: %w", err)
 	}
 
-	// Pre-warm cache with new API key for immediate availability
-	cachedKey := &CachedApiKey{
+	cachedKey := &api_keys_dto.CachedApiKey{
 		ID:        apiKey.ID,
 		ProjectID: apiKey.ProjectID,
 		Status:    apiKey.Status,
 	}
-	s.apiKeyCacheUtil.Set(tokenHash, cachedKey)
+	s.ApiKeyCacheUtil.Set(tokenHash, cachedKey)
 
-	s.auditLogService.WriteAuditLog(
+	s.AuditLogService.WriteAuditLog(
 		fmt.Sprintf("API key created: %s (%s)", request.Name, tokenPrefix),
 		&creator.ID,
 		&projectID,
 	)
 
-	// Set the full token in the response (only returned once)
 	apiKey.Token = fullToken
 
 	return apiKey, nil
@@ -85,8 +86,8 @@ func (s *ApiKeyService) CreateApiKey(
 func (s *ApiKeyService) GetProjectApiKeys(
 	projectID uuid.UUID,
 	user *users_models.User,
-) (*GetApiKeysResponseDTO, error) {
-	canAccess, _, err := s.projectService.CanUserAccessProject(projectID, user)
+) (*api_keys_dto.GetApiKeysResponseDTO, error) {
+	canAccess, _, err := s.ProjectService.CanUserAccessProject(projectID, user)
 	if err != nil {
 		return nil, err
 	}
@@ -94,12 +95,12 @@ func (s *ApiKeyService) GetProjectApiKeys(
 		return nil, errors.New("insufficient permissions to view API keys")
 	}
 
-	apiKeys, err := s.apiKeyRepository.GetApiKeysByProjectID(projectID)
+	apiKeys, err := s.ApiKeyRepository.GetApiKeysByProjectID(projectID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get API keys: %w", err)
 	}
 
-	return &GetApiKeysResponseDTO{
+	return &api_keys_dto.GetApiKeysResponseDTO{
 		ApiKeys: apiKeys,
 	}, nil
 }
@@ -107,10 +108,10 @@ func (s *ApiKeyService) GetProjectApiKeys(
 func (s *ApiKeyService) UpdateApiKey(
 	projectID uuid.UUID,
 	apiKeyID uuid.UUID,
-	request *UpdateApiKeyRequestDTO,
+	request *api_keys_dto.UpdateApiKeyRequestDTO,
 	updater *users_models.User,
 ) error {
-	canManage, err := s.projectService.CanUserManageProject(projectID, updater)
+	canManage, err := s.ProjectService.CanUserManageProject(projectID, updater)
 	if err != nil {
 		return err
 	}
@@ -118,7 +119,7 @@ func (s *ApiKeyService) UpdateApiKey(
 		return errors.New("insufficient permissions to update API keys")
 	}
 
-	apiKey, err := s.apiKeyRepository.GetApiKeyByID(apiKeyID)
+	apiKey, err := s.ApiKeyRepository.GetApiKeyByID(apiKeyID)
 	if err != nil {
 		return errors.New("API key not found")
 	}
@@ -135,13 +136,13 @@ func (s *ApiKeyService) UpdateApiKey(
 		apiKey.Status = *request.Status
 	}
 
-	if err := s.apiKeyRepository.UpdateApiKey(apiKey); err != nil {
+	if err := s.ApiKeyRepository.UpdateApiKey(apiKey); err != nil {
 		return fmt.Errorf("failed to update API key: %w", err)
 	}
 
-	s.apiKeyCacheUtil.Invalidate(apiKey.TokenHash)
+	s.ApiKeyCacheUtil.Invalidate(apiKey.TokenHash)
 
-	s.auditLogService.WriteAuditLog(
+	s.AuditLogService.WriteAuditLog(
 		fmt.Sprintf("API key updated: %s (%s)", apiKey.Name, apiKey.TokenPrefix),
 		&updater.ID,
 		&projectID,
@@ -155,7 +156,7 @@ func (s *ApiKeyService) DeleteApiKey(
 	apiKeyID uuid.UUID,
 	deleter *users_models.User,
 ) error {
-	canManage, err := s.projectService.CanUserManageProject(projectID, deleter)
+	canManage, err := s.ProjectService.CanUserManageProject(projectID, deleter)
 	if err != nil {
 		return err
 	}
@@ -163,7 +164,7 @@ func (s *ApiKeyService) DeleteApiKey(
 		return errors.New("insufficient permissions to delete API keys")
 	}
 
-	apiKey, err := s.apiKeyRepository.GetApiKeyByID(apiKeyID)
+	apiKey, err := s.ApiKeyRepository.GetApiKeyByID(apiKeyID)
 	if err != nil {
 		return errors.New("API key not found")
 	}
@@ -172,13 +173,13 @@ func (s *ApiKeyService) DeleteApiKey(
 		return errors.New("API key does not belong to this project")
 	}
 
-	if err := s.apiKeyRepository.DeleteApiKey(apiKeyID); err != nil {
+	if err := s.ApiKeyRepository.DeleteApiKey(apiKeyID); err != nil {
 		return fmt.Errorf("failed to delete API key: %w", err)
 	}
 
-	s.apiKeyCacheUtil.Invalidate(apiKey.TokenHash)
+	s.ApiKeyCacheUtil.Invalidate(apiKey.TokenHash)
 
-	s.auditLogService.WriteAuditLog(
+	s.AuditLogService.WriteAuditLog(
 		fmt.Sprintf("API key deleted: %s (%s)", apiKey.Name, apiKey.TokenPrefix),
 		&deleter.ID,
 		&projectID,
@@ -187,61 +188,57 @@ func (s *ApiKeyService) DeleteApiKey(
 	return nil
 }
 
-func (s *ApiKeyService) ValidateApiKey(token string, projectID uuid.UUID) (*ValidateTokenResponse, error) {
+func (s *ApiKeyService) ValidateApiKey(token string, projectID uuid.UUID) (*api_keys_dto.ValidateTokenResponse, error) {
 	if !strings.HasPrefix(token, TokenPrefix) {
-		return &ValidateTokenResponse{IsValid: false}, nil
+		return &api_keys_dto.ValidateTokenResponse{IsValid: false}, nil
 	}
 
 	tokenHash := s.hashToken(token)
 
-	// Tier 1: Check cache
-	if cachedKey := s.apiKeyCacheUtil.Get(tokenHash); cachedKey != nil {
-		if cachedKey.ProjectID != projectID || cachedKey.Status != ApiKeyStatusActive {
-			return &ValidateTokenResponse{IsValid: false}, nil
+	if cachedKey := s.ApiKeyCacheUtil.Get(tokenHash); cachedKey != nil {
+		if cachedKey.ProjectID != projectID || cachedKey.Status != api_keys_enums.ApiKeyStatusActive {
+			return &api_keys_dto.ValidateTokenResponse{IsValid: false}, nil
 		}
 
-		return &ValidateTokenResponse{
+		return &api_keys_dto.ValidateTokenResponse{
 			IsValid:   true,
 			ApiKeyID:  cachedKey.ID,
 			ProjectID: cachedKey.ProjectID,
 		}, nil
 	}
 
-	// Tier 2: Database lookup with singleflight protection (prevents thundering herd)
-	result, err, _ := s.singleflight.Do(tokenHash, func() (any, error) {
-		return s.apiKeyRepository.GetApiKeyByTokenHash(tokenHash)
+	result, err, _ := s.Singleflight.Do(tokenHash, func() (any, error) {
+		return s.ApiKeyRepository.GetApiKeyByTokenHash(tokenHash)
 	})
 
 	if err != nil {
-		// Cache the invalid key to prevent future DB hits
-		invalidCachedKey := &CachedApiKey{
+		invalidCachedKey := &api_keys_dto.CachedApiKey{
 			ID:        uuid.Nil,
 			ProjectID: uuid.Nil,
-			Status:    ApiKeyStatusNotFound,
+			Status:    api_keys_enums.ApiKeyStatusNotFound,
 		}
 
-		s.apiKeyCacheUtil.Set(tokenHash, invalidCachedKey)
-		return &ValidateTokenResponse{IsValid: false}, nil
+		s.ApiKeyCacheUtil.Set(tokenHash, invalidCachedKey)
+		return &api_keys_dto.ValidateTokenResponse{IsValid: false}, nil
 	}
 
-	apiKey, ok := result.(*ApiKey)
+	apiKey, ok := result.(*api_keys_models.ApiKey)
 	if !ok {
-		return &ValidateTokenResponse{IsValid: false}, fmt.Errorf("failed to cast result to ApiKey")
+		return &api_keys_dto.ValidateTokenResponse{IsValid: false}, fmt.Errorf("failed to cast result to ApiKey")
 	}
 
-	// Verify project matches and is active
-	if apiKey.ProjectID != projectID || apiKey.Status != ApiKeyStatusActive {
-		return &ValidateTokenResponse{IsValid: false}, nil
+	if apiKey.ProjectID != projectID || apiKey.Status != api_keys_enums.ApiKeyStatusActive {
+		return &api_keys_dto.ValidateTokenResponse{IsValid: false}, nil
 	}
 
-	cachedKey := &CachedApiKey{
+	cachedKey := &api_keys_dto.CachedApiKey{
 		ID:        apiKey.ID,
 		ProjectID: apiKey.ProjectID,
 		Status:    apiKey.Status,
 	}
-	s.apiKeyCacheUtil.Set(tokenHash, cachedKey)
+	s.ApiKeyCacheUtil.Set(tokenHash, cachedKey)
 
-	return &ValidateTokenResponse{
+	return &api_keys_dto.ValidateTokenResponse{
 		IsValid:   true,
 		ApiKeyID:  apiKey.ID,
 		ProjectID: apiKey.ProjectID,
@@ -249,13 +246,11 @@ func (s *ApiKeyService) ValidateApiKey(token string, projectID uuid.UUID) (*Vali
 }
 
 func (s *ApiKeyService) generateSecureToken() (fullToken, prefix, hash string, err error) {
-	// Generate random bytes
-	tokenBytes := make([]byte, TokenLength/2) // hex encoding doubles the length
+	tokenBytes := make([]byte, TokenLength/2)
 	if _, err := rand.Read(tokenBytes); err != nil {
 		return "", "", "", err
 	}
 
-	// Create token parts
 	tokenSuffix := hex.EncodeToString(tokenBytes)
 	fullToken = TokenPrefix + tokenSuffix
 	prefix = TokenPrefix + tokenSuffix[:6] + "..."
