@@ -23,9 +23,9 @@ func (s *DowndetectService) IsAvailable() error {
 		return fmt.Errorf("cache check failed: %w", err)
 	}
 
-	// Check OpenSearch connection
-	if err := s.logCoreRepository.TestOpenSearchConnection(); err != nil {
-		return fmt.Errorf("OpenSearch check failed: %w", err)
+	// Check log storage connection
+	if err := s.logCoreRepository.HealthCheck(); err != nil {
+		return fmt.Errorf("log storage check failed: %w", err)
 	}
 
 	return nil

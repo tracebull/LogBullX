@@ -2,12 +2,12 @@ package system_healthcheck
 
 import (
 	"errors"
-	"logbull/internal/features/disk"
+	disk_services "logbull/internal/features/disk/services"
 	"logbull/internal/storage"
 )
 
 type HealthcheckService struct {
-	diskService *disk.DiskService
+	diskService *disk_services.DiskService
 }
 
 func (s *HealthcheckService) IsHealthy() error {

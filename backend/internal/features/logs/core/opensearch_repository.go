@@ -683,7 +683,7 @@ func (r *LogCoreRepository) deleteByQuery(queryBody map[string]any, routing *uui
 	return fmt.Errorf("OpenSearch delete_by_query failed after retries: %s", string(lastBody))
 }
 
-func (r *LogCoreRepository) TestOpenSearchConnection() error {
+func (r *LogCoreRepository) HealthCheck() error {
 	healthEndpoint := r.baseURL + "/_cluster/health"
 	healthRequest, err := http.NewRequest("GET", healthEndpoint, nil)
 	if err != nil {

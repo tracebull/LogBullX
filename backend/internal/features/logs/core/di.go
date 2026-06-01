@@ -17,12 +17,12 @@ var logCoreRepository = &LogCoreRepository{
 	client: &http.Client{
 		Timeout: 10 * time.Second,
 		Transport: &http.Transport{
-			MaxIdleConns:        100,              // Total idle connections across all hosts
-			MaxIdleConnsPerHost: 10,               // Idle connections per host
-			MaxConnsPerHost:     50,               // Max connections per host
-			IdleConnTimeout:     90 * time.Second, // How long idle connections stay open
-			DisableKeepAlives:   false,            // Enable connection reuse
-			ForceAttemptHTTP2:   false,            // Stick to HTTP/1.1 for OpenSearch
+			MaxIdleConns:        100,
+			MaxIdleConnsPerHost: 10,
+			MaxConnsPerHost:     50,
+			IdleConnTimeout:     90 * time.Second,
+			DisableKeepAlives:   false,
+			ForceAttemptHTTP2:   false,
 		},
 	},
 	baseURL:      strings.TrimRight(fmt.Sprintf("%s:%s", env.OpenSearchURL, env.OpenSearchAPIPort), "/"),
@@ -33,12 +33,12 @@ var logCoreRepository = &LogCoreRepository{
 	queryBuilder: &QueryBuilder{logger.GetLogger()},
 }
 
-var logQueryBuilder = &QueryBuilder{
-	logger.GetLogger(),
-}
-
 var logCoreService = &LogCoreService{
 	logCoreRepository,
+}
+
+func GetLogStorage() LogStorage {
+	return logCoreRepository
 }
 
 func GetLogCoreRepository() *LogCoreRepository {
@@ -52,10 +52,6 @@ func GetUnavailableLogCoreRepository() *LogCoreRepository {
 		timeout: 30 * time.Second,
 		logger:  logger.GetLogger(),
 	}
-}
-
-func GetLogQueryBuilder() *QueryBuilder {
-	return logQueryBuilder
 }
 
 func SetupDependencies() {

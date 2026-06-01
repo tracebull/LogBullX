@@ -30,10 +30,15 @@ type EnvVariables struct {
 	ValkeyUsername string `env:"VALKEY_USERNAME"           required:"false"`
 	ValkeyPassword string `env:"VALKEY_PASSWORD"           required:"false"`
 	ValkeyIsSsl    bool   `env:"VALKEY_IS_SSL"             required:"true"`
+	// log storage backend
+	LogStorageBackend string `env:"LOG_STORAGE_BACKEND" envDefault:"opensearch"`
 	// opensearch
-	OpenSearchURL           string `env:"OPENSEARCH_URL"            required:"true"`
-	OpenSearchAPIPort       string `env:"OPENSEARCH_API_PORT"       required:"true"`
-	OpenSearchTransportPort string `env:"OPENSEARCH_TRANSPORT_PORT" required:"true"`
+	OpenSearchURL           string `env:"OPENSEARCH_URL"`
+	OpenSearchAPIPort       string `env:"OPENSEARCH_API_PORT"`
+	OpenSearchTransportPort string `env:"OPENSEARCH_TRANSPORT_PORT"`
+	// victorialogs
+	VictoriaLogsURL  string `env:"VICTORIALOGS_URL"  envDefault:""`
+	VictoriaLogsPort string `env:"VICTORIALOGS_PORT" envDefault:""`
 	// oauth
 	GitHubClientID     string `env:"GITHUB_CLIENT_ID"`
 	GitHubClientSecret string `env:"GITHUB_CLIENT_SECRET"`
@@ -134,17 +139,31 @@ func loadEnvVariables() {
 	}
 
 	// OpenSearch
-	if env.OpenSearchURL == "" {
-		log.Error("OPENSEARCH_URL is empty")
-		os.Exit(1)
+	if env.LogStorageBackend == "opensearch" || env.LogStorageBackend == "" {
+		if env.OpenSearchURL == "" {
+			log.Error("OPENSEARCH_URL is empty")
+			os.Exit(1)
+		}
+		if env.OpenSearchAPIPort == "" {
+			log.Error("OPENSEARCH_API_PORT is empty")
+			os.Exit(1)
+		}
+		if env.OpenSearchTransportPort == "" {
+			log.Error("OPENSEARCH_TRANSPORT_PORT is empty")
+			os.Exit(1)
+		}
 	}
-	if env.OpenSearchAPIPort == "" {
-		log.Error("OPENSEARCH_API_PORT is empty")
-		os.Exit(1)
-	}
-	if env.OpenSearchTransportPort == "" {
-		log.Error("OPENSEARCH_TRANSPORT_PORT is empty")
-		os.Exit(1)
+
+	// VictoriaLogs
+	if env.LogStorageBackend == "victorialogs" {
+		if env.VictoriaLogsURL == "" {
+			log.Error("VICTORIALOGS_URL is empty when LOG_STORAGE_BACKEND=victorialogs")
+			os.Exit(1)
+		}
+		if env.VictoriaLogsPort == "" {
+			log.Error("VICTORIALOGS_PORT is empty when LOG_STORAGE_BACKEND=victorialogs")
+			os.Exit(1)
+		}
 	}
 
 	log.Info("Environment variables loaded successfully!")

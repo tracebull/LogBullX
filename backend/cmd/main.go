@@ -14,9 +14,9 @@ import (
 
 	"logbull/internal/config"
 	"logbull/internal/downdetect"
-	"logbull/internal/features/api_keys"
-	"logbull/internal/features/audit_logs"
-	"logbull/internal/features/disk"
+	api_keys "logbull/internal/features/api_keys"
+	audit_logs "logbull/internal/features/audit_logs"
+	disk "logbull/internal/features/disk"
 	logs_cleanup "logbull/internal/features/logs/cleanup"
 	logs_core "logbull/internal/features/logs/core"
 	logs_querying "logbull/internal/features/logs/querying"
@@ -57,7 +57,7 @@ func main() {
 
 	cache_utils.TestCacheConnection()
 
-	testOpenSearchConnection(log)
+	testLogStorageConnection(log)
 
 	runMigrations(log)
 
@@ -205,17 +205,17 @@ func generateSwaggerDocs(log *slog.Logger) {
 	log.Info("Swagger documentation generated successfully")
 }
 
-func testOpenSearchConnection(log *slog.Logger) {
-	log.Info("Testing OpenSearch connection...")
+func testLogStorageConnection(log *slog.Logger) {
+	log.Info("Testing log storage connection...")
 
-	repository := logs_core.GetLogCoreRepository()
-	err := repository.TestOpenSearchConnection()
+	storage := logs_core.GetLogStorage()
+	err := storage.HealthCheck()
 	if err != nil {
-		log.Error("Failed to connect to OpenSearch", "error", err)
+		log.Error("Failed to connect to log storage", "error", err)
 		os.Exit(1)
 	}
 
-	log.Info("OpenSearch connection test successful")
+	log.Info("Log storage connection test successful")
 }
 
 func runMigrations(log *slog.Logger) {
