@@ -1,6 +1,6 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { App, Button, Spin, Tooltip } from 'antd';
-import { useEffect, useState } from 'react';
+import { Suspense, lazy, useEffect, useState } from 'react';
 
 import { APP_VERSION } from '../../../constants';
 import { type DiskUsage, diskApi } from '../../../entity/disk';
@@ -12,19 +12,50 @@ import {
   settingsApi,
   userApi,
 } from '../../../entity/users';
-import {
-  CreateProjectDialogComponent,
-  ProjectApiKeysComponent,
-  ProjectMembershipComponent,
-  ProjectSettingsComponent,
-} from '../../../features/projects';
-import { QueryComponentComponent } from '../../../features/query';
-import { SettingsComponent } from '../../../features/settings';
-import { ProfileComponent } from '../../../features/users/ui/ProfileComponent';
-import { UsersComponent } from '../../../features/users/ui/UsersComponent';
 import { useScreenHeight } from '../../../shared/hooks';
 import { MobilePlaceholderComponent } from './MobilePlaceholderComponent';
 import { ProjectSelectionComponent } from './ProjectSelectionComponent';
+
+const CreateProjectDialogComponent = lazy(() =>
+  import('../../../features/projects/ui/CreateProjectDialogComponent').then((m) => ({
+    default: m.CreateProjectDialogComponent,
+  })),
+);
+const ProjectApiKeysComponent = lazy(() =>
+  import('../../../features/projects/ui/ProjectApiKeysComponent').then((m) => ({
+    default: m.ProjectApiKeysComponent,
+  })),
+);
+const ProjectMembershipComponent = lazy(() =>
+  import('../../../features/projects/ui/ProjectMembershipComponent').then((m) => ({
+    default: m.ProjectMembershipComponent,
+  })),
+);
+const ProjectSettingsComponent = lazy(() =>
+  import('../../../features/projects/ui/ProjectSettingsComponent').then((m) => ({
+    default: m.ProjectSettingsComponent,
+  })),
+);
+const QueryComponentComponent = lazy(() =>
+  import('../../../features/query/ui/QueryComponent').then((m) => ({
+    default: m.QueryComponentComponent,
+  })),
+);
+const SettingsComponent = lazy(() =>
+  import('../../../features/settings/ui/SettingsComponent').then((m) => ({
+    default: m.SettingsComponent,
+  })),
+);
+const ProfileComponent = lazy(() =>
+  import('../../../features/users/ui/ProfileComponent').then((m) => ({
+    default: m.ProfileComponent,
+  })),
+);
+const UsersComponent = lazy(() =>
+  import('../../../features/users/ui/UsersComponent').then((m) => ({
+    default: m.UsersComponent,
+  })),
+);
 
 export const MainScreenComponent = () => {
   const { message } = App.useApp();
@@ -263,69 +294,80 @@ export const MainScreenComponent = () => {
                 ))}
             </div>
 
-            {selectedTab === 'profile' && <ProfileComponent contentHeight={contentHeight} />}
+            <Suspense
+              fallback={
+                <div
+                  className="flex grow items-center justify-center rounded"
+                  style={{ height: contentHeight }}
+                >
+                  <Spin indicator={<LoadingOutlined spin />} size="large" />
+                </div>
+              }
+            >
+              {selectedTab === 'profile' && <ProfileComponent contentHeight={contentHeight} />}
 
-            {selectedTab === 'logbull-settings' && (
-              <SettingsComponent contentHeight={contentHeight} />
-            )}
+              {selectedTab === 'logbull-settings' && (
+                <SettingsComponent contentHeight={contentHeight} />
+              )}
 
-            {selectedTab === 'users' && (
-              <UsersComponent contentHeight={contentHeight} globalSettings={globalSettings} user={user} />
-            )}
+              {selectedTab === 'users' && (
+                <UsersComponent contentHeight={contentHeight} globalSettings={globalSettings} user={user} />
+              )}
 
-            {projects.length === 0 &&
-            (selectedTab === 'search' ||
-              selectedTab === 'settings' ||
-              selectedTab === 'api-keys' ||
-              selectedTab === 'members') ? (
-              <div
-                className="flex grow items-center justify-center rounded pl-5"
-                style={{ height: contentHeight }}
-              >
-                {(user?.role === UserRole.ADMIN ||
-                  globalSettings?.isMemberAllowedToCreateProjects !== false) && (
-                  <Button
-                    type="primary"
-                    size="large"
-                    onClick={handleCreateProject}
-                    className="border-emerald-600 bg-emerald-600 hover:border-emerald-700 hover:bg-emerald-700"
-                  >
-                    Create project
-                  </Button>
-                )}
-              </div>
-            ) : (
-              <>
-                {selectedTab === 'settings' && selectedProject && user && (
-                  <ProjectSettingsComponent
-                    projectResponse={selectedProject}
-                    contentHeight={contentHeight}
-                    user={user}
-                  />
-                )}
-                {selectedTab === 'api-keys' && selectedProject && user && (
-                  <ProjectApiKeysComponent
-                    projectResponse={selectedProject}
-                    contentHeight={contentHeight}
-                    user={user}
-                  />
-                )}
-                {selectedTab === 'members' && selectedProject && user && (
-                  <ProjectMembershipComponent
-                    projectResponse={selectedProject}
-                    contentHeight={contentHeight}
-                    user={user}
-                  />
-                )}
-                {selectedTab === 'search' && selectedProject && user && (
-                  <QueryComponentComponent
-                    projectId={selectedProject.id}
-                    contentHeight={contentHeight}
-                    user={user}
-                  />
-                )}
-              </>
-            )}
+              {projects.length === 0 &&
+              (selectedTab === 'search' ||
+                selectedTab === 'settings' ||
+                selectedTab === 'api-keys' ||
+                selectedTab === 'members') ? (
+                <div
+                  className="flex grow items-center justify-center rounded pl-5"
+                  style={{ height: contentHeight }}
+                >
+                  {(user?.role === UserRole.ADMIN ||
+                    globalSettings?.isMemberAllowedToCreateProjects !== false) && (
+                    <Button
+                      type="primary"
+                      size="large"
+                      onClick={handleCreateProject}
+                      className="border-emerald-600 bg-emerald-600 hover:border-emerald-700 hover:bg-emerald-700"
+                    >
+                      Create project
+                    </Button>
+                  )}
+                </div>
+              ) : (
+                <>
+                  {selectedTab === 'settings' && selectedProject && user && (
+                    <ProjectSettingsComponent
+                      projectResponse={selectedProject}
+                      contentHeight={contentHeight}
+                      user={user}
+                    />
+                  )}
+                  {selectedTab === 'api-keys' && selectedProject && user && (
+                    <ProjectApiKeysComponent
+                      projectResponse={selectedProject}
+                      contentHeight={contentHeight}
+                      user={user}
+                    />
+                  )}
+                  {selectedTab === 'members' && selectedProject && user && (
+                    <ProjectMembershipComponent
+                      projectResponse={selectedProject}
+                      contentHeight={contentHeight}
+                      user={user}
+                    />
+                  )}
+                  {selectedTab === 'search' && selectedProject && user && (
+                    <QueryComponentComponent
+                      projectId={selectedProject.id}
+                      contentHeight={contentHeight}
+                      user={user}
+                    />
+                  )}
+                </>
+              )}
+            </Suspense>
 
             <div className="absolute bottom-1 left-2 mb-[0px] text-sm text-gray-400">
               v{APP_VERSION}
@@ -334,14 +376,16 @@ export const MainScreenComponent = () => {
         )}
 
         {/* Create Project Dialog */}
-        {showCreateProjectDialog && user && globalSettings && (
-          <CreateProjectDialogComponent
-            user={user}
-            globalSettings={globalSettings}
-            onClose={() => setShowCreateProjectDialog(false)}
-            onProjectCreated={handleProjectCreated}
-          />
-        )}
+        <Suspense fallback={null}>
+          {showCreateProjectDialog && user && globalSettings && (
+            <CreateProjectDialogComponent
+              user={user}
+              globalSettings={globalSettings}
+              onClose={() => setShowCreateProjectDialog(false)}
+              onProjectCreated={handleProjectCreated}
+            />
+          )}
+        </Suspense>
       </div>
     </>
   );

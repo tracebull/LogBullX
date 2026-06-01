@@ -1,16 +1,14 @@
-import { accessTokenHelper } from '.';
 import RequestOptions from './RequestOptions';
 
-const REPEAT_TRIES_COUNT = 10;
-const REPEAT_INTERVAL_MS = 3_000;
+const MAX_RETRIES = 10;
+const RETRY_INTERVAL_MS = 3_000;
 
 const handleOrThrowMessageIfResponseError = async (
   url: string,
   response: Response,
   handleNotAuthorizedError = true,
-) => {
+): Promise<void> => {
   if (handleNotAuthorizedError && response.status === 401) {
-    accessTokenHelper?.cleanAccessToken();
     window.location.reload();
   }
 
@@ -18,7 +16,7 @@ const handleOrThrowMessageIfResponseError = async (
     throw new Error('failed to fetch');
   }
 
-  if (response.status >= 400 && response.status <= 600) {
+  if (response.status >= 400 && response.status < 500) {
     let errorMessage: string | undefined;
 
     try {
@@ -32,27 +30,56 @@ const handleOrThrowMessageIfResponseError = async (
       }
     }
 
-    throw new Error(errorMessage ?? `${url}: ${await response.text()}`);
+    throw new Error(errorMessage ?? `${url}: ${response.statusText}`);
   }
 };
 
 const makeRequest = async (
   url: string,
   optionsWrapper: RequestOptions,
+  enableRetry: boolean,
   currentTry = 0,
 ): Promise<Response> => {
   try {
     const response = await fetch(url, optionsWrapper.toRequestInit());
-    await handleOrThrowMessageIfResponseError(url, response);
-    return response;
-  } catch (e) {
-    if (currentTry < REPEAT_TRIES_COUNT) {
-      await new Promise((resolve) => setTimeout(resolve, REPEAT_INTERVAL_MS));
-      return makeRequest(url, optionsWrapper, currentTry + 1);
+
+    if (response.status >= 400 && response.status < 500) {
+      await handleOrThrowMessageIfResponseError(url, response);
+      return response;
     }
 
+    if (response.status >= 500) {
+      if (enableRetry && currentTry < MAX_RETRIES) {
+        await new Promise((resolve) => setTimeout(resolve, RETRY_INTERVAL_MS));
+        return makeRequest(url, optionsWrapper, enableRetry, currentTry + 1);
+      }
+      await handleOrThrowMessageIfResponseError(url, response);
+      return response;
+    }
+
+    return response;
+  } catch (e) {
+    if (enableRetry && currentTry < MAX_RETRIES) {
+      await new Promise((resolve) => setTimeout(resolve, RETRY_INTERVAL_MS));
+      return makeRequest(url, optionsWrapper, enableRetry, currentTry + 1);
+    }
     throw e;
   }
+};
+
+const buildDefaultHeaders = (method: string): [string, string][] => {
+  const headers: [string, string][] = [
+    ['Content-Type', 'application/json'],
+    ['Accept', 'application/json'],
+  ];
+
+  const methodOverride = method.toUpperCase();
+
+  if (['GET', 'POST', 'PUT', 'DELETE', 'PATCH'].includes(methodOverride)) {
+    headers.push(['Access-Control-Allow-Methods', methodOverride]);
+  }
+
+  return headers;
 };
 
 export const apiHelper = {
@@ -61,19 +88,13 @@ export const apiHelper = {
     requestOptions?: RequestOptions,
     isRetryOnError = false,
   ): Promise<T> => {
-    const optionsWrapper = (requestOptions ?? new RequestOptions())
-      .setMethod('POST')
-      .addHeader('Content-Type', 'application/json')
-      .addHeader('Access-Control-Allow-Methods', 'POST')
-      .addHeader('Accept', 'application/json')
-      .addHeader('Authorization', accessTokenHelper.getAccessToken());
+    const options = requestOptions ?? new RequestOptions();
+    if (!options.getMethod()) options.setMethod('POST');
+    for (const [name, value] of buildDefaultHeaders(options.getMethod() ?? 'POST')) {
+      options.addHeader(name, value);
+    }
 
-    const response = await makeRequest(
-      url,
-      optionsWrapper,
-      isRetryOnError ? 0 : REPEAT_TRIES_COUNT,
-    );
-
+    const response = await makeRequest(url, options, isRetryOnError);
     return response.json();
   },
 
@@ -82,19 +103,13 @@ export const apiHelper = {
     requestOptions?: RequestOptions,
     isRetryOnError = false,
   ): Promise<string> => {
-    const optionsWrapper = (requestOptions ?? new RequestOptions())
-      .setMethod('POST')
-      .addHeader('Content-Type', 'application/json')
-      .addHeader('Access-Control-Allow-Methods', 'POST')
-      .addHeader('Accept', 'application/json')
-      .addHeader('Authorization', accessTokenHelper.getAccessToken());
+    const options = requestOptions ?? new RequestOptions();
+    if (!options.getMethod()) options.setMethod('POST');
+    for (const [name, value] of buildDefaultHeaders(options.getMethod() ?? 'POST')) {
+      options.addHeader(name, value);
+    }
 
-    const response = await makeRequest(
-      url,
-      optionsWrapper,
-      isRetryOnError ? 0 : REPEAT_TRIES_COUNT,
-    );
-
+    const response = await makeRequest(url, options, isRetryOnError);
     return response.text();
   },
 
@@ -103,18 +118,13 @@ export const apiHelper = {
     requestOptions?: RequestOptions,
     isRetryOnError = false,
   ): Promise<Blob> => {
-    const optionsWrapper = (requestOptions ?? new RequestOptions())
-      .setMethod('POST')
-      .addHeader('Content-Type', 'application/json')
-      .addHeader('Access-Control-Allow-Methods', 'POST')
-      .addHeader('Authorization', accessTokenHelper.getAccessToken());
+    const options = requestOptions ?? new RequestOptions();
+    if (!options.getMethod()) options.setMethod('POST');
+    for (const [name, value] of buildDefaultHeaders(options.getMethod() ?? 'POST')) {
+      options.addHeader(name, value);
+    }
 
-    const response = await makeRequest(
-      url,
-      optionsWrapper,
-      isRetryOnError ? 0 : REPEAT_TRIES_COUNT,
-    );
-
+    const response = await makeRequest(url, options, isRetryOnError);
     return response.blob();
   },
 
@@ -123,18 +133,12 @@ export const apiHelper = {
     requestOptions?: RequestOptions,
     isRetryOnError = false,
   ): Promise<T> => {
-    const optionsWrapper = (requestOptions ?? new RequestOptions())
-      .addHeader('Content-Type', 'application/json')
-      .addHeader('Access-Control-Allow-Methods', 'GET')
-      .addHeader('Accept', 'application/json')
-      .addHeader('Authorization', accessTokenHelper.getAccessToken());
+    const options = requestOptions ?? new RequestOptions();
+    for (const [name, value] of buildDefaultHeaders('GET')) {
+      options.addHeader(name, value);
+    }
 
-    const response = await makeRequest(
-      url,
-      optionsWrapper,
-      isRetryOnError ? 0 : REPEAT_TRIES_COUNT,
-    );
-
+    const response = await makeRequest(url, options, isRetryOnError);
     return response.json();
   },
 
@@ -143,18 +147,12 @@ export const apiHelper = {
     requestOptions?: RequestOptions,
     isRetryOnError = false,
   ): Promise<string> => {
-    const optionsWrapper = (requestOptions ?? new RequestOptions())
-      .addHeader('Content-Type', 'application/json')
-      .addHeader('Access-Control-Allow-Methods', 'GET')
-      .addHeader('Accept', 'application/json')
-      .addHeader('Authorization', accessTokenHelper.getAccessToken());
+    const options = requestOptions ?? new RequestOptions();
+    for (const [name, value] of buildDefaultHeaders('GET')) {
+      options.addHeader(name, value);
+    }
 
-    const response = await makeRequest(
-      url,
-      optionsWrapper,
-      isRetryOnError ? 0 : REPEAT_TRIES_COUNT,
-    );
-
+    const response = await makeRequest(url, options, isRetryOnError);
     return response.text();
   },
 
@@ -163,16 +161,12 @@ export const apiHelper = {
     requestOptions?: RequestOptions,
     isRetryOnError = false,
   ): Promise<Blob> => {
-    const optionsWrapper = (requestOptions ?? new RequestOptions())
-      .addHeader('Access-Control-Allow-Methods', 'GET')
-      .addHeader('Authorization', accessTokenHelper.getAccessToken());
+    const options = requestOptions ?? new RequestOptions();
+    for (const [name, value] of buildDefaultHeaders('GET')) {
+      options.addHeader(name, value);
+    }
 
-    const response = await makeRequest(
-      url,
-      optionsWrapper,
-      isRetryOnError ? 0 : REPEAT_TRIES_COUNT,
-    );
-
+    const response = await makeRequest(url, options, isRetryOnError);
     return response.blob();
   },
 
@@ -181,19 +175,13 @@ export const apiHelper = {
     requestOptions?: RequestOptions,
     isRetryOnError = false,
   ): Promise<T> => {
-    const optionsWrapper = (requestOptions ?? new RequestOptions())
-      .setMethod('PUT')
-      .addHeader('Content-Type', 'application/json')
-      .addHeader('Access-Control-Allow-Methods', 'PUT')
-      .addHeader('Accept', 'application/json')
-      .addHeader('Authorization', accessTokenHelper.getAccessToken());
+    const options = requestOptions ?? new RequestOptions();
+    if (!options.getMethod()) options.setMethod('PUT');
+    for (const [name, value] of buildDefaultHeaders(options.getMethod() ?? 'PUT')) {
+      options.addHeader(name, value);
+    }
 
-    const response = await makeRequest(
-      url,
-      optionsWrapper,
-      isRetryOnError ? 0 : REPEAT_TRIES_COUNT,
-    );
-
+    const response = await makeRequest(url, options, isRetryOnError);
     return response.json();
   },
 
@@ -202,18 +190,13 @@ export const apiHelper = {
     requestOptions?: RequestOptions,
     isRetryOnError = false,
   ): Promise<T> => {
-    const optionsWrapper = (requestOptions ?? new RequestOptions())
-      .setMethod('DELETE')
-      .addHeader('Access-Control-Allow-Methods', 'DELETE')
-      .addHeader('Accept', 'application/json')
-      .addHeader('Authorization', accessTokenHelper.getAccessToken());
+    const options = requestOptions ?? new RequestOptions();
+    if (!options.getMethod()) options.setMethod('DELETE');
+    for (const [name, value] of buildDefaultHeaders(options.getMethod() ?? 'DELETE')) {
+      options.addHeader(name, value);
+    }
 
-    const response = await makeRequest(
-      url,
-      optionsWrapper,
-      isRetryOnError ? 0 : REPEAT_TRIES_COUNT,
-    );
-
+    const response = await makeRequest(url, options, isRetryOnError);
     return response.json();
   },
 
@@ -222,18 +205,13 @@ export const apiHelper = {
     requestOptions?: RequestOptions,
     isRetryOnError = false,
   ): Promise<string> => {
-    const optionsWrapper = (requestOptions ?? new RequestOptions())
-      .setMethod('DELETE')
-      .addHeader('Access-Control-Allow-Methods', 'DELETE')
-      .addHeader('Accept', 'application/json')
-      .addHeader('Authorization', accessTokenHelper.getAccessToken());
+    const options = requestOptions ?? new RequestOptions();
+    if (!options.getMethod()) options.setMethod('DELETE');
+    for (const [name, value] of buildDefaultHeaders(options.getMethod() ?? 'DELETE')) {
+      options.addHeader(name, value);
+    }
 
-    const response = await makeRequest(
-      url,
-      optionsWrapper,
-      isRetryOnError ? 0 : REPEAT_TRIES_COUNT,
-    );
-
+    const response = await makeRequest(url, options, isRetryOnError);
     return response.text();
   },
 };

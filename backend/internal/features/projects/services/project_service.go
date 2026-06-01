@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	audit_logs "logbull/internal/features/audit_logs"
+	audit_logs_dto "logbull/internal/features/audit_logs/dto"
+	audit_logs_services "logbull/internal/features/audit_logs/services"
 	projects_dto "logbull/internal/features/projects/dto"
 	projects_interfaces "logbull/internal/features/projects/interfaces"
 	projects_models "logbull/internal/features/projects/models"
@@ -23,7 +24,7 @@ type ProjectService struct {
 	projectRepository        *projects_repositories.ProjectRepository
 	membershipRepository     *projects_repositories.MembershipRepository
 	userService              *users_services.UserService
-	auditLogService          *audit_logs.AuditLogService
+	auditLogService          *audit_logs_services.AuditLogService
 	settingsService          *users_services.SettingsService
 	userPlanService          *users_services.UserPlanService
 	projectDeletionListeners []projects_interfaces.ProjectDeletionListener
@@ -257,8 +258,8 @@ func (s *ProjectService) CanUserManageProject(projectID uuid.UUID, user *users_m
 func (s *ProjectService) GetProjectAuditLogs(
 	projectID uuid.UUID,
 	user *users_models.User,
-	request *audit_logs.GetAuditLogsRequest,
-) (*audit_logs.GetAuditLogsResponse, error) {
+	request *audit_logs_dto.GetAuditLogsRequest,
+) (*audit_logs_dto.GetAuditLogsResponse, error) {
 	isCanAccess, _, err := s.CanUserAccessProject(projectID, user)
 	if err != nil {
 		return nil, err

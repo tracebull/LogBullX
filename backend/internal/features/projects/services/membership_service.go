@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	audit_logs "logbull/internal/features/audit_logs"
+	audit_logs_services "logbull/internal/features/audit_logs/services"
 	projects_dto "logbull/internal/features/projects/dto"
 	projects_models "logbull/internal/features/projects/models"
 	projects_repositories "logbull/internal/features/projects/repositories"
@@ -20,7 +20,7 @@ type MembershipService struct {
 	membershipRepository *projects_repositories.MembershipRepository
 	projectRepository    *projects_repositories.ProjectRepository
 	userService          *users_services.UserService
-	auditLogService      *audit_logs.AuditLogService
+	auditLogService      *audit_logs_services.AuditLogService
 	projectService       *ProjectService
 	settingsService      *users_services.SettingsService
 }

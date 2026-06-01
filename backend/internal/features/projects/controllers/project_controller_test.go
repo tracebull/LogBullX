@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"testing"
 
-	audit_logs "logbull/internal/features/audit_logs"
+	audit_logs_dto "logbull/internal/features/audit_logs/dto"
 	projects_dto "logbull/internal/features/projects/dto"
 	projects_models "logbull/internal/features/projects/models"
 	projects_services "logbull/internal/features/projects/services"
@@ -430,7 +430,7 @@ func Test_GetProjectAuditLogs_WhenUserIsProjectAdmin_ReturnsAuditLogs(t *testing
 	project, _ := projects_testing.CreateTestProjectWithToken(projectName, owner.Token, router)
 
 	projects_testing.AddMemberToProject(project, projectAdmin, users_enums.ProjectRoleAdmin, owner.Token, router)
-	var response audit_logs.GetAuditLogsResponse
+	var response audit_logs_dto.GetAuditLogsResponse
 	test_utils.MakeGetRequestAndUnmarshal(t, router,
 		"/api/v1/projects/"+project.ID.String()+"/audit-logs",
 		"Bearer "+projectAdmin.Token, http.StatusOK, &response)
@@ -482,12 +482,12 @@ func Test_GetProjectAuditLogs_WithMultipleProjects_ReturnsOnlyProjectSpecificLog
 		http.StatusOK,
 	)
 
-	var project1Response audit_logs.GetAuditLogsResponse
+	var project1Response audit_logs_dto.GetAuditLogsResponse
 	test_utils.MakeGetRequestAndUnmarshal(t, router,
 		"/api/v1/projects/"+project1.ID.String()+"/audit-logs?limit=50",
 		"Bearer "+owner1.Token, http.StatusOK, &project1Response)
 
-	var project2Response audit_logs.GetAuditLogsResponse
+	var project2Response audit_logs_dto.GetAuditLogsResponse
 	test_utils.MakeGetRequestAndUnmarshal(t, router,
 		"/api/v1/projects/"+project2.ID.String()+"/audit-logs?limit=50",
 		"Bearer "+owner2.Token, http.StatusOK, &project2Response)
@@ -529,20 +529,20 @@ func Test_GetProjectAuditLogs_WithDifferentUserRoles_EnforcesPermissionsCorrectl
 	project, _ := projects_testing.CreateTestProjectWithToken(projectName, owner.Token, router)
 
 	projects_testing.AddMemberToProject(project, member, users_enums.ProjectRoleMember, owner.Token, router)
-	var ownerResponse audit_logs.GetAuditLogsResponse
+	var ownerResponse audit_logs_dto.GetAuditLogsResponse
 	test_utils.MakeGetRequestAndUnmarshal(t, router,
 		"/api/v1/projects/"+project.ID.String()+"/audit-logs",
 		"Bearer "+owner.Token, http.StatusOK, &ownerResponse)
 
 	assert.GreaterOrEqual(t, len(ownerResponse.AuditLogs), 2)
-	var memberResponse audit_logs.GetAuditLogsResponse
+	var memberResponse audit_logs_dto.GetAuditLogsResponse
 	test_utils.MakeGetRequestAndUnmarshal(t, router,
 		"/api/v1/projects/"+project.ID.String()+"/audit-logs",
 		"Bearer "+member.Token, http.StatusOK, &memberResponse)
 
 	assert.GreaterOrEqual(t, len(memberResponse.AuditLogs), 2)
 
-	var globalAdminResponse audit_logs.GetAuditLogsResponse
+	var globalAdminResponse audit_logs_dto.GetAuditLogsResponse
 	test_utils.MakeGetRequestAndUnmarshal(t, router,
 		"/api/v1/projects/"+project.ID.String()+"/audit-logs",
 		"Bearer "+globalAdmin.Token, http.StatusOK, &globalAdminResponse)
@@ -1275,7 +1275,7 @@ func Test_UpdateProjectLimits_WhenProjectHasPlanWithUnlimitedLimits_LimitsUpdate
 	assert.Equal(t, 128, projectAfter.MaxLogSizeKB)
 }
 
-func extractAuditLogMessages(logs []*audit_logs.AuditLogDTO) []string {
+func extractAuditLogMessages(logs []*audit_logs_dto.AuditLogDTO) []string {
 	messages := make([]string, len(logs))
 	for i, log := range logs {
 		messages[i] = log.Message

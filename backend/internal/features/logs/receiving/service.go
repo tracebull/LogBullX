@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	api_keys "logbull/internal/features/api_keys"
+	api_keys_services "logbull/internal/features/api_keys/services"
 	logs_core "logbull/internal/features/logs/core"
 	projects_models "logbull/internal/features/projects/models"
 	projects_services "logbull/internal/features/projects/services"
@@ -34,7 +34,7 @@ type LogReceivingService struct {
 	logRepository    *logs_core.LogCoreRepository
 	rateLimiter      *rate_limit.RateLimiter
 	projectService   *projects_services.ProjectService
-	apiKeyService    *api_keys.ApiKeyService
+	apiKeyService    *api_keys_services.ApiKeyService
 	logWorkerService *LogWorkerService
 	logger           *slog.Logger
 }

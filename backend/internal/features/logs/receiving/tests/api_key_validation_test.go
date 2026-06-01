@@ -6,7 +6,8 @@ import (
 	"net/http"
 	"testing"
 
-	api_keys "logbull/internal/features/api_keys"
+	api_keys_dto "logbull/internal/features/api_keys/dto"
+	api_keys_enums "logbull/internal/features/api_keys/enums"
 	logs_receiving "logbull/internal/features/logs/receiving"
 	projects_models "logbull/internal/features/projects/models"
 	projects_testing "logbull/internal/features/projects/testing"
@@ -240,8 +241,8 @@ func submitTestLogsExpectingError(
 }
 
 func disableApiKey(t *testing.T, router *gin.Engine, projectID, apiKeyID uuid.UUID, userToken string) {
-	status := api_keys.ApiKeyStatusDisabled
-	updateRequest := api_keys.UpdateApiKeyRequestDTO{
+	status := api_keys_enums.ApiKeyStatusDisabled
+	updateRequest := api_keys_dto.UpdateApiKeyRequestDTO{
 		Status: &status,
 	}
 	test_utils.MakePutRequest(

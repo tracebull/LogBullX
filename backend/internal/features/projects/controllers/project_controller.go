@@ -3,7 +3,7 @@ package projects_controllers
 import (
 	"net/http"
 
-	audit_logs "logbull/internal/features/audit_logs"
+	audit_logs_dto "logbull/internal/features/audit_logs/dto"
 	projects_dto "logbull/internal/features/projects/dto"
 	projects_models "logbull/internal/features/projects/models"
 	projects_services "logbull/internal/features/projects/services"
@@ -246,7 +246,7 @@ func (c *ProjectController) GetProjectAuditLogs(ctx *gin.Context) {
 		return
 	}
 
-	request := &audit_logs.GetAuditLogsRequest{}
+	request := &audit_logs_dto.GetAuditLogsRequest{}
 	if err := ctx.ShouldBindQuery(request); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid query parameters"})
 		return

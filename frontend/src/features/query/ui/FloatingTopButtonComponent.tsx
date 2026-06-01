@@ -24,7 +24,7 @@ export const FloatingTopButtonComponent = ({
 }: Props): React.JSX.Element | null => {
   // Scroll state and refs
   const [showScrollToTop, setShowScrollToTop] = useState(false);
-  const scrollTimeoutRef = useRef<number | null>(null);
+  const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Scroll detection to show/hide floating button
   const handleScroll = useCallback(() => {
