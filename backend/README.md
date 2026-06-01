@@ -1,7 +1,6 @@
 # Before run
 
 > Copy .env.example to .env
-> Copy docker-compose.yml.example to docker-compose.yml (for development only)
 
 # Run
 

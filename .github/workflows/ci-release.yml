@@ -155,7 +155,7 @@ jobs:
       - name: Start test containers
         run: |
           cd backend
-          docker compose -f docker-compose.yml.example up -d
+          docker compose --profile db --profile cache --profile search up -d
 
       - name: Check container status and logs
         run: |
@@ -258,7 +258,7 @@ jobs:
         run: |
           cd backend
           echo "Stopping containers..."
-          docker compose -f docker-compose.yml.example down -v
+          docker compose --profile db --profile cache --profile search down -v
           echo "Cleaning up backend data directories..."
           sudo rm -rf opensearch-data pgdata valkey-data || true
           cd ..
@@ -384,7 +384,7 @@ jobs:
         with:
           context: .
           push: true
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
           build-args: |
             APP_VERSION=dev-${{ github.sha }}
           tags: |
@@ -418,7 +418,7 @@ jobs:
         with:
           context: .
           push: true
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
           build-args: |
             APP_VERSION=${{ needs.determine-version.outputs.new_version }}
           tags: |
@@ -512,7 +512,7 @@ jobs:
           # Add Docker image info
           CHANGELOG="${CHANGELOG}### 🐳 Docker\n"
           CHANGELOG="${CHANGELOG}- **Image**: \`logbull/logbull:v${NEW_VERSION}\`\n"
-          CHANGELOG="${CHANGELOG}- **Platforms**: linux/amd64\n\n"
+          CHANGELOG="${CHANGELOG}- **Platforms**: linux/amd64, linux/arm64\n\n"
 
           # Set output for GitHub release
           {
