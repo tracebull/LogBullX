@@ -1,24 +1,27 @@
 package audit_logs
 
 import (
+	audit_logs_controllers "logbull/internal/features/audit_logs/controllers"
+	audit_logs_repositories "logbull/internal/features/audit_logs/repositories"
+	audit_logs_services "logbull/internal/features/audit_logs/services"
 	users_services "logbull/internal/features/users/services"
 	"logbull/internal/util/logger"
 )
 
-var auditLogRepository = &AuditLogRepository{}
-var auditLogService = &AuditLogService{
-	auditLogRepository: auditLogRepository,
-	logger:             logger.GetLogger(),
+var auditLogRepository = &audit_logs_repositories.AuditLogRepository{}
+var auditLogService = &audit_logs_services.AuditLogService{
+	auditLogRepository,
+	logger.GetLogger(),
 }
-var auditLogController = &AuditLogController{
-	auditLogService: auditLogService,
+var auditLogController = &audit_logs_controllers.AuditLogController{
+	auditLogService,
 }
 
-func GetAuditLogService() *AuditLogService {
+func GetAuditLogService() *audit_logs_services.AuditLogService {
 	return auditLogService
 }
 
-func GetAuditLogController() *AuditLogController {
+func GetAuditLogController() *audit_logs_controllers.AuditLogController {
 	return auditLogController
 }
 

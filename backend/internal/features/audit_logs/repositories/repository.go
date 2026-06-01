@@ -1,15 +1,18 @@
-package audit_logs
+package audit_logs_repositories
 
 import (
-	"logbull/internal/storage"
 	"time"
+
+	audit_logs_dto "logbull/internal/features/audit_logs/dto"
+	audit_logs_models "logbull/internal/features/audit_logs/models"
+	"logbull/internal/storage"
 
 	"github.com/google/uuid"
 )
 
 type AuditLogRepository struct{}
 
-func (r *AuditLogRepository) Create(auditLog *AuditLog) error {
+func (r *AuditLogRepository) Create(auditLog *audit_logs_models.AuditLog) error {
 	if auditLog.ID == uuid.Nil {
 		auditLog.ID = uuid.New()
 	}
@@ -17,8 +20,8 @@ func (r *AuditLogRepository) Create(auditLog *AuditLog) error {
 	return storage.GetDb().Create(auditLog).Error
 }
 
-func (r *AuditLogRepository) GetGlobal(limit, offset int, beforeDate *time.Time) ([]*AuditLogDTO, error) {
-	var auditLogs = make([]*AuditLogDTO, 0)
+func (r *AuditLogRepository) GetGlobal(limit, offset int, beforeDate *time.Time) ([]*audit_logs_dto.AuditLogDTO, error) {
+	var auditLogs = make([]*audit_logs_dto.AuditLogDTO, 0)
 
 	sql := `
 		SELECT 
@@ -53,8 +56,8 @@ func (r *AuditLogRepository) GetByUser(
 	userID uuid.UUID,
 	limit, offset int,
 	beforeDate *time.Time,
-) ([]*AuditLogDTO, error) {
-	var auditLogs = make([]*AuditLogDTO, 0)
+) ([]*audit_logs_dto.AuditLogDTO, error) {
+	var auditLogs = make([]*audit_logs_dto.AuditLogDTO, 0)
 
 	sql := `
 		SELECT 
@@ -90,8 +93,8 @@ func (r *AuditLogRepository) GetByProject(
 	projectID uuid.UUID,
 	limit, offset int,
 	beforeDate *time.Time,
-) ([]*AuditLogDTO, error) {
-	var auditLogs = make([]*AuditLogDTO, 0)
+) ([]*audit_logs_dto.AuditLogDTO, error) {
+	var auditLogs = make([]*audit_logs_dto.AuditLogDTO, 0)
 
 	sql := `
 		SELECT 
@@ -125,7 +128,7 @@ func (r *AuditLogRepository) GetByProject(
 
 func (r *AuditLogRepository) CountGlobal(beforeDate *time.Time) (int64, error) {
 	var count int64
-	query := storage.GetDb().Model(&AuditLog{})
+	query := storage.GetDb().Model(&audit_logs_models.AuditLog{})
 
 	if beforeDate != nil {
 		query = query.Where("created_at < ?", *beforeDate)

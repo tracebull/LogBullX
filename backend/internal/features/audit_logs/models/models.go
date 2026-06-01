@@ -1,4 +1,4 @@
-package audit_logs
+package audit_logs_models
 
 import (
 	"time"

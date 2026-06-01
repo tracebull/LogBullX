@@ -1,8 +1,10 @@
-package audit_logs
+package audit_logs_controllers
 
 import (
 	"net/http"
 
+	audit_logs_dto "logbull/internal/features/audit_logs/dto"
+	audit_logs_services "logbull/internal/features/audit_logs/services"
 	user_models "logbull/internal/features/users/models"
 
 	"github.com/gin-gonic/gin"
@@ -10,11 +12,10 @@ import (
 )
 
 type AuditLogController struct {
-	auditLogService *AuditLogService
+	AuditLogService *audit_logs_services.AuditLogService
 }
 
 func (c *AuditLogController) RegisterRoutes(router *gin.RouterGroup) {
-	// All audit log endpoints require authentication (handled in main.go)
 	auditRoutes := router.Group("/audit-logs")
 
 	auditRoutes.GET("/global", c.GetGlobalAuditLogs)
@@ -31,7 +32,7 @@ func (c *AuditLogController) RegisterRoutes(router *gin.RouterGroup) {
 // @Param limit query int false "Limit number of results" default(100)
 // @Param offset query int false "Offset for pagination" default(0)
 // @Param beforeDate query string false "Filter logs created before this date (RFC3339 format)" format(date-time)
-// @Success 200 {object} GetAuditLogsResponse
+// @Success 200 {object} audit_logs_dto.GetAuditLogsResponse
 // @Failure 401 {object} map[string]string
 // @Failure 403 {object} map[string]string
 // @Router /audit-logs/global [get]
@@ -42,13 +43,13 @@ func (c *AuditLogController) GetGlobalAuditLogs(ctx *gin.Context) {
 		return
 	}
 
-	request := &GetAuditLogsRequest{}
+	request := &audit_logs_dto.GetAuditLogsRequest{}
 	if err := ctx.ShouldBindQuery(request); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid query parameters"})
 		return
 	}
 
-	response, err := c.auditLogService.GetGlobalAuditLogs(user, request)
+	response, err := c.AuditLogService.GetGlobalAuditLogs(user, request)
 	if err != nil {
 		if err.Error() == "only administrators can view global audit logs" {
 			ctx.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
@@ -72,7 +73,7 @@ func (c *AuditLogController) GetGlobalAuditLogs(ctx *gin.Context) {
 // @Param limit query int false "Limit number of results" default(100)
 // @Param offset query int false "Offset for pagination" default(0)
 // @Param beforeDate query string false "Filter logs created before this date (RFC3339 format)" format(date-time)
-// @Success 200 {object} GetAuditLogsResponse
+// @Success 200 {object} audit_logs_dto.GetAuditLogsResponse
 // @Failure 400 {object} map[string]string
 // @Failure 401 {object} map[string]string
 // @Failure 403 {object} map[string]string
@@ -91,13 +92,13 @@ func (c *AuditLogController) GetUserAuditLogs(ctx *gin.Context) {
 		return
 	}
 
-	request := &GetAuditLogsRequest{}
+	request := &audit_logs_dto.GetAuditLogsRequest{}
 	if err := ctx.ShouldBindQuery(request); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid query parameters"})
 		return
 	}
 
-	response, err := c.auditLogService.GetUserAuditLogs(targetUserID, user, request)
+	response, err := c.AuditLogService.GetUserAuditLogs(targetUserID, user, request)
 	if err != nil {
 		if err.Error() == "insufficient permissions to view user audit logs" {
 			ctx.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
