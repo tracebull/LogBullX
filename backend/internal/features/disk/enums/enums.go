@@ -1,4 +1,4 @@
-package disk
+package disk_enums
 
 type Platform string
 

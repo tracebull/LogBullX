@@ -1,22 +1,27 @@
 package disk
 
+import (
+	disk_controllers "logbull/internal/features/disk/controllers"
+	disk_services "logbull/internal/features/disk/services"
+)
+
 var (
-	diskService    *DiskService
-	diskController *DiskController
+	diskService    *disk_services.DiskService
+	diskController *disk_controllers.DiskController
 )
 
 func init() {
-	diskService = &DiskService{}
+	diskService = &disk_services.DiskService{}
 
-	diskController = &DiskController{
+	diskController = &disk_controllers.DiskController{
 		diskService,
 	}
 }
 
-func GetDiskService() *DiskService {
+func GetDiskService() *disk_services.DiskService {
 	return diskService
 }
 
-func GetDiskController() *DiskController {
+func GetDiskController() *disk_controllers.DiskController {
 	return diskController
 }

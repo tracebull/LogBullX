@@ -1,20 +1,22 @@
-package disk
+package disk_services
 
 import (
 	"fmt"
 	"runtime"
+
+	disk_dto "logbull/internal/features/disk/dto"
+	disk_enums "logbull/internal/features/disk/enums"
 
 	"github.com/shirou/gopsutil/v4/disk"
 )
 
 type DiskService struct{}
 
-func (s *DiskService) GetDiskUsage() (*DiskUsage, error) {
+func (s *DiskService) GetDiskUsage() (*disk_dto.DiskUsage, error) {
 	platform := s.detectPlatform()
 
-	// Set path based on platform
 	path := "/"
-	if platform == PlatformWindows {
+	if platform == disk_enums.PlatformWindows {
 		path = "C:\\"
 	}
 
@@ -23,7 +25,7 @@ func (s *DiskService) GetDiskUsage() (*DiskUsage, error) {
 		return nil, fmt.Errorf("failed to get disk usage for path %s: %w", path, err)
 	}
 
-	return &DiskUsage{
+	return &disk_dto.DiskUsage{
 		Platform:        platform,
 		TotalSpaceBytes: int64(diskUsage.Total),
 		UsedSpaceBytes:  int64(diskUsage.Used),
@@ -31,11 +33,11 @@ func (s *DiskService) GetDiskUsage() (*DiskUsage, error) {
 	}, nil
 }
 
-func (s *DiskService) detectPlatform() Platform {
+func (s *DiskService) detectPlatform() disk_enums.Platform {
 	switch runtime.GOOS {
 	case "windows":
-		return PlatformWindows
+		return disk_enums.PlatformWindows
 	default:
-		return PlatformLinux
+		return disk_enums.PlatformLinux
 	}
 }

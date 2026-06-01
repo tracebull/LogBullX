@@ -1,13 +1,15 @@
-package disk
+package disk_controllers
 
 import (
 	"net/http"
+
+	disk_services "logbull/internal/features/disk/services"
 
 	"github.com/gin-gonic/gin"
 )
 
 type DiskController struct {
-	diskService *DiskService
+	DiskService *disk_services.DiskService
 }
 
 func (c *DiskController) RegisterRoutes(router *gin.RouterGroup) {
@@ -19,11 +21,11 @@ func (c *DiskController) RegisterRoutes(router *gin.RouterGroup) {
 // @Description Returns information about disk space usage
 // @Tags disk
 // @Produce json
-// @Success 200 {object} DiskUsage
+// @Success 200 {object} disk_dto.DiskUsage
 // @Failure 500
 // @Router /disk/usage [get]
 func (c *DiskController) GetDiskUsage(ctx *gin.Context) {
-	diskUsage, err := c.diskService.GetDiskUsage()
+	diskUsage, err := c.DiskService.GetDiskUsage()
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
