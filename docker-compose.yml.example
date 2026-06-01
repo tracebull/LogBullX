@@ -1,16 +1,16 @@
-version: "3"
-
 # Do not use this file in production or VPS. This
-# file is indended for local development only. To
+# file is intended for local development only. To
 # run on your machine - read README.md
+#
+# This uses the all-in-one Dockerfile which bundles
+# PostgreSQL, OpenSearch, and Valkey in a single container.
+# For production, use docker-compose.yml instead.
 
 services:
-  # For local development only to test build. Do
-  # not use in production or VPS
   logbull-local:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.all-in-one
     ports:
       - "4005:4005"
     volumes:

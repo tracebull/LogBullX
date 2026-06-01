@@ -1,0 +1,14 @@
+.git
+.github
+node_modules
+backend/pgdata
+backend/valkey-data
+backend/opensearch-data
+*.md
+.env
+.env.*
+!.env.production.example
+opensearch-data
+pgdata
+valkey-data
+logbull-data
