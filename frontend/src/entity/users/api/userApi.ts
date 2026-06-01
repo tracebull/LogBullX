@@ -19,8 +19,7 @@ import type { UserProfile } from '../model/UserProfile';
 
 const listeners: (() => void)[] = [];
 
-const saveAuthorizedData = (accessToken: string, userId: string) => {
-  accessTokenHelper.saveAccessToken(accessToken);
+const saveAuthorizedData = (_token: string, userId: string) => {
   accessTokenHelper.saveUserId(userId);
 };
 
@@ -145,13 +144,20 @@ export const userApi = {
       });
   },
 
-  isAuthorized: (): boolean => !!accessTokenHelper.getAccessToken(),
+  isAuthorized: (): boolean => accessTokenHelper.isAuthenticated(),
 
-  logout: () => {
-    accessTokenHelper.cleanAccessToken();
+  logout: async () => {
+    try {
+      await apiHelper.fetchPostRaw(
+        `${getApplicationServer()}/api/v1/users/signout`,
+        new RequestOptions().setMethod('POST'),
+      );
+    } catch {
+      // Sign out best-effort — clear local state regardless
+    }
+    accessTokenHelper.clearUserId();
+    notifyAuthListeners();
   },
-
-  // listeners
 
   addAuthListener: (listener: () => void) => {
     listeners.push(listener);

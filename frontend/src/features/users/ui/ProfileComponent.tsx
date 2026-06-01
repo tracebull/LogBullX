@@ -125,7 +125,7 @@ export function ProfileComponent({ contentHeight }: Props) {
               : 'Failed to sign in with new password';
           message.error(errorMessage);
           // If sign in fails, logout and redirect to login page
-          userApi.logout();
+          await userApi.logout();
           userApi.notifyAuthListeners();
           window.location.reload();
         }
@@ -191,8 +191,8 @@ export function ProfileComponent({ contentHeight }: Props) {
     }
   };
 
-  const handleLogout = () => {
-    userApi.logout();
+  const handleLogout = async () => {
+    await userApi.logout();
     window.location.reload();
   };
 

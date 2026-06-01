@@ -12,16 +12,22 @@ import (
 // AuthMiddleware validates JWT token and adds user to context
 func AuthMiddleware(userService *users_services.UserService) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		token := ctx.GetHeader("Authorization")
-		if token == "" {
-			ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization token required"})
-			ctx.Abort()
-			return
-		}
+		var token string
 
-		// Remove "Bearer " prefix if present
-		if len(token) > 7 && token[:7] == "Bearer " {
-			token = token[7:]
+		cookieToken, err := ctx.Cookie("logbull_session")
+		if err == nil && cookieToken != "" {
+			token = cookieToken
+		} else {
+			token = ctx.GetHeader("Authorization")
+			if token == "" {
+				ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization token required"})
+				ctx.Abort()
+				return
+			}
+
+			if len(token) > 7 && token[:7] == "Bearer " {
+				token = token[7:]
+			}
 		}
 
 		user, err := userService.GetUserFromToken(token)

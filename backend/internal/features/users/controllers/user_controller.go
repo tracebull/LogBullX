@@ -7,6 +7,7 @@ import (
 	user_dto "logbull/internal/features/users/dto"
 	user_middleware "logbull/internal/features/users/middleware"
 	users_services "logbull/internal/features/users/services"
+	env_utils "logbull/internal/util/env"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/time/rate"
@@ -39,6 +40,7 @@ func (c *UserController) RegisterProtectedRoutes(router *gin.RouterGroup) {
 	router.PUT("/users/change-password", c.ChangePassword)
 	router.POST("/users/invite", c.InviteUser)
 	router.POST("/users/bulk-invite", c.BulkInviteUsers)
+	router.POST("/users/signout", c.SignOut)
 }
 
 func (c *UserController) SetSignInLimiter(limiter *rate.Limiter) {
@@ -122,6 +124,7 @@ func (c *UserController) SignIn(ctx *gin.Context) {
 		return
 	}
 
+	c.setSessionCookie(ctx, response.Token)
 	ctx.JSON(http.StatusOK, response)
 }
 
@@ -361,6 +364,7 @@ func (c *UserController) HandleGitHubOAuth(ctx *gin.Context) {
 		return
 	}
 
+	c.setSessionCookie(ctx, response.Token)
 	ctx.JSON(http.StatusOK, response)
 }
 
@@ -394,5 +398,27 @@ func (c *UserController) HandleGoogleOAuth(ctx *gin.Context) {
 		return
 	}
 
+	c.setSessionCookie(ctx, response.Token)
 	ctx.JSON(http.StatusOK, response)
+}
+
+// SignOut
+// @Summary Sign out user
+// @Description Clear the session cookie
+// @Tags users
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} map[string]string
+// @Router /users/signout [post]
+func (c *UserController) SignOut(ctx *gin.Context) {
+	isSecure := config.GetEnv().EnvMode == env_utils.EnvModeProduction
+	ctx.SetCookie("logbull_session", "", -1, "/", "", isSecure, true)
+	ctx.JSON(http.StatusOK, gin.H{"message": "Signed out successfully"})
+}
+
+const sessionCookieMaxAge = 60 * 60 * 24 * 365 * 10 // 10 years, matches JWT token expiration
+
+func (c *UserController) setSessionCookie(ctx *gin.Context, token string) {
+	isSecure := config.GetEnv().EnvMode == env_utils.EnvModeProduction
+	ctx.SetCookie("logbull_session", token, sessionCookieMaxAge, "/", "", isSecure, true)
 }

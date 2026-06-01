@@ -1,15 +1,26 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
-import { useEffect, useState } from 'react';
+import { Suspense, lazy, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router';
 
 import { settingsApi, userApi } from '../entity/users';
-import {
-  AdminPasswordComponent,
-  AuthNavbarComponent,
-  SignInComponent,
-  SignUpComponent,
-} from '../features/users';
+import { AuthNavbarComponent } from '../features/users';
+
+const AdminPasswordComponent = lazy(() =>
+  import('../features/users/ui/AdminPasswordComponent').then((m) => ({
+    default: m.AdminPasswordComponent,
+  })),
+);
+const SignInComponent = lazy(() =>
+  import('../features/users/ui/SignInComponent').then((m) => ({
+    default: m.SignInComponent,
+  })),
+);
+const SignUpComponent = lazy(() =>
+  import('../features/users/ui/SignUpComponent').then((m) => ({
+    default: m.SignUpComponent,
+  })),
+);
 
 export function AuthPageComponent() {
   const [searchParams] = useSearchParams();
@@ -58,19 +69,27 @@ export function AuthPageComponent() {
             <AuthNavbarComponent />
 
             <div className="mt-10 flex justify-center sm:mt-[10vh]">
-              {isAdminHasPassword ? (
-                authMode === 'signUp' && canShowSignUp ? (
-                  <SignUpComponent onSwitchToSignIn={() => setAuthMode('signIn')} />
+              <Suspense
+                fallback={
+                  <div className="flex h-[300px] items-center justify-center">
+                    <Spin indicator={<LoadingOutlined spin />} size="large" />
+                  </div>
+                }
+              >
+                {isAdminHasPassword ? (
+                  authMode === 'signUp' && canShowSignUp ? (
+                    <SignUpComponent onSwitchToSignIn={() => setAuthMode('signIn')} />
+                  ) : (
+                    <SignInComponent
+                      onSwitchToSignUp={
+                        canShowSignUp ? () => setAuthMode('signUp') : undefined
+                      }
+                    />
+                  )
                 ) : (
-                  <SignInComponent
-                    onSwitchToSignUp={
-                      canShowSignUp ? () => setAuthMode('signUp') : undefined
-                    }
-                  />
-                )
-              ) : (
-                <AdminPasswordComponent onPasswordSet={checkAdminPasswordStatus} />
-              )}
+                  <AdminPasswordComponent onPasswordSet={checkAdminPasswordStatus} />
+                )}
+              </Suspense>
             </div>
           </div>
         </div>
