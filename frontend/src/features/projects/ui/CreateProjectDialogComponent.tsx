@@ -1,6 +1,8 @@
-import { LoadingOutlined } from '@ant-design/icons';
-import { App, Button, Input, Modal } from 'antd';
-import { Spin } from 'antd';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Spinner } from '@/components/ui/spinner';
+import { toastMessage } from '@/shared/lib/toastMessage';
 import { useState } from 'react';
 
 import type { ProjectResponse } from '../../../entity/projects';
@@ -21,7 +23,6 @@ export const CreateProjectDialogComponent = ({
   onClose,
   onProjectCreated,
 }: Props) => {
-  const { message } = App.useApp();
   const [isCreating, setIsCreating] = useState(false);
   const [projectName, setProjectName] = useState('');
 
@@ -30,7 +31,7 @@ export const CreateProjectDialogComponent = ({
 
   const handleCreateProject = async () => {
     if (!projectName.trim()) {
-      message.error('Please enter a project name');
+      toastMessage.error('Please enter a project name');
       return;
     }
 
@@ -41,11 +42,11 @@ export const CreateProjectDialogComponent = ({
         name: projectName.trim(),
       });
 
-      message.success('Project created successfully');
+      toastMessage.success('Project created successfully');
       onProjectCreated(newProject);
       onClose();
     } catch (error) {
-      message.error((error as Error).message || 'Failed to create project');
+      toastMessage.error((error as Error).message || 'Failed to create project');
     } finally {
       setIsCreating(false);
     }
@@ -53,60 +54,61 @@ export const CreateProjectDialogComponent = ({
 
   if (!isAllowedToCreateProjects) {
     return (
-      <Modal
-        title="Permission denied"
-        open
-        onCancel={onClose}
-        footer={[
-          <Button key="ok" type="primary" onClick={onClose}>
-            OK
-          </Button>,
-        ]}
-      >
-        <p>
-          You don&apos;t have permission to create projects. Please ask the administrator to create
-          the project for you.
-        </p>
-      </Modal>
+      <Dialog open onOpenChange={(open) => { if (!open) onClose(); }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Permission denied</DialogTitle>
+          </DialogHeader>
+          <p>
+            You don&apos;t have permission to create projects. Please ask the administrator to create
+            the project for you.
+          </p>
+          <DialogFooter>
+            <Button onClick={onClose}>OK</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     );
   }
 
   return (
-    <Modal
-      title="Create project"
-      open
-      onCancel={onClose}
-      footer={[
-        <Button key="cancel" onClick={onClose} disabled={isCreating}>
-          Cancel
-        </Button>,
-
-        <Button
-          key="create"
-          type="primary"
-          onClick={handleCreateProject}
-          disabled={isCreating || !projectName.trim()}
-          className="border-emerald-600 bg-emerald-600 hover:border-emerald-700 hover:bg-emerald-700"
-        >
-          {isCreating ? (
-            <Spin indicator={<LoadingOutlined spin />} size="small" />
-          ) : (
-            'Create project'
-          )}
-        </Button>,
-      ]}
-    >
-      <div className="mb-4">
-        <label className="mb-2 block text-sm font-medium text-gray-700">Project name</label>
-        <Input
-          value={projectName}
-          onChange={(e) => setProjectName(e.target.value)}
-          placeholder="Enter project name"
-          disabled={isCreating}
-          onPressEnter={handleCreateProject}
-          autoFocus
-        />
-      </div>
-    </Modal>
+    <Dialog open onOpenChange={(open) => { if (!open) onClose(); }}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Create project</DialogTitle>
+        </DialogHeader>
+        <div className="mb-4">
+          <label className="mb-2 block text-sm font-medium text-gray-700">Project name</label>
+          <Input
+            value={projectName}
+            onChange={(e) => setProjectName(e.target.value)}
+            placeholder="Enter project name"
+            disabled={isCreating}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') handleCreateProject();
+            }}
+            autoFocus
+          />
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose} disabled={isCreating}>
+            Cancel
+          </Button>
+          <Button
+            onClick={handleCreateProject}
+            disabled={isCreating || !projectName.trim()}
+          >
+            {isCreating ? (
+              <>
+                <Spinner size="sm" className="mr-2" />
+                Creating...
+              </>
+            ) : (
+              'Create project'
+            )}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };

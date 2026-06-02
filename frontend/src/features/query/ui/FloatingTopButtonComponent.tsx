@@ -1,6 +1,7 @@
-import { UpOutlined } from '@ant-design/icons';
-import { Button } from 'antd';
+import { ArrowUp } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+
+import { Button } from '@/components/ui/button';
 
 interface Props {
   containerRef: React.RefObject<HTMLDivElement | null>;
@@ -105,13 +106,12 @@ export const FloatingTopButtonComponent = ({
       }}
     >
       <Button
-        type="primary"
-        className="border-emerald-600 bg-emerald-600 shadow-lg hover:border-emerald-700 hover:bg-emerald-700"
-        shape="circle"
-        icon={<UpOutlined />}
-        size="large"
+        size="icon"
         onClick={scrollToTop}
-      />
+        className="size-10 rounded-full border-emerald-600 bg-emerald-600 shadow-lg hover:border-emerald-700 hover:bg-emerald-700"
+      >
+        <ArrowUp className="size-4" />
+      </Button>
     </div>
   );
 };

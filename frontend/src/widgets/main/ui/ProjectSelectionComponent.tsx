@@ -1,4 +1,5 @@
-import { Button, Input } from 'antd';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { type ProjectResponse } from '../../../entity/projects';
@@ -68,7 +69,6 @@ export const ProjectSelectionComponent = ({
 
     return (
       <Button
-        type="primary"
         onClick={onCreateProject}
         className="border-emerald-600 bg-emerald-600 hover:border-emerald-700 hover:bg-emerald-700"
       >

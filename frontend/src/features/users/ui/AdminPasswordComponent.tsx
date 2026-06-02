@@ -1,8 +1,12 @@
-import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
-import { App, Button, Input } from 'antd';
+import { Eye, EyeOff } from 'lucide-react';
 import { type JSX, useState } from 'react';
 
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Spinner } from '@/components/ui/spinner';
+
 import { userApi } from '../../../entity/users';
+import { toastMessage } from '../../../shared/lib/toastMessage';
 
 interface AdminPasswordComponentProps {
   onPasswordSet?: () => void;
@@ -11,7 +15,6 @@ interface AdminPasswordComponentProps {
 export function AdminPasswordComponent({
   onPasswordSet,
 }: AdminPasswordComponentProps): JSX.Element {
-  const { message } = App.useApp();
   const [password, setPassword] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -32,7 +35,7 @@ export function AdminPasswordComponent({
 
     if (password.length < 8) {
       setPasswordError(true);
-      message.error('Password must be at least 8 characters long');
+      toastMessage.error('Password must be at least 8 characters long');
       return false;
     }
     setPasswordError(false);
@@ -81,55 +84,73 @@ export function AdminPasswordComponent({
     <div className="w-full max-w-[300px]">
       <div className="mb-5 text-center text-2xl font-bold">Sign up admin</div>
 
-      <div className="mx-auto mb-4 max-w-[250px] text-center text-sm text-gray-600">
+      <div className="mx-auto mb-4 max-w-[250px] text-center text-sm text-muted-foreground">
         Then you will be able to sign in with login &quot;admin&quot; and password you set
       </div>
 
       <div className="my-1 text-xs font-semibold">Password</div>
-      <Input.Password
-        placeholder="********"
-        value={password}
-        onChange={(e) => {
-          setPasswordError(false);
-          setPassword(e.currentTarget.value);
-        }}
-        status={passwordError ? 'error' : undefined}
-        iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
-        visibilityToggle={{ visible: passwordVisible, onVisibleChange: setPasswordVisible }}
-      />
+      <div className="relative">
+        <Input
+          placeholder="********"
+          type={passwordVisible ? 'text' : 'password'}
+          value={password}
+          onChange={(e) => {
+            setPasswordError(false);
+            setPassword(e.currentTarget.value);
+          }}
+          className={passwordError ? 'border-destructive pr-9' : 'pr-9'}
+        />
+        <button
+          type="button"
+          onClick={() => setPasswordVisible(!passwordVisible)}
+          className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+        >
+          {passwordVisible ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
+        </button>
+      </div>
 
       <div className="my-1 text-xs font-semibold">Confirm password</div>
-      <Input.Password
-        placeholder="********"
-        value={confirmPassword}
-        status={confirmPasswordError ? 'error' : undefined}
-        onChange={(e) => {
-          setConfirmPasswordError(false);
-          setConfirmPassword(e.currentTarget.value);
-        }}
-        iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
-        visibilityToggle={{
-          visible: confirmPasswordVisible,
-          onVisibleChange: setConfirmPasswordVisible,
-        }}
-      />
+      <div className="relative">
+        <Input
+          placeholder="********"
+          type={confirmPasswordVisible ? 'text' : 'password'}
+          value={confirmPassword}
+          onChange={(e) => {
+            setConfirmPasswordError(false);
+            setConfirmPassword(e.currentTarget.value);
+          }}
+          className={confirmPasswordError ? 'border-destructive pr-9' : 'pr-9'}
+        />
+        <button
+          type="button"
+          onClick={() => setConfirmPasswordVisible(!confirmPasswordVisible)}
+          className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+        >
+          {confirmPasswordVisible ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
+        </button>
+      </div>
 
       <div className="mt-3" />
 
       <Button
         disabled={isLoading}
-        loading={isLoading}
         className="w-full"
         onClick={() => {
           onSetPassword();
         }}
-        type="primary"
       >
-        Set Password
+        {isLoading ? (
+          <>
+            <Spinner size="sm" className="mr-2" />
+            Loading...
+          </>
+        ) : (
+          'Set Password'
+        )}
       </Button>
 
       {adminPasswordError && (
-        <div className="mt-3 flex justify-center text-center text-sm text-red-600">
+        <div className="mt-3 flex justify-center text-center text-sm text-destructive">
           {adminPasswordError}
         </div>
       )}

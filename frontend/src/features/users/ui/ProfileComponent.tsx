@@ -1,6 +1,10 @@
-import { EyeInvisibleOutlined, EyeTwoTone, LoadingOutlined } from '@ant-design/icons';
-import { App, Button, Input, Spin } from 'antd';
+import { Eye, EyeOff } from 'lucide-react';
 import { useEffect, useState } from 'react';
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Spinner } from '@/components/ui/spinner';
+import { toastMessage } from '@/shared/lib/toastMessage';
 
 import { userApi } from '../../../entity/users/api/userApi';
 import type { ChangePasswordRequest } from '../../../entity/users/model/ChangePasswordRequest';
@@ -25,7 +29,6 @@ const getRoleDisplayText = (role: UserRole): string => {
 };
 
 export function ProfileComponent({ contentHeight }: Props) {
-  const { message } = App.useApp();
   const [user, setUser] = useState<UserProfile | undefined>(undefined);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
 
@@ -59,7 +62,7 @@ export function ProfileComponent({ contentHeight }: Props) {
         setEditEmail(user.email);
       })
       .catch((error) => {
-        message.error(error.message);
+        toastMessage.error(error.message);
       });
   };
 
@@ -71,7 +74,7 @@ export function ProfileComponent({ contentHeight }: Props) {
       isValid = false;
     } else if (newPassword.length < 6) {
       setNewPasswordError(true);
-      message.error('Password must be at least 6 characters long');
+      toastMessage.error('Password must be at least 6 characters long');
       isValid = false;
     } else {
       setNewPasswordError(false);
@@ -82,7 +85,7 @@ export function ProfileComponent({ contentHeight }: Props) {
       isValid = false;
     } else if (newPassword !== confirmPassword) {
       setConfirmPasswordError(true);
-      message.error('New passwords do not match');
+      toastMessage.error('New passwords do not match');
       isValid = false;
     } else {
       setConfirmPasswordError(false);
@@ -117,13 +120,13 @@ export function ProfileComponent({ contentHeight }: Props) {
             password: newPassword,
           };
           await userApi.signIn(signInRequest);
-          message.success('Successfully signed in with new password');
+          toastMessage.success('Successfully signed in with new password');
         } catch (signInError: unknown) {
           const errorMessage =
             signInError instanceof Error
               ? signInError.message
               : 'Failed to sign in with new password';
-          message.error(errorMessage);
+          toastMessage.error(errorMessage);
           // If sign in fails, logout and redirect to login page
           await userApi.logout();
           userApi.notifyAuthListeners();
@@ -132,7 +135,7 @@ export function ProfileComponent({ contentHeight }: Props) {
       }
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to change password';
-      message.error(errorMessage);
+      toastMessage.error(errorMessage);
     } finally {
       setIsChangingPassword(false);
     }
@@ -142,7 +145,7 @@ export function ProfileComponent({ contentHeight }: Props) {
     // Validate name
     if (!editName || editName.trim() === '') {
       setEditNameError(true);
-      message.error('Name is required');
+      toastMessage.error('Name is required');
       return;
     }
     setEditNameError(false);
@@ -151,7 +154,7 @@ export function ProfileComponent({ contentHeight }: Props) {
     if (user?.email !== 'admin') {
       if (!editEmail || editEmail.trim() === '') {
         setEditEmailError(true);
-        message.error('Email is required');
+        toastMessage.error('Email is required');
         return;
       }
       setEditEmailError(false);
@@ -173,19 +176,19 @@ export function ProfileComponent({ contentHeight }: Props) {
 
       // If nothing changed, just show a message
       if (Object.keys(request).length === 0) {
-        message.info('No changes to save');
+        toastMessage.info('No changes to save');
         setIsUpdatingProfile(false);
         return;
       }
 
       await userApi.updateUserInfo(request);
-      message.success('Profile updated successfully');
+      toastMessage.success('Profile updated successfully');
 
       // Reload user profile
       loadUserProfile();
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to update profile';
-      message.error(errorMessage);
+      toastMessage.error(errorMessage);
     } finally {
       setIsUpdatingProfile(false);
     }
@@ -221,9 +224,8 @@ export function ProfileComponent({ contentHeight }: Props) {
                         setEditNameError(false);
                         setEditName(e.currentTarget.value);
                       }}
-                      status={editNameError ? 'error' : undefined}
                       placeholder="Enter your name"
-                      className="mb-4"
+                      className={`mb-4 ${editNameError ? 'border-destructive' : ''}`}
                     />
 
                     <div className="mt-2 mb-1 text-xs font-semibold">Email</div>
@@ -233,10 +235,9 @@ export function ProfileComponent({ contentHeight }: Props) {
                         setEditEmailError(false);
                         setEditEmail(e.currentTarget.value.trim().toLowerCase());
                       }}
-                      status={editEmailError ? 'error' : undefined}
                       placeholder="Enter your email"
                       type="email"
-                      className="mb-4"
+                      className={`mb-4 ${editEmailError ? 'border-destructive' : ''}`}
                       disabled={user.email === 'admin'}
                     />
                     {user.email === 'admin' && (
@@ -254,20 +255,24 @@ export function ProfileComponent({ contentHeight }: Props) {
 
                     {(editName !== user.name || editEmail !== user.email) && (
                       <Button
-                        type="primary"
                         onClick={handleProfileUpdate}
-                        loading={isUpdatingProfile}
                         disabled={isUpdatingProfile}
-                        className="border-emerald-600 bg-emerald-600 hover:border-emerald-700 hover:bg-emerald-700"
                       >
-                        Save changes
+                        {isUpdatingProfile ? (
+                          <>
+                            <Spinner size="sm" className="mr-2" />
+                            Saving...
+                          </>
+                        ) : (
+                          'Save changes'
+                        )}
                       </Button>
                     )}
                   </div>
                 </div>
 
                 <div className="mb-8">
-                  <Button type="default" onClick={handleLogout} danger>
+                  <Button variant="destructive" onClick={handleLogout}>
                     Logout
                   </Button>
                 </div>
@@ -277,52 +282,70 @@ export function ProfileComponent({ contentHeight }: Props) {
 
                   <div className="max-w-sm">
                     <div className="my-1 text-xs font-semibold">New Password</div>
-                    <Input.Password
-                      placeholder="Enter new password"
-                      value={newPassword}
-                      onChange={(e) => {
-                        setNewPasswordError(false);
-                        setNewPassword(e.currentTarget.value);
-                      }}
-                      status={newPasswordError ? 'error' : undefined}
-                      iconRender={(visible) =>
-                        visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
-                      }
-                      visibilityToggle={{
-                        visible: newPasswordVisible,
-                        onVisibleChange: setNewPasswordVisible,
-                      }}
-                    />
+                    <div className="relative mb-2">
+                      <Input
+                        type={newPasswordVisible ? 'text' : 'password'}
+                        placeholder="Enter new password"
+                        value={newPassword}
+                        onChange={(e) => {
+                          setNewPasswordError(false);
+                          setNewPassword(e.currentTarget.value);
+                        }}
+                        className={newPasswordError ? 'border-destructive pr-9' : 'pr-9'}
+                      />
+                      <button
+                        type="button"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                        onClick={() => setNewPasswordVisible(!newPasswordVisible)}
+                      >
+                        {newPasswordVisible ? (
+                          <Eye className="size-4" />
+                        ) : (
+                          <EyeOff className="size-4" />
+                        )}
+                      </button>
+                    </div>
 
                     <div className="mt-2 mb-1 text-xs font-semibold">Confirm New Password</div>
-                    <Input.Password
-                      placeholder="Confirm new password"
-                      value={confirmPassword}
-                      onChange={(e) => {
-                        setConfirmPasswordError(false);
-                        setConfirmPassword(e.currentTarget.value);
-                      }}
-                      status={confirmPasswordError ? 'error' : undefined}
-                      iconRender={(visible) =>
-                        visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
-                      }
-                      visibilityToggle={{
-                        visible: confirmPasswordVisible,
-                        onVisibleChange: setConfirmPasswordVisible,
-                      }}
-                    />
+                    <div className="relative mb-2">
+                      <Input
+                        type={confirmPasswordVisible ? 'text' : 'password'}
+                        placeholder="Confirm new password"
+                        value={confirmPassword}
+                        onChange={(e) => {
+                          setConfirmPasswordError(false);
+                          setConfirmPassword(e.currentTarget.value);
+                        }}
+                        className={confirmPasswordError ? 'border-destructive pr-9' : 'pr-9'}
+                      />
+                      <button
+                        type="button"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                        onClick={() => setConfirmPasswordVisible(!confirmPasswordVisible)}
+                      >
+                        {confirmPasswordVisible ? (
+                          <Eye className="size-4" />
+                        ) : (
+                          <EyeOff className="size-4" />
+                        )}
+                      </button>
+                    </div>
 
                     <div className="mt-3" />
 
                     {(newPassword || confirmPassword) && (
                       <Button
-                        type="primary"
                         onClick={handlePasswordChange}
-                        loading={isChangingPassword}
                         disabled={isChangingPassword}
-                        className="border-emerald-600 bg-emerald-600 hover:border-emerald-700 hover:bg-emerald-700"
                       >
-                        {isChangingPassword ? 'Changing password...' : 'Change password'}
+                        {isChangingPassword ? (
+                          <>
+                            <Spinner size="sm" className="mr-2" />
+                            Changing password...
+                          </>
+                        ) : (
+                          'Change password'
+                        )}
                       </Button>
                     )}
                   </div>
@@ -330,7 +353,7 @@ export function ProfileComponent({ contentHeight }: Props) {
               </>
             ) : (
               <div>
-                <Spin indicator={<LoadingOutlined spin />} />
+                <Spinner />
               </div>
             )}
           </div>

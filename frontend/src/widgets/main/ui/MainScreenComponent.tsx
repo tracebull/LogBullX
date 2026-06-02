@@ -1,7 +1,8 @@
-import { LoadingOutlined } from '@ant-design/icons';
-import { App, Button, Spin, Tooltip } from 'antd';
 import { Suspense, lazy, useEffect, useState } from 'react';
 
+import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { APP_VERSION } from '../../../constants';
 import { type DiskUsage, diskApi } from '../../../entity/disk';
 import { type ProjectResponse, projectApi } from '../../../entity/projects';
@@ -14,6 +15,7 @@ import {
 } from '../../../entity/users';
 import { ThemeToggle } from '../../../features/users/ui/ThemeToggle';
 import { useScreenHeight } from '../../../shared/hooks';
+import { toastMessage } from '../../../shared/lib/toastMessage';
 import { MobilePlaceholderComponent } from './MobilePlaceholderComponent';
 import { ProjectSelectionComponent } from './ProjectSelectionComponent';
 
@@ -59,7 +61,6 @@ const UsersComponent = lazy(() =>
 );
 
 export const MainScreenComponent = () => {
-  const { message } = App.useApp();
   const screenHeight = useScreenHeight();
   const contentHeight = screenHeight - 95;
 
@@ -92,7 +93,7 @@ export const MainScreenComponent = () => {
       setProjects(projects.projects);
       setGlobalSettings(settings);
     } catch (e) {
-      message.error((e as Error).message);
+      toastMessage.error((e as Error).message);
     }
 
     setIsLoading(false);
@@ -133,7 +134,7 @@ export const MainScreenComponent = () => {
       setSelectedProject(newProject);
       setSelectedTab('search');
     } catch (e) {
-      message.error((e as Error).message);
+      toastMessage.error((e as Error).message);
     }
   };
 
@@ -174,16 +175,22 @@ export const MainScreenComponent = () => {
           <div className="mr-3 ml-auto flex items-center gap-5">
             <ThemeToggle />
             {isUsedMoreThan95Percent && diskUsage && (
-              <Tooltip title="To make backups locally and restore them, you need to have enough space on your disk. For restore, you need to have same amount of space that the backup size.">
-                <div
-                  className={`cursor-pointer text-center text-xs ${isUsedMoreThan95Percent ? 'text-destructive' : 'text-muted-foreground'}`}
-                >
-                  {(diskUsage.usedSpaceBytes / 1024 ** 3).toFixed(1)} of{' '}
-                  {(diskUsage.totalSpaceBytes / 1024 ** 3).toFixed(1)} GB
-                  <br />
-                  ROM used (
-                  {((diskUsage.usedSpaceBytes / diskUsage.totalSpaceBytes) * 100).toFixed(1)}%)
-                </div>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div
+                    className={`cursor-pointer text-center text-xs ${isUsedMoreThan95Percent ? 'text-destructive' : 'text-muted-foreground'}`}
+                  >
+                    {(diskUsage.usedSpaceBytes / 1024 ** 3).toFixed(1)} of{' '}
+                    {(diskUsage.totalSpaceBytes / 1024 ** 3).toFixed(1)} GB
+                    <br />
+                    ROM used (
+                    {((diskUsage.usedSpaceBytes / diskUsage.totalSpaceBytes) * 100).toFixed(1)}%)
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  To make backups locally and restore them, you need to have enough space on your
+                  disk. For restore, you need to have same amount of space that the backup size.
+                </TooltipContent>
               </Tooltip>
             )}
           </div>
@@ -192,7 +199,7 @@ export const MainScreenComponent = () => {
 
         {isLoading ? (
           <div className="flex items-center justify-center py-2" style={{ height: contentHeight }}>
-            <Spin indicator={<LoadingOutlined spin />} size="large" />
+            <Spinner size="lg" />
           </div>
         ) : (
           <div className="relative flex">
@@ -302,7 +309,7 @@ export const MainScreenComponent = () => {
                   className="flex grow items-center justify-center rounded"
                   style={{ height: contentHeight }}
                 >
-                  <Spin indicator={<LoadingOutlined spin />} size="large" />
+                  <Spinner size="lg" />
                 </div>
               }
             >
@@ -328,8 +335,7 @@ export const MainScreenComponent = () => {
                   {(user?.role === UserRole.ADMIN ||
                     globalSettings?.isMemberAllowedToCreateProjects !== false) && (
                     <Button
-                      type="primary"
-                      size="large"
+                      size="lg"
                       onClick={handleCreateProject}
                       className="border-emerald-600 bg-emerald-600 hover:border-emerald-700 hover:bg-emerald-700"
                     >

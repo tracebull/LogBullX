@@ -1,8 +1,27 @@
-import { LoadingOutlined } from '@ant-design/icons';
-import { App, Button, Drawer, Input, Select, Spin, Switch, Table } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { useCallback, useEffect, useRef, useState } from 'react';
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
+import { Spinner } from '@/components/ui/spinner';
+import { Switch } from '@/components/ui/switch';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { toastMessage } from '@/shared/lib/toastMessage';
 
 import { userManagementApi } from '../../../entity/users/api/userManagementApi';
 import type { ChangeUserRoleRequest } from '../../../entity/users/model/ChangeUserRoleRequest';
@@ -23,16 +42,15 @@ interface Props {
 const getRoleColor = (role: UserRole): string => {
   switch (role) {
     case UserRole.ADMIN:
-      return '#3b82f6';
+      return 'text-blue-500';
     case UserRole.MEMBER:
-      return '#10b981';
+      return 'text-emerald-500';
     default:
-      return '#6b7280';
+      return 'text-gray-500';
   }
 };
 
 export function UsersComponent({ contentHeight, globalSettings, user }: Props) {
-  const { message } = App.useApp();
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -127,7 +145,7 @@ export function UsersComponent({ contentHeight, globalSettings, user }: Props) {
       setHasMore(response.users.length === pageSize);
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to load users';
-      message.error(errorMessage);
+      toastMessage.error(errorMessage);
     } finally {
       loadingRef.current = false;
       setIsLoading(false);
@@ -145,14 +163,14 @@ export function UsersComponent({ contentHeight, globalSettings, user }: Props) {
     try {
       if (isActive) {
         await userManagementApi.deactivateUser(userId);
-        message.success('User deactivated successfully');
+        toastMessage.success('User deactivated successfully');
       } else {
         await userManagementApi.activateUser(userId);
-        message.success('User activated successfully');
+        toastMessage.success('User activated successfully');
       }
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Operation failed';
-      message.error(errorMessage);
+      toastMessage.error(errorMessage);
 
       setUsers((prev) =>
         prev.map((user) => (user.id === userId ? { ...user, isActive: isActive } : user)),
@@ -179,10 +197,10 @@ export function UsersComponent({ contentHeight, globalSettings, user }: Props) {
     try {
       const request: ChangeUserRoleRequest = { role: newRole };
       await userManagementApi.changeUserRole(userId, request);
-      message.success('User role changed successfully');
+      toastMessage.success('User role changed successfully');
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to change user role';
-      message.error(errorMessage);
+      toastMessage.error(errorMessage);
 
       if (originalRole) {
         setUsers((prev) =>
@@ -208,99 +226,12 @@ export function UsersComponent({ contentHeight, globalSettings, user }: Props) {
     setSelectedUser(null);
   };
 
-  const columns: ColumnsType<UserProfile> = [
-    {
-      title: 'User',
-      key: 'user',
-      width: 350,
-      render: (_, record: UserProfile) => (
-        <div>
-          {record.name} ({record.email})
-        </div>
-      ),
-    },
-    {
-      title: 'System role',
-      dataIndex: 'role',
-      key: 'role',
-      width: 200,
-      render: (role: UserRole, record: UserProfile) => (
-        <Select
-          value={role}
-          onChange={(value) => handleRoleChange(record.id, value)}
-          loading={changingRoleUsers.has(record.id)}
-          disabled={changingRoleUsers.has(record.id)}
-          size="small"
-          className="w-24"
-          style={{
-            color: getRoleColor(role),
-          }}
-          options={[
-            {
-              label: <span style={{ color: getRoleColor(UserRole.ADMIN) }}>Admin</span>,
-              value: UserRole.ADMIN,
-            },
-            {
-              label: <span style={{ color: getRoleColor(UserRole.MEMBER) }}>Member</span>,
-              value: UserRole.MEMBER,
-            },
-          ]}
-        />
-      ),
-    },
-    {
-      title: 'Is active?',
-      dataIndex: 'isActive',
-      key: 'isActive',
-      width: 200,
-      render: (isActive: boolean, record: UserProfile) => (
-        <Switch
-          checked={isActive}
-          onChange={() => handleActivationToggle(record.id, isActive)}
-          loading={processingUsers.has(record.id)}
-          disabled={processingUsers.has(record.id)}
-          size="small"
-          style={{
-            backgroundColor: isActive ? '#059669' : undefined,
-          }}
-        />
-      ),
-    },
-    {
-      title: 'Created',
-      dataIndex: 'createdAt',
-      key: 'createdAt',
-      width: 300,
-      render: (createdAt: string) => {
-        const date = dayjs(createdAt);
-        const timeFormat = getUserShortTimeFormat();
-        return (
-          <div className="text-sm text-gray-600">
-            <div>{date.format(timeFormat.format)}</div>
-            <div className="text-xs text-gray-400">{date.fromNow()}</div>
-          </div>
-        );
-      },
-    },
-    {
-      title: '',
-      key: 'empty',
-      render: (_, record: UserProfile) => (
-        <div>
-          <Button type="primary" ghost size="small" onClick={() => handleRowClick(record)}>
-            View audit logs
-          </Button>
-        </div>
-      ),
-    },
-  ];
-
   return (
     <div className="flex grow pl-3">
       <div className="w-full">
         <div
           ref={scrollContainerRef}
-          className="grow overflow-y-auto rounded bg-white p-5 shadow"
+          className="grow overflow-y-auto rounded bg-card p-5 shadow"
           style={{ height: contentHeight }}
         >
           <div className="mb-4 flex items-center justify-between">
@@ -308,11 +239,11 @@ export function UsersComponent({ contentHeight, globalSettings, user }: Props) {
             <div className="flex items-center gap-3">
               {(user?.role === UserRole.ADMIN ||
                 globalSettings?.isAllowMemberInvitations !== false) && (
-                <Button type="primary" onClick={() => setIsBulkInviteOpen(true)}>
+                <Button onClick={() => setIsBulkInviteOpen(true)}>
                   Bulk Invite
                 </Button>
               )}
-              <div className="text-sm text-gray-500">
+              <div className="text-sm text-muted-foreground">
                 {isLoading ? 'Loading...' : `${users.length} of ${total} users`}
               </div>
             </div>
@@ -321,36 +252,97 @@ export function UsersComponent({ contentHeight, globalSettings, user }: Props) {
           <div className="mb-4">
             <Input
               placeholder="Search by email or name..."
-              allowClear
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              style={{ width: 400 }}
+              className="max-w-md"
             />
           </div>
 
           {isLoading ? (
             <div className="flex h-64 items-center justify-center">
-              <Spin indicator={<LoadingOutlined spin />} size="large" />
+              <Spinner size="lg" />
             </div>
           ) : (
             <>
-              <Table
-                columns={columns}
-                dataSource={users}
-                pagination={false}
-                rowKey="id"
-                size="small"
-                className="mb-4"
-              />
+              <Table className="mb-4">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead style={{ width: 350 }}>User</TableHead>
+                    <TableHead style={{ width: 200 }}>System role</TableHead>
+                    <TableHead style={{ width: 200 }}>Is active?</TableHead>
+                    <TableHead style={{ width: 300 }}>Created</TableHead>
+                    <TableHead></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {users.map((record) => (
+                    <TableRow key={record.id}>
+                      <TableCell>
+                        <div>
+                          {record.name} ({record.email})
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Select
+                          value={record.role}
+                          onValueChange={(value) =>
+                            handleRoleChange(record.id, value as UserRole)
+                          }
+                          disabled={changingRoleUsers.has(record.id)}
+                        >
+                          <SelectTrigger className="h-7 w-24 text-xs">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value={UserRole.ADMIN}>
+                              <span className={getRoleColor(UserRole.ADMIN)}>Admin</span>
+                            </SelectItem>
+                            <SelectItem value={UserRole.MEMBER}>
+                              <span className={getRoleColor(UserRole.MEMBER)}>Member</span>
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </TableCell>
+                      <TableCell>
+                        <Switch
+                          checked={record.isActive}
+                          onCheckedChange={() =>
+                            handleActivationToggle(record.id, record.isActive)
+                          }
+                          disabled={processingUsers.has(record.id)}
+                          size="sm"
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-sm text-muted-foreground">
+                          <div>{dayjs(record.createdAt).format(getUserShortTimeFormat().format)}</div>
+                          <div className="text-xs text-muted-foreground/60">
+                            {dayjs(record.createdAt).fromNow()}
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleRowClick(record)}
+                        >
+                          View audit logs
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
 
               {isLoadingMore && (
                 <div className="flex justify-center py-4">
-                  <Spin indicator={<LoadingOutlined spin />} />
+                  <Spinner />
                 </div>
               )}
 
               {!hasMore && users.length > 0 && (
-                <div className="py-4 text-center text-sm text-gray-500">
+                <div className="py-4 text-center text-sm text-muted-foreground">
                   All users loaded ({total} total)
                 </div>
               )}
@@ -360,20 +352,17 @@ export function UsersComponent({ contentHeight, globalSettings, user }: Props) {
       </div>
 
       {/* Audit logs drawer */}
-      <Drawer
-        title={
-          <div>
-            <div className="text-lg font-semibold text-gray-900">User Audit Logs</div>
-            <div className="text-sm text-gray-600">{selectedUser?.email}</div>
+      <Sheet open={isDrawerOpen} onOpenChange={(open) => !open && handleDrawerClose()}>
+        <SheetContent side="right" className="w-full sm:max-w-[900px] overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>User Audit Logs</SheetTitle>
+            <SheetDescription>{selectedUser?.email}</SheetDescription>
+          </SheetHeader>
+          <div className="mt-4">
+            {selectedUser && <UserAuditLogsSidebarComponent user={selectedUser} />}
           </div>
-        }
-        placement="right"
-        width={900}
-        onClose={handleDrawerClose}
-        open={isDrawerOpen}
-      >
-        {selectedUser && <UserAuditLogsSidebarComponent user={selectedUser} />}
-      </Drawer>
+        </SheetContent>
+      </Sheet>
 
       <BulkInviteComponent
         open={isBulkInviteOpen}

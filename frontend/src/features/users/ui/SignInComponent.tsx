@@ -1,6 +1,9 @@
-import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
-import { Button, Input } from 'antd';
+import { Eye, EyeOff } from 'lucide-react';
 import { type JSX, useState } from 'react';
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Spinner } from '@/components/ui/spinner';
 
 import { IS_CLOUD } from '../../../constants';
 import { userApi } from '../../../entity/users';
@@ -72,10 +75,10 @@ export function SignInComponent({ onSwitchToSignUp }: SignInComponentProps): JSX
       {IS_CLOUD && (
         <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-300"></div>
+            <div className="w-full border-t border-border"></div>
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="bg-white px-2 text-gray-500">or continue</span>
+            <span className="bg-background px-2 text-muted-foreground">or continue</span>
           </div>
         </div>
       )}
@@ -88,45 +91,58 @@ export function SignInComponent({ onSwitchToSignUp }: SignInComponentProps): JSX
           setEmailError(false);
           setEmail(e.currentTarget.value.trim().toLowerCase());
         }}
-        status={isEmailError ? 'error' : undefined}
+        className={isEmailError ? 'border-destructive' : undefined}
         type="email"
       />
 
       <div className="my-1 text-xs font-semibold">Password</div>
-      <Input.Password
-        placeholder="********"
-        value={password}
-        onChange={(e) => {
-          setPasswordError(false);
-          setPassword(e.currentTarget.value);
-        }}
-        status={passwordError ? 'error' : undefined}
-        iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
-        visibilityToggle={{ visible: passwordVisible, onVisibleChange: setPasswordVisible }}
-      />
+      <div className="relative">
+        <Input
+          placeholder="********"
+          type={passwordVisible ? 'text' : 'password'}
+          value={password}
+          onChange={(e) => {
+            setPasswordError(false);
+            setPassword(e.currentTarget.value);
+          }}
+          className={passwordError ? 'border-destructive pr-9' : 'pr-9'}
+        />
+        <button
+          type="button"
+          onClick={() => setPasswordVisible(!passwordVisible)}
+          className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+        >
+          {passwordVisible ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
+        </button>
+      </div>
 
       <div className="mt-3" />
 
       <Button
         disabled={isLoading}
-        loading={isLoading}
         className="w-full"
         onClick={() => {
           onSignIn();
         }}
-        type="primary"
       >
-        Sign in
+        {isLoading ? (
+          <>
+            <Spinner size="sm" className="mr-2" />
+            Loading...
+          </>
+        ) : (
+          'Sign in'
+        )}
       </Button>
 
       {signInError && (
-        <div className="mt-3 flex justify-center text-center text-sm text-red-600">
+        <div className="mt-3 flex justify-center text-center text-sm text-destructive">
           {signInError}
         </div>
       )}
 
       {onSwitchToSignUp && (
-        <div className="mt-4 text-center text-sm text-gray-600">
+        <div className="mt-4 text-center text-sm text-muted-foreground">
           Don&apos;t have an account?{' '}
           <button
             type="button"

@@ -1,5 +1,12 @@
-import { Button, Modal } from 'antd';
 import type { JSX } from 'react';
+
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 interface Props {
   onConfirm(): void;
@@ -23,36 +30,34 @@ export function ConfirmationComponent({
   hideCancelButton = false,
 }: Props): JSX.Element {
   return (
-    <Modal
-      title="Confirmation"
-      open
-      onClose={() => onDecline()}
-      onCancel={() => onDecline()}
-      footer={<div />}
-    >
-      <div dangerouslySetInnerHTML={{ __html: description }} />
+    <Dialog open onOpenChange={(open) => { if (!open) onDecline(); }}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Confirmation</DialogTitle>
+        </DialogHeader>
 
-      <div className="mt-5 flex">
-        {!hideCancelButton && (
+        <div dangerouslySetInnerHTML={{ __html: description }} />
+
+        <div className="mt-5 flex">
+          {!hideCancelButton && (
+            <Button
+              className="ml-auto"
+              variant={actionButtonColor !== 'red' ? 'destructive' : 'default'}
+              onClick={() => onDecline()}
+            >
+              {cancelText || 'Cancel'}
+            </Button>
+          )}
+
           <Button
-            className="ml-auto"
-            onClick={() => onDecline()}
-            danger={actionButtonColor !== 'red'}
-            type="primary"
+            className="ml-1"
+            variant={actionButtonColor === 'red' ? 'destructive' : 'default'}
+            onClick={() => onConfirm()}
           >
-            {cancelText || 'Cancel'}
+            {actionText}
           </Button>
-        )}
-
-        <Button
-          className="ml-1"
-          onClick={() => onConfirm()}
-          danger={actionButtonColor === 'red'}
-          type="primary"
-        >
-          {actionText}
-        </Button>
-      </div>
-    </Modal>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
