@@ -1,8 +1,8 @@
-# LogBullX - Project Context
+# TraceBull - Project Context
 
 ## Overview
 
-Self-hosted log collection and viewing system. Alternative to ELK/Loki. Single Docker container. Apache 2.0 licensed.
+Self-hosted log collection and viewing system. Fork of LogBull. Single Docker container. Apache 2.0 licensed.
 
 ## Tech Stack
 

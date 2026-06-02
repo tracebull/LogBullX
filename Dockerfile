@@ -57,7 +57,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates curl && \
     rm -rf /var/lib/apt/lists/*
 
-RUN useradd -m -s /bin/bash logbull
+RUN useradd -m -s /bin/bash tracebull
 
 WORKDIR /app
 
@@ -74,16 +74,16 @@ RUN if [ ! -f /app/.env ]; then \
     fi; \
     fi
 
-RUN chown -R logbull:logbull /app
+RUN chown -R tracebull:tracebull /app
 
 EXPOSE 4005
 
 HEALTHCHECK --interval=5s --timeout=5s --start-period=30s --retries=10 \
     CMD curl -f http://localhost:4005/api/v1/system/health || exit 1
 
-VOLUME ["/logbull-data"]
+VOLUME ["/tracebull-data"]
 
-USER logbull
+USER tracebull
 
 ENTRYPOINT ["./main"]
 CMD []
