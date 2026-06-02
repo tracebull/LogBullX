@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { BrowserRouter, Route } from 'react-router';
 import { Routes } from 'react-router';
 
+import { Toaster } from './components/ui/sonner';
 import { userApi } from './entity/users';
 import { AuthPageComponent } from './pages/AuthPageComponent';
 import { OAuthCallbackPage } from './pages/OAuthCallbackPage';
@@ -49,6 +50,7 @@ function AppContent() {
           />
         </Routes>
       </BrowserRouter>
+      <Toaster />
     </AntdConfigWrapper>
   );
 }
