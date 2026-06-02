@@ -295,7 +295,7 @@ export const MainScreenComponent = () => {
                             width={20}
                             alt={tab.text}
                             loading="lazy"
-                            className="dark:invert"
+                            className={selectedTab === tab.name ? 'dark:invert' : ''}
                           />
                         </div>
                       </div>
