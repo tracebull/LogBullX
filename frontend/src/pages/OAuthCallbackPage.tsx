@@ -1,8 +1,7 @@
-import { LoadingOutlined } from '@ant-design/icons';
-import { Spin } from 'antd';
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 
+import { Spinner } from '../components/ui/spinner';
 import { getOAuthRedirectUri } from '../constants';
 import { userApi } from '../entity/users';
 
@@ -67,7 +66,7 @@ export function OAuthCallbackPage() {
         </div>
       ) : (
         <div className="flex flex-col items-center">
-          <Spin indicator={<LoadingOutlined spin />} size="large" />
+          <Spinner size="lg" />
           <div className="mt-4 text-gray-600">Completing authentication...</div>
         </div>
       )}

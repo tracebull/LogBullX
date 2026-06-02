@@ -1,5 +1,4 @@
-import { LoadingOutlined, PlayCircleOutlined } from '@ant-design/icons';
-import { App, Button, Divider, Spin, Switch } from 'antd';
+import { Play } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 
 import type { Project } from '../../../entity/projects';
@@ -13,6 +12,11 @@ import {
   queryApi,
 } from '../../../entity/query';
 import type { UserProfile } from '../../../entity/users/model/UserProfile';
+import { toastMessage } from '../../../shared/lib/toastMessage';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { Spinner } from '@/components/ui/spinner';
+import { Switch } from '@/components/ui/switch';
 import { FloatingTopButtonComponent } from './FloatingTopButtonComponent';
 import { HowToSendLogsFromCodeComponent } from './HowToSendLogsFromCodeComponent';
 import { OnboardingTooltipComponent } from './OnboardingTooltipComponent';
@@ -38,7 +42,7 @@ interface Props {
  * - Sort order control (ascending/descending by timestamp)
  * - Results table with pagination
  * - Proper TypeScript typing throughout
- * - Responsive design with Ant Design components
+ * - Responsive design with shadcn/ui components
  *
  * Query Structure:
  * - Simple conditions: field + operator + value
@@ -91,9 +95,6 @@ export const QueryComponentComponent = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const queryBuilderRef = useRef<HTMLDivElement>(null);
   const howToSendLogsButtonRef = useRef<HTMLDivElement>(null);
-
-  // Functions
-  const { message } = App.useApp();
 
   // Onboarding functions
   const isUserNewlyRegistered = (user: UserProfile): boolean => {
@@ -155,7 +156,7 @@ export const QueryComponentComponent = ({
       setProject(projectData);
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to load project';
-      message.error(errorMessage);
+      toastMessage.error(errorMessage);
     }
   };
 
@@ -166,7 +167,7 @@ export const QueryComponentComponent = ({
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error ? error.message : 'Failed to load queryable fields';
-      message.error(errorMessage);
+      toastMessage.error(errorMessage);
     }
   };
 
@@ -180,7 +181,7 @@ export const QueryComponentComponent = ({
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error ? error.message : 'Failed to search queryable fields';
-      message.error(errorMessage);
+      toastMessage.error(errorMessage);
       return [];
     }
   };
@@ -262,7 +263,7 @@ export const QueryComponentComponent = ({
     if (!isLoadMore) {
       const validation = validateQuery(currentQuery);
       if (!validation.isValid) {
-        message.error(validation.error);
+        toastMessage.error(validation.error!);
         return;
       }
     }
@@ -317,14 +318,14 @@ export const QueryComponentComponent = ({
       if (!isLoadMore) {
         const queryType = currentQuery ? 'matching your query' : '(showing all logs)';
         const executedInMs = Math.round(parseFloat(response.executedIn));
-        message.success(
+        toastMessage.success(
           `Found ${response.total} logs ${queryType} (${executedInMs.toLocaleString()} ms)`,
         );
         setHasSearched(true);
       }
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Query execution failed';
-      message.error(errorMessage);
+      toastMessage.error(errorMessage);
     } finally {
       setIsExecuting(false);
     }
@@ -368,7 +369,7 @@ export const QueryComponentComponent = ({
       setHasSearched(false);
     }
 
-    message.success(`Field "${fieldName}" added to query`);
+    toastMessage.success(`Field "${fieldName}" added to query`);
 
     setTimeout(() => {
       queryBuilderRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -498,11 +499,11 @@ export const QueryComponentComponent = ({
               </span>
               <Switch
                 checked={sortOrder === 'asc'}
-                onChange={(checked) => {
+                onCheckedChange={(checked) => {
                   setSortOrder(checked ? 'asc' : 'desc');
                   setHasSearched(false);
                 }}
-                size="small"
+                size="sm"
               />
               <span
                 className={`text-sm ${sortOrder === 'asc' ? 'text-gray-900' : 'text-gray-400'}`}
@@ -514,10 +515,8 @@ export const QueryComponentComponent = ({
 
           <div className="ml-auto" ref={howToSendLogsButtonRef}>
             <Button
-              type="primary"
               onClick={handleHowToSendLogsClick}
-              loading={isExecuting}
-              ghost
+              disabled={isExecuting}
               className="border-emerald-600 bg-emerald-600 hover:border-emerald-700 hover:bg-emerald-700"
             >
               How to send logs from code?
@@ -540,25 +539,24 @@ export const QueryComponentComponent = ({
             onFieldSearch={searchQueryableFields}
           />
 
-          <Divider />
+          <Separator />
 
           {/* Execution Controls */}
           <div className="flex items-center justify-between">
             {isExecuting ? (
-              <Spin indicator={<LoadingOutlined spin />} />
+              <Spinner className="ml-auto" />
             ) : (
               <Button
-                type="primary"
-                icon={<PlayCircleOutlined />}
                 onClick={handleExecuteOrRefresh}
-                size="large"
-                ghost={hasSearched}
+                size="lg"
+                variant={hasSearched ? 'outline' : 'default'}
                 className={`ml-auto ${
                   hasSearched
                     ? 'border-emerald-600 text-emerald-600 hover:border-emerald-700 hover:text-emerald-700'
                     : 'border-emerald-600 bg-emerald-600 hover:border-emerald-700 hover:bg-emerald-700'
                 }`}
               >
+                <Play className="mr-2 size-4" />
                 {hasSearched ? 'Refresh Query' : 'Execute Query'}
               </Button>
             )}

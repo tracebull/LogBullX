@@ -1,13 +1,21 @@
-import { LoadingOutlined } from '@ant-design/icons';
-import { App, Spin, Table } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { useCallback, useEffect, useRef, useState } from 'react';
+
+import { Spinner } from '../../../components/ui/spinner';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '../../../components/ui/table';
 
 import { auditLogApi } from '../../../entity/audit-logs/api/auditLogApi';
 import type { AuditLog } from '../../../entity/audit-logs/model/AuditLog';
 import type { GetAuditLogsRequest } from '../../../entity/audit-logs/model/GetAuditLogsRequest';
 import type { UserProfile } from '../../../entity/users/model/UserProfile';
+import { toastMessage } from '../../../shared/lib/toastMessage';
 import { getUserShortTimeFormat } from '../../../shared/time';
 
 interface Props {
@@ -15,7 +23,6 @@ interface Props {
 }
 
 export function UserAuditLogsSidebarComponent({ user }: Props) {
-  const { message } = App.useApp();
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -87,7 +94,7 @@ export function UserAuditLogsSidebarComponent({ user }: Props) {
       setHasMore(response.auditLogs.length === pageSize);
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to load audit logs';
-      message.error(errorMessage);
+      toastMessage.error(errorMessage);
     } finally {
       loadingRef.current = false;
       setIsLoading(false);
@@ -95,44 +102,11 @@ export function UserAuditLogsSidebarComponent({ user }: Props) {
     }
   };
 
-  const columns: ColumnsType<AuditLog> = [
-    {
-      title: 'Message',
-      dataIndex: 'message',
-      key: 'message',
-      render: (message: string) => <span className="text-xs text-gray-900">{message}</span>,
-    },
-    {
-      title: 'Project',
-      dataIndex: 'projectName',
-      key: 'projectName',
-      width: 200,
-      render: (projectId: string | undefined) => (
-        <span
-          className={`inline-block rounded-full px-2 py-1 text-xs font-medium ${
-            projectId ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-600'
-          }`}
-        >
-          {projectId || '-'}
-        </span>
-      ),
-    },
-    {
-      title: 'Created',
-      dataIndex: 'createdAt',
-      key: 'createdAt',
-      width: 200,
-      render: (createdAt: string) => {
-        const date = dayjs(createdAt);
-        const timeFormat = getUserShortTimeFormat();
-        return (
-          <span className="text-xs text-gray-700">
-            {`${date.format(timeFormat.format)} (${date.fromNow()})`}
-          </span>
-        );
-      },
-    },
-  ];
+  const formatCreatedAt = (createdAt: string) => {
+    const date = dayjs(createdAt);
+    const timeFormat = getUserShortTimeFormat();
+    return `${date.format(timeFormat.format)} (${date.fromNow()})`;
+  };
 
   return (
     <div className="h-full">
@@ -140,7 +114,7 @@ export function UserAuditLogsSidebarComponent({ user }: Props) {
         <div className="mb-4 flex items-center justify-between">
           <div className="text-sm text-gray-500">
             {isLoading ? (
-              <Spin indicator={<LoadingOutlined spin />} />
+              <Spinner size="sm" />
             ) : (
               `${auditLogs.length} of ${total} logs`
             )}
@@ -149,22 +123,46 @@ export function UserAuditLogsSidebarComponent({ user }: Props) {
 
         {isLoading ? (
           <div className="flex h-64 items-center justify-center">
-            <Spin indicator={<LoadingOutlined spin />} size="large" />
+            <Spinner size="lg" />
           </div>
         ) : (
           <>
-            <Table
-              columns={columns}
-              dataSource={auditLogs}
-              pagination={false}
-              rowKey="id"
-              size="small"
-              className="mb-4"
-            />
+            <Table className="mb-4">
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Message</TableHead>
+                  <TableHead className="w-[200px]">Project</TableHead>
+                  <TableHead className="w-[200px]">Created</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {auditLogs.map((log) => (
+                  <TableRow key={log.id}>
+                    <TableCell>
+                      <span className="text-xs text-gray-900">{log.message}</span>
+                    </TableCell>
+                    <TableCell>
+                      <span
+                        className={`inline-block rounded-full px-2 py-1 text-xs font-medium ${
+                          log.projectName ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-600'
+                        }`}
+                      >
+                        {log.projectName || '-'}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-xs text-gray-700">
+                        {formatCreatedAt(log.createdAt)}
+                      </span>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
 
             {isLoadingMore && (
               <div className="flex justify-center py-4">
-                <Spin indicator={<LoadingOutlined spin />} />
+                <Spinner size="sm" />
                 <span className="ml-2 text-sm text-gray-500">Loading more logs...</span>
               </div>
             )}

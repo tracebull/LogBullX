@@ -1,6 +1,3 @@
-import { LoadingOutlined } from '@ant-design/icons';
-import { App, Button, Checkbox, Input, InputNumber, Modal, Select, Spin, Table, Tag } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
 import { useEffect, useState } from 'react';
 
 import { userPlanApi } from '../../../entity/users/api/userPlanApi';
@@ -8,8 +5,35 @@ import type { CreatePlanRequest } from '../../../entity/users/model/CreatePlanRe
 import type { UpdatePlanRequest } from '../../../entity/users/model/UpdatePlanRequest';
 import type { UserPlan } from '../../../entity/users/model/UserPlan';
 import { UserPlanType } from '../../../entity/users/model/UserPlanType';
-
-const { TextArea } = Input;
+import { toastMessage } from '../../../shared/lib/toastMessage';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Spinner } from '@/components/ui/spinner';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Textarea } from '@/components/ui/textarea';
 
 interface FormValues {
   name: string;
@@ -49,8 +73,6 @@ const initialFormValues: FormValues = {
 };
 
 export const PlansSettingsComponent = () => {
-  const { message } = App.useApp();
-
   // State
   const [plans, setPlans] = useState<UserPlan[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -85,7 +107,7 @@ export const PlansSettingsComponent = () => {
       setPlans(fetchedPlans);
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to load plans';
-      message.error(errorMessage);
+      toastMessage.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -198,13 +220,13 @@ export const PlansSettingsComponent = () => {
     setIsSaving(true);
     try {
       await userPlanApi.deletePlan(deletingPlanId);
-      message.success('Plan deleted successfully');
+      toastMessage.success('Plan deleted successfully');
       setIsDeleteModalVisible(false);
       setDeletingPlanId(null);
       await loadPlans();
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to delete plan';
-      message.error(errorMessage);
+      toastMessage.error(errorMessage);
     } finally {
       setIsSaving(false);
     }
@@ -213,7 +235,7 @@ export const PlansSettingsComponent = () => {
   const handleModalOk = async () => {
     // Validation
     if (!formValues.name.trim()) {
-      message.error('Name is required');
+      toastMessage.error('Name is required');
       return;
     }
 
@@ -241,10 +263,10 @@ export const PlansSettingsComponent = () => {
 
       if (editingPlan) {
         await userPlanApi.updatePlan(editingPlan.id, requestData as UpdatePlanRequest);
-        message.success('Plan updated successfully');
+        toastMessage.success('Plan updated successfully');
       } else {
         await userPlanApi.createPlan(requestData as CreatePlanRequest);
-        message.success('Plan created successfully');
+        toastMessage.success('Plan created successfully');
       }
 
       setIsModalVisible(false);
@@ -252,7 +274,7 @@ export const PlansSettingsComponent = () => {
       await loadPlans();
     } catch (error: unknown) {
       if (error instanceof Error && error.message) {
-        message.error(error.message);
+        toastMessage.error(error.message);
       }
     } finally {
       setIsSaving(false);
@@ -280,49 +302,6 @@ export const PlansSettingsComponent = () => {
     }
   };
 
-  const columns: ColumnsType<UserPlan> = [
-    {
-      title: 'Name',
-      dataIndex: 'name',
-      key: 'name',
-    },
-    {
-      title: 'Type',
-      dataIndex: 'type',
-      key: 'type',
-      render: (type: UserPlanType) => (
-        <Tag color={type === UserPlanType.EXTENDED ? 'blue' : 'default'}>{type}</Tag>
-      ),
-    },
-    {
-      title: 'Public',
-      dataIndex: 'isPublic',
-      key: 'isPublic',
-      render: (isPublic: boolean) => (
-        <Tag color={isPublic ? 'green' : 'default'}>{isPublic ? 'Yes' : 'No'}</Tag>
-      ),
-    },
-    {
-      title: 'Allowed projects',
-      dataIndex: 'allowedProjectsCount',
-      key: 'allowedProjectsCount',
-    },
-    {
-      title: 'Actions',
-      key: 'actions',
-      render: (_: unknown, record: UserPlan) => (
-        <div className="flex space-x-2">
-          <Button size="small" onClick={() => handleEdit(record)}>
-            Edit
-          </Button>
-          <Button size="small" danger onClick={() => handleDelete(record.id)}>
-            Delete
-          </Button>
-        </div>
-      ),
-    },
-  ];
-
   const deletingPlan = plans.find((p) => p.id === deletingPlanId);
 
   return (
@@ -330,9 +309,8 @@ export const PlansSettingsComponent = () => {
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-xl font-bold text-gray-900">Plans Management</h2>
         <Button
-          type="primary"
-          onClick={handleCreate}
           className="border-emerald-600 bg-emerald-600 hover:border-emerald-700 hover:bg-emerald-700"
+          onClick={handleCreate}
         >
           Create Plan
         </Button>
@@ -340,277 +318,314 @@ export const PlansSettingsComponent = () => {
 
       {isLoading ? (
         <div className="flex items-center py-4">
-          <Spin indicator={<LoadingOutlined spin />} />
+          <Spinner />
           <span className="ml-2 text-sm text-gray-500">Loading plans...</span>
         </div>
       ) : (
-        <Table dataSource={plans} columns={columns} rowKey="id" pagination={false} size="small" />
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Name</TableHead>
+              <TableHead>Type</TableHead>
+              <TableHead>Public</TableHead>
+              <TableHead>Allowed projects</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {plans.map((plan) => (
+              <TableRow key={plan.id}>
+                <TableCell>{plan.name}</TableCell>
+                <TableCell>
+                  <Badge variant={plan.type === UserPlanType.EXTENDED ? 'default' : 'secondary'}>
+                    {plan.type}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  <Badge variant={plan.isPublic ? 'default' : 'secondary'}>
+                    {plan.isPublic ? 'Yes' : 'No'}
+                  </Badge>
+                </TableCell>
+                <TableCell>{plan.allowedProjectsCount}</TableCell>
+                <TableCell>
+                  <div className="flex space-x-2">
+                    <Button size="sm" variant="outline" onClick={() => handleEdit(plan)}>
+                      Edit
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => handleDelete(plan.id)}
+                    >
+                      Delete
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       )}
 
       {/* Create/Edit Modal */}
-      <Modal
-        title={editingPlan ? 'Edit Plan' : 'Create Plan'}
-        open={isModalVisible}
-        onOk={handleModalOk}
-        onCancel={handleModalCancel}
-        confirmLoading={isSaving}
-        width={650}
-        okText={editingPlan ? (isUnsaved ? 'Update' : 'No Changes') : 'Create'}
-        okButtonProps={{
-          className:
-            'border-emerald-600 bg-emerald-600 hover:border-emerald-700 hover:bg-emerald-700',
-          disabled: editingPlan ? !isUnsaved : false,
-        }}
-      >
-        <div className="mt-4 space-y-3">
-          {/* Name */}
-          <div>
-            <label className="mb-1 block text-sm font-medium">
-              Name <span className="text-red-500">*</span>
-            </label>
-            <Input
-              placeholder="Plan name"
-              value={formValues.name}
-              onChange={(e) => updateFormValue('name', e.target.value)}
-            />
-          </div>
+      <Dialog open={isModalVisible} onOpenChange={(open) => { if (!open) handleModalCancel(); }}>
+        <DialogContent className="max-w-[650px]">
+          <DialogHeader>
+            <DialogTitle>{editingPlan ? 'Edit Plan' : 'Create Plan'}</DialogTitle>
+          </DialogHeader>
 
-          {/* Type */}
-          <div>
-            <label className="mb-1 block text-sm font-medium">
-              Type <span className="text-red-500">*</span>
-            </label>
-            <Select
-              placeholder="Type"
-              value={formValues.type}
-              onChange={(value) => updateFormValue('type', value)}
-              className="w-full"
-            >
-              <Select.Option value={UserPlanType.DEFAULT}>DEFAULT</Select.Option>
-              <Select.Option value={UserPlanType.EXTENDED}>EXTENDED</Select.Option>
-            </Select>
-          </div>
-
-          {/* Is public */}
-          <div>
-            <Checkbox
-              checked={formValues.isPublic}
-              onChange={(e) => updateFormValue('isPublic', e.target.checked)}
-            >
-              Is public
-            </Checkbox>
-          </div>
-
-          {/* Allowed Projects */}
-          <div>
-            <label className="mb-1 block text-sm font-medium">Allowed projects</label>
-            <div className="flex items-center space-x-2">
-              <InputNumber
-                min={0}
-                placeholder="0"
-                value={formValues.allowedProjectsCount}
-                onChange={(value) => updateFormValue('allowedProjectsCount', value)}
-                disabled={limitUnlimited.allowedProjectsUnlimited}
-                className="flex-1"
+          <div className="mt-4 space-y-3">
+            {/* Name */}
+            <div>
+              <label className="mb-1 block text-sm font-medium">
+                Name <span className="text-red-500">*</span>
+              </label>
+              <Input
+                placeholder="Plan name"
+                value={formValues.name}
+                onChange={(e) => updateFormValue('name', e.target.value)}
               />
+            </div>
 
-              <div className="flex-1 pl-3">
-                <Checkbox
-                  checked={limitUnlimited.allowedProjectsUnlimited}
+            {/* Type */}
+            <div>
+              <label className="mb-1 block text-sm font-medium">
+                Type <span className="text-red-500">*</span>
+              </label>
+              <Select
+                value={formValues.type}
+                onValueChange={(value) => updateFormValue('type', value as UserPlanType)}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={UserPlanType.DEFAULT}>DEFAULT</SelectItem>
+                  <SelectItem value={UserPlanType.EXTENDED}>EXTENDED</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Is public */}
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="isPublic"
+                checked={formValues.isPublic}
+                onCheckedChange={(checked) => updateFormValue('isPublic', checked === true)}
+              />
+              <label htmlFor="isPublic" className="text-sm font-medium">
+                Is public
+              </label>
+            </div>
+
+            {/* Allowed Projects */}
+            <div>
+              <label className="mb-1 block text-sm font-medium">Allowed projects</label>
+              <div className="flex items-center space-x-2">
+                <Input
+                  type="number"
+                  min={0}
+                  placeholder="0"
+                  value={formValues.allowedProjectsCount ?? ''}
                   onChange={(e) =>
-                    handleUnlimitedChange('allowedProjectsUnlimited', e.target.checked)
+                    updateFormValue(
+                      'allowedProjectsCount',
+                      e.target.value === '' ? null : parseInt(e.target.value),
+                    )
                   }
-                >
-                  Unlimited
-                </Checkbox>
+                  disabled={limitUnlimited.allowedProjectsUnlimited}
+                  className="flex-1"
+                />
+
+                <div className="flex flex-1 items-center space-x-2 pl-3">
+                  <Checkbox
+                    id="allowedProjectsUnlimited"
+                    checked={limitUnlimited.allowedProjectsUnlimited}
+                    onCheckedChange={(checked) =>
+                      handleUnlimitedChange('allowedProjectsUnlimited', checked === true)
+                    }
+                  />
+                  <label htmlFor="allowedProjectsUnlimited" className="text-sm">
+                    Unlimited
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            {/* Warning Text */}
+            <div>
+              <label className="mb-1 block text-sm font-medium">Warning Text</label>
+              <Textarea
+                rows={2}
+                placeholder="Optional"
+                value={formValues.warningText}
+                onChange={(e) => updateFormValue('warningText', e.target.value)}
+              />
+            </div>
+
+            {/* Upgrade Text */}
+            <div>
+              <label className="mb-1 block text-sm font-medium">Upgrade Text</label>
+              <Textarea
+                rows={2}
+                placeholder="Optional"
+                value={formValues.upgradeText}
+                onChange={(e) => updateFormValue('upgradeText', e.target.value)}
+              />
+            </div>
+
+            {/* Limit Fields */}
+            <div className="rounded border border-gray-200 p-3">
+              <h3 className="mb-2 text-sm font-semibold">Limits</h3>
+
+              <div className="space-y-2 text-sm">
+                <LimitRow
+                  label="Logs/Second:"
+                  value={formValues.logsPerSecondLimit}
+                  disabled={limitUnlimited.logsPerSecondUnlimited}
+                  onValueChange={(v) => updateFormValue('logsPerSecondLimit', v)}
+                  unlimited={limitUnlimited.logsPerSecondUnlimited}
+                  onUnlimitedChange={(c) => handleUnlimitedChange('logsPerSecondUnlimited', c)}
+                  unlimitedId="logsPerSecondUnlimited"
+                />
+
+                <LimitRow
+                  label="Max Logs:"
+                  value={formValues.maxLogsAmount}
+                  disabled={limitUnlimited.maxLogsAmountUnlimited}
+                  onValueChange={(v) => updateFormValue('maxLogsAmount', v)}
+                  unlimited={limitUnlimited.maxLogsAmountUnlimited}
+                  onUnlimitedChange={(c) => handleUnlimitedChange('maxLogsAmountUnlimited', c)}
+                  unlimitedId="maxLogsAmountUnlimited"
+                />
+
+                <LimitRow
+                  label="Max Size (MB):"
+                  value={formValues.maxLogsSizeMb}
+                  disabled={limitUnlimited.maxLogsSizeMbUnlimited}
+                  onValueChange={(v) => updateFormValue('maxLogsSizeMb', v)}
+                  unlimited={limitUnlimited.maxLogsSizeMbUnlimited}
+                  onUnlimitedChange={(c) => handleUnlimitedChange('maxLogsSizeMbUnlimited', c)}
+                  unlimitedId="maxLogsSizeMbUnlimited"
+                />
+
+                <LimitRow
+                  label="Retention (Days):"
+                  value={formValues.maxLogsLifeDays}
+                  disabled={limitUnlimited.maxLogsLifeDaysUnlimited}
+                  onValueChange={(v) => updateFormValue('maxLogsLifeDays', v)}
+                  unlimited={limitUnlimited.maxLogsLifeDaysUnlimited}
+                  onUnlimitedChange={(c) => handleUnlimitedChange('maxLogsLifeDaysUnlimited', c)}
+                  unlimitedId="maxLogsLifeDaysUnlimited"
+                />
+
+                <LimitRow
+                  label="Max Log Size (KB):"
+                  value={formValues.maxLogSizeKb}
+                  disabled={limitUnlimited.maxLogSizeKbUnlimited}
+                  onValueChange={(v) => updateFormValue('maxLogSizeKb', v)}
+                  unlimited={limitUnlimited.maxLogSizeKbUnlimited}
+                  onUnlimitedChange={(c) => handleUnlimitedChange('maxLogSizeKbUnlimited', c)}
+                  unlimitedId="maxLogSizeKbUnlimited"
+                />
               </div>
             </div>
           </div>
 
-          {/* Warning Text */}
-          <div>
-            <label className="mb-1 block text-sm font-medium">Warning Text</label>
-            <TextArea
-              rows={2}
-              placeholder="Optional"
-              value={formValues.warningText}
-              onChange={(e) => updateFormValue('warningText', e.target.value)}
-            />
-          </div>
-
-          {/* Upgrade Text */}
-          <div>
-            <label className="mb-1 block text-sm font-medium">Upgrade Text</label>
-            <TextArea
-              rows={2}
-              placeholder="Optional"
-              value={formValues.upgradeText}
-              onChange={(e) => updateFormValue('upgradeText', e.target.value)}
-            />
-          </div>
-
-          {/* Limit Fields */}
-          <div className="rounded border border-gray-200 p-3">
-            <h3 className="mb-2 text-sm font-semibold">Limits</h3>
-
-            <div className="space-y-2 text-sm">
-              <div className="flex items-center justify-between">
-                <span className="w-40 text-gray-600">Logs/Second:</span>
-
-                <div className="flex flex-1 items-center space-x-2">
-                  <InputNumber
-                    size="small"
-                    min={0}
-                    className="flex-1"
-                    disabled={limitUnlimited.logsPerSecondUnlimited}
-                    placeholder="0"
-                    value={formValues.logsPerSecondLimit}
-                    onChange={(value) => updateFormValue('logsPerSecondLimit', value)}
-                  />
-
-                  <div className="flex flex-1 items-center space-x-2 pl-3">
-                    <Checkbox
-                      checked={limitUnlimited.logsPerSecondUnlimited}
-                      onChange={(e) =>
-                        handleUnlimitedChange('logsPerSecondUnlimited', e.target.checked)
-                      }
-                    >
-                      Unlimited
-                    </Checkbox>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <span className="w-40 text-gray-600">Max Logs:</span>
-
-                <div className="flex flex-1 items-center space-x-2">
-                  <InputNumber
-                    size="small"
-                    min={0}
-                    className="flex-1"
-                    disabled={limitUnlimited.maxLogsAmountUnlimited}
-                    placeholder="0"
-                    value={formValues.maxLogsAmount}
-                    onChange={(value) => updateFormValue('maxLogsAmount', value)}
-                  />
-
-                  <div className="flex flex-1 items-center space-x-2 pl-3">
-                    <Checkbox
-                      checked={limitUnlimited.maxLogsAmountUnlimited}
-                      onChange={(e) =>
-                        handleUnlimitedChange('maxLogsAmountUnlimited', e.target.checked)
-                      }
-                    >
-                      Unlimited
-                    </Checkbox>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <span className="w-40 text-gray-600">Max Size (MB):</span>
-
-                <div className="flex flex-1 items-center space-x-2">
-                  <InputNumber
-                    size="small"
-                    min={0}
-                    className="flex-1"
-                    disabled={limitUnlimited.maxLogsSizeMbUnlimited}
-                    placeholder="0"
-                    value={formValues.maxLogsSizeMb}
-                    onChange={(value) => updateFormValue('maxLogsSizeMb', value)}
-                  />
-
-                  <div className="flex flex-1 items-center space-x-2 pl-3">
-                    <Checkbox
-                      checked={limitUnlimited.maxLogsSizeMbUnlimited}
-                      onChange={(e) =>
-                        handleUnlimitedChange('maxLogsSizeMbUnlimited', e.target.checked)
-                      }
-                    >
-                      Unlimited
-                    </Checkbox>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <span className="w-40 text-gray-600">Retention (Days):</span>
-
-                <div className="flex flex-1 items-center space-x-2">
-                  <InputNumber
-                    size="small"
-                    min={0}
-                    className="flex-1"
-                    disabled={limitUnlimited.maxLogsLifeDaysUnlimited}
-                    placeholder="0"
-                    value={formValues.maxLogsLifeDays}
-                    onChange={(value) => updateFormValue('maxLogsLifeDays', value)}
-                  />
-
-                  <div className="flex flex-1 items-center space-x-2 pl-3">
-                    <Checkbox
-                      checked={limitUnlimited.maxLogsLifeDaysUnlimited}
-                      onChange={(e) =>
-                        handleUnlimitedChange('maxLogsLifeDaysUnlimited', e.target.checked)
-                      }
-                    >
-                      Unlimited
-                    </Checkbox>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <span className="w-40 text-gray-600">Max Log Size (KB):</span>
-
-                <div className="flex flex-1 items-center space-x-2">
-                  <InputNumber
-                    size="small"
-                    min={0}
-                    className="flex-1"
-                    disabled={limitUnlimited.maxLogSizeKbUnlimited}
-                    placeholder="0"
-                    value={formValues.maxLogSizeKb}
-                    onChange={(value) => updateFormValue('maxLogSizeKb', value)}
-                  />
-
-                  <div className="flex flex-1 items-center space-x-2 pl-3">
-                    <Checkbox
-                      checked={limitUnlimited.maxLogSizeKbUnlimited}
-                      onChange={(e) =>
-                        handleUnlimitedChange('maxLogSizeKbUnlimited', e.target.checked)
-                      }
-                    >
-                      Unlimited
-                    </Checkbox>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </Modal>
+          <DialogFooter>
+            <Button variant="outline" onClick={handleModalCancel}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleModalOk}
+              disabled={isSaving || (editingPlan ? !isUnsaved : false)}
+              className="border-emerald-600 bg-emerald-600 hover:border-emerald-700 hover:bg-emerald-700"
+            >
+              {isSaving && <Spinner size="sm" className="mr-2" />}
+              {editingPlan ? (isUnsaved ? 'Update' : 'No Changes') : 'Create'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Delete Confirmation Modal */}
-      <Modal
-        title="Delete Plan"
-        open={isDeleteModalVisible}
-        onOk={confirmDelete}
-        onCancel={() => {
-          setIsDeleteModalVisible(false);
-          setDeletingPlanId(null);
-        }}
-        confirmLoading={isSaving}
-        okText="Delete"
-        okButtonProps={{ danger: true }}
-      >
-        <p>
-          Are you sure you want to delete the plan <strong>{deletingPlan?.name}</strong>? This
-          action cannot be undone.
-        </p>
-      </Modal>
+      <Dialog open={isDeleteModalVisible} onOpenChange={(open) => { if (!open) { setIsDeleteModalVisible(false); setDeletingPlanId(null); } }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Plan</DialogTitle>
+          </DialogHeader>
+          <p>
+            Are you sure you want to delete the plan <strong>{deletingPlan?.name}</strong>? This
+            action cannot be undone.
+          </p>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setIsDeleteModalVisible(false);
+                setDeletingPlanId(null);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={confirmDelete} disabled={isSaving}>
+              {isSaving && <Spinner size="sm" className="mr-2" />}
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
+
+interface LimitRowProps {
+  label: string;
+  value: number | null;
+  disabled: boolean;
+  onValueChange: (value: number | null) => void;
+  unlimited: boolean;
+  onUnlimitedChange: (checked: boolean) => void;
+  unlimitedId: string;
+}
+
+function LimitRow({
+  label,
+  value,
+  disabled,
+  onValueChange,
+  unlimited,
+  onUnlimitedChange,
+  unlimitedId,
+}: LimitRowProps) {
+  return (
+    <div className="flex items-center justify-between">
+      <span className="w-40 text-gray-600">{label}</span>
+
+      <div className="flex flex-1 items-center space-x-2">
+        <Input
+          type="number"
+          min={0}
+          className="flex-1 h-7 text-xs"
+          disabled={disabled}
+          placeholder="0"
+          value={value ?? ''}
+          onChange={(e) =>
+            onValueChange(e.target.value === '' ? null : parseInt(e.target.value))
+          }
+        />
+
+        <div className="flex flex-1 items-center space-x-2 pl-3">
+          <Checkbox
+            id={unlimitedId}
+            checked={unlimited}
+            onCheckedChange={(checked) => onUnlimitedChange(checked === true)}
+          />
+          <label htmlFor={unlimitedId} className="text-sm">
+            Unlimited
+          </label>
+        </div>
+      </div>
+    </div>
+  );
+}

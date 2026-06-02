@@ -1,9 +1,16 @@
-import { CopyOutlined, LoadingOutlined } from '@ant-design/icons';
-import { Button, Modal, Spin } from 'antd';
+import { Copy, Loader2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
 import { type Project, projectApi } from '../../../entity/projects';
 import { copyToClipboard } from '../../../shared/lib';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Spinner } from '@/components/ui/spinner';
 import { CodeUsageComponent } from './CodeUsageComponent';
 
 interface Props {
@@ -47,117 +54,126 @@ export const HowToSendLogsFromCodeComponent = ({
   const baseUrl = window.origin;
 
   return (
-    <Modal
-      title="How to send logs from code?"
-      open={true}
-      onCancel={onClose}
-      footer={null}
-      width={1000}
-      style={{ top: 20 }}
-    >
-      {!project ? (
-        <div className="flex justify-center py-8">
-          <Spin indicator={<LoadingOutlined spin />} />
-        </div>
-      ) : (
-        <div>
-          <div style={{ marginBottom: 16 }}>
-            {project.isApiKeyRequired && (
-              <div
-                style={{
-                  marginBottom: 16,
-                  padding: '8px 12px',
-                  backgroundColor: '#fff3cd',
-                  border: '1px solid #ffeaa7',
-                  borderRadius: '4px',
-                }}
-              >
-                <strong style={{ color: '#856404' }}>
-                  📝 API Key Required: This project requires an X-API-Key header. Create an API key
-                  in your project settings.
-                </strong>
-              </div>
-            )}
+    <Dialog open={true} onOpenChange={(open) => { if (!open) onClose(); }}>
+      <DialogContent className="max-w-[1000px]">
+        <DialogHeader>
+          <DialogTitle>How to send logs from code?</DialogTitle>
+        </DialogHeader>
 
-            {project.isFilterByDomain && (
-              <div
-                style={{
-                  marginBottom: 16,
-                  padding: '8px 12px',
-                  backgroundColor: '#d1ecf1',
-                  border: '1px solid #bee5eb',
-                  borderRadius: '4px',
-                }}
-              >
-                <strong style={{ color: '#0c5460' }}>
-                  🌐 Domain Filtering: This project filters by domain. Allowed domains:{' '}
-                  {project.allowedDomains.join(', ')}
-                </strong>
-              </div>
-            )}
-
-            {project.isFilterByIp && (
-              <div
-                style={{
-                  marginBottom: 16,
-                  padding: '8px 12px',
-                  backgroundColor: '#d1ecf1',
-                  border: '1px solid #bee5eb',
-                  borderRadius: '4px',
-                }}
-              >
-                <strong style={{ color: '#0c5460' }}>
-                  🔒 IP Filtering: This project filters by IP address. Allowed IPs:{' '}
-                  {project.allowedIps.join(', ')}
-                </strong>
-              </div>
-            )}
+        {!project ? (
+          <div className="flex justify-center py-8">
+            <Spinner />
           </div>
+        ) : (
+          <div>
+            <div style={{ marginBottom: 16 }}>
+              {project.isApiKeyRequired && (
+                <div
+                  style={{
+                    marginBottom: 16,
+                    padding: '8px 12px',
+                    backgroundColor: '#fff3cd',
+                    border: '1px solid #ffeaa7',
+                    borderRadius: '4px',
+                  }}
+                >
+                  <strong style={{ color: '#856404' }}>
+                    📝 API Key Required: This project requires an X-API-Key header. Create an API key
+                    in your project settings.
+                  </strong>
+                </div>
+              )}
 
-          <div className="mb-4 flex">
-            <div className="mr-5 w-80">
-              <div className="mb-1">
-                <span className="text-xs font-medium text-gray-600">LogBull URL:</span>
+              {project.isFilterByDomain && (
+                <div
+                  style={{
+                    marginBottom: 16,
+                    padding: '8px 12px',
+                    backgroundColor: '#d1ecf1',
+                    border: '1px solid #bee5eb',
+                    borderRadius: '4px',
+                  }}
+                >
+                  <strong style={{ color: '#0c5460' }}>
+                    🌐 Domain Filtering: This project filters by domain. Allowed domains:{' '}
+                    {project.allowedDomains.join(', ')}
+                  </strong>
+                </div>
+              )}
+
+              {project.isFilterByIp && (
+                <div
+                  style={{
+                    marginBottom: 16,
+                    padding: '8px 12px',
+                    backgroundColor: '#d1ecf1',
+                    border: '1px solid #bee5eb',
+                    borderRadius: '4px',
+                  }}
+                >
+                  <strong style={{ color: '#0c5460' }}>
+                    🔒 IP Filtering: This project filters by IP address. Allowed IPs:{' '}
+                    {project.allowedIps.join(', ')}
+                  </strong>
+                </div>
+              )}
+            </div>
+
+            <div className="mb-4 flex">
+              <div className="mr-5 w-80">
+                <div className="mb-1">
+                  <span className="text-xs font-medium text-gray-600">LogBull URL:</span>
+                </div>
+                <div className="flex items-center justify-between rounded border border-gray-200 bg-gray-100 px-3 py-1.5">
+                  <span className="truncate !font-mono text-xs text-gray-800">{baseUrl}</span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="ml-2 size-5 min-w-5 p-0.5 text-gray-600"
+                    onClick={() => handleCopyToClipboard(baseUrl)}
+                    disabled={copyingStates['logbull-url']}
+                  >
+                    {copyingStates['logbull-url'] ? (
+                      <Loader2 className="size-3 animate-spin" />
+                    ) : (
+                      <Copy className="size-3" />
+                    )}
+                  </Button>
+                </div>
               </div>
-              <div className="flex items-center justify-between rounded border border-gray-200 bg-gray-100 px-3 py-1.5">
-                <span className="truncate !font-mono text-xs text-gray-800">{baseUrl}</span>
-                <Button
-                  type="text"
-                  size="small"
-                  icon={<CopyOutlined />}
-                  loading={copyingStates['logbull-url']}
-                  onClick={() => handleCopyToClipboard(baseUrl)}
-                  className="ml-2 h-5 min-w-5 p-0.5 text-gray-600"
-                />
+
+              <div className="w-80">
+                <div className="mb-1">
+                  <span className="text-xs font-medium text-gray-600">Project ID:</span>
+                </div>
+                <div className="flex items-center justify-between rounded border border-gray-200 bg-gray-100 px-3 py-1.5">
+                  <span className="truncate !font-mono text-xs text-gray-800">{projectId}</span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="ml-2 size-5 min-w-5 p-0.5 text-gray-600"
+                    onClick={() => handleCopyToClipboard(projectId)}
+                    disabled={copyingStates['project-id']}
+                  >
+                    {copyingStates['project-id'] ? (
+                      <Loader2 className="size-3 animate-spin" />
+                    ) : (
+                      <Copy className="size-3" />
+                    )}
+                  </Button>
+                </div>
               </div>
             </div>
 
-            <div className="w-80">
-              <div className="mb-1">
-                <span className="text-xs font-medium text-gray-600">Project ID:</span>
-              </div>
-              <div className="flex items-center justify-between rounded border border-gray-200 bg-gray-100 px-3 py-1.5">
-                <span className="truncate !font-mono text-xs text-gray-800">{projectId}</span>
-                <Button
-                  type="text"
-                  size="small"
-                  icon={<CopyOutlined />}
-                  loading={copyingStates['project-id']}
-                  onClick={() => handleCopyToClipboard(projectId)}
-                  className="ml-2 h-5 min-w-5 p-0.5 text-gray-600"
-                />
-              </div>
-            </div>
+            <CodeUsageComponent
+              logbullHost={baseUrl}
+              logbullProjectId={projectId}
+              logbullApiKey="YOUR_API_KEY_HERE"
+              isLogBullApiKeyRequired={project.isApiKeyRequired}
+            />
           </div>
-
-          <CodeUsageComponent
-            logbullHost={baseUrl}
-            logbullProjectId={projectId}
-            logbullApiKey="YOUR_API_KEY_HERE"
-            isLogBullApiKeyRequired={project.isApiKeyRequired}
-          />
-        </div>
-      )}
-    </Modal>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 };

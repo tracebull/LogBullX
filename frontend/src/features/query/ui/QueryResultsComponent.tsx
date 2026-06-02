@@ -1,10 +1,21 @@
-import { LoadingOutlined, QuestionCircleOutlined } from '@ant-design/icons';
-import { Checkbox, Popconfirm, Spin } from 'antd';
 import dayjs from 'dayjs';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { type LogItem } from '../../../entity/query';
 import { getUserTimeFormatWithMs } from '../../../shared/time';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Spinner } from '@/components/ui/spinner';
 
 const STORAGE_KEY = 'logbull-message-length';
 
@@ -213,29 +224,42 @@ export const QueryResultsComponent = ({
                   e.preventDefault();
                 }}
               >
-                <Popconfirm
-                  title="Add this field to the query?"
-                  icon={<QuestionCircleOutlined style={{ color: '#10b981' }} />}
-                  okText="Yes"
-                  cancelText="No"
-                  okButtonProps={{ className: 'bg-emerald-600 hover:bg-emerald-700' }}
-                  onConfirm={() => {
-                    if (onAddFieldToQuery) {
-                      onAddFieldToQuery(key, log.fields?.[key] || '');
-                    }
-                  }}
-                >
-                  <div className="cursor-pointer rounded px-1 hover:bg-emerald-200">
-                    <span className="!font-mono font-medium text-gray-700">{key}:</span>{' '}
-                    <span
-                      className={`!font-mono text-gray-600 ${
-                        isJson || formatted.includes(' ') ? 'whitespace-pre-wrap' : ''
-                      }`}
-                    >
-                      {formatted}
-                    </span>
-                  </div>
-                </Popconfirm>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <div className="cursor-pointer rounded px-1 hover:bg-emerald-200">
+                      <span className="!font-mono font-medium text-gray-700">{key}:</span>{' '}
+                      <span
+                        className={`!font-mono text-gray-600 ${
+                          isJson || formatted.includes(' ') ? 'whitespace-pre-wrap' : ''
+                        }`}
+                      >
+                        {formatted}
+                      </span>
+                    </div>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Add Field to Query</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Add &quot;{key}&quot; with value &quot;{log.fields?.[key]}&quot; to the
+                        query?
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>No</AlertDialogCancel>
+                      <AlertDialogAction
+                        className="bg-emerald-600 hover:bg-emerald-700"
+                        onClick={() => {
+                          if (onAddFieldToQuery) {
+                            onAddFieldToQuery(key, log.fields?.[key] || '');
+                          }
+                        }}
+                      >
+                        Yes
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             );
           })
@@ -308,16 +332,18 @@ export const QueryResultsComponent = ({
             </div>
             <div className="flex items-center gap-2">
               <Checkbox
+                id="showFields"
                 checked={showFields}
-                onChange={(e) => setShowFields(e.target.checked)}
+                onCheckedChange={(checked) => setShowFields(checked === true)}
                 className="text-xs"
-              >
-                <span className="text-xs font-normal text-gray-500">Show fields</span>
-              </Checkbox>
+              />
+              <label htmlFor="showFields" className="text-xs font-normal text-gray-500">
+                Show fields
+              </label>
             </div>
             <span className="text-xs font-normal text-gray-500">
               {isExecuting && queryResults.length === 0 ? (
-                <Spin indicator={<LoadingOutlined spin />} size="small" />
+                <Spinner size="sm" />
               ) : (
                 `${queryResults.length.toLocaleString()}${totalResults > queryResults.length ? `+ of ${totalResults.toLocaleString()}` : ''} results${queryResults.length > 0 ? ' loaded' : ' found'}`
               )}
@@ -329,7 +355,7 @@ export const QueryResultsComponent = ({
       <div className="p-3">
         {isExecuting && queryResults.length === 0 ? (
           <div className="flex h-32 items-center justify-center">
-            <Spin indicator={<LoadingOutlined spin />} />
+            <Spinner />
             <span className="ml-2 text-sm">Executing query...</span>
           </div>
         ) : queryResults.length === 0 ? (
@@ -406,7 +432,7 @@ export const QueryResultsComponent = ({
             {/* Loading indicator for infinite scroll */}
             {isExecuting && queryResults.length > 0 && (
               <div className="flex justify-center py-2">
-                <Spin indicator={<LoadingOutlined spin />} size="small" />
+                <Spinner size="sm" />
                 <span className="ml-2 text-xs text-gray-500">Loading more results...</span>
               </div>
             )}

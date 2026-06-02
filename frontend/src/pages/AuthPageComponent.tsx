@@ -1,8 +1,7 @@
-import { LoadingOutlined } from '@ant-design/icons';
-import { Spin } from 'antd';
 import { Suspense, lazy, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router';
 
+import { Spinner } from '../components/ui/spinner';
 import { settingsApi, userApi } from '../entity/users';
 import { AuthNavbarComponent } from '../features/users';
 import { ThemeToggle } from '../features/users/ui/ThemeToggle';
@@ -65,7 +64,7 @@ export function AuthPageComponent() {
       </div>
       {isLoading ? (
         <div className="flex h-screen w-screen items-center justify-center">
-          <Spin indicator={<LoadingOutlined spin />} size="large" />
+                    <Spinner size="lg" />
         </div>
       ) : (
         <div>
@@ -76,7 +75,7 @@ export function AuthPageComponent() {
               <Suspense
                 fallback={
                   <div className="flex h-[300px] items-center justify-center">
-                    <Spin indicator={<LoadingOutlined spin />} size="large" />
+          <Spinner size="lg" />
                   </div>
                 }
               >

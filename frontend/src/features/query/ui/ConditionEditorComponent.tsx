@@ -1,12 +1,18 @@
-import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
-import { AutoComplete, DatePicker, Input, Select, Spin, Tag } from 'antd';
+import { Plus, X } from 'lucide-react';
 import dayjs from 'dayjs';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import type { ConditionNode, QueryOperator, QueryableField } from '../../../entity/query';
-import { getUserShortTimeFormat } from '../../../shared/time';
-
-const { Option } = Select;
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Spinner } from '@/components/ui/spinner';
 
 interface Props {
   fields: QueryableField[];
@@ -27,9 +33,10 @@ export const ConditionEditorComponent = ({
   const [localFields, setLocalFields] = useState<QueryableField[]>(fields);
   const [isLocalSearching, setIsLocalSearching] = useState(false);
   const [searchTimeout, setSearchTimeout] = useState<ReturnType<typeof setTimeout> | null>(null);
-
-  // Get user's time format preference
-  const timeFormat = useMemo(() => getUserShortTimeFormat(), []);
+  const [showFieldDropdown, setShowFieldDropdown] = useState(false);
+  const [fieldSearchText, setFieldSearchText] = useState('');
+  const fieldInputRef = useRef<HTMLInputElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Functions
   const debouncedSearchFields = async (searchTerm?: string) => {
@@ -244,30 +251,40 @@ export const ConditionEditorComponent = ({
               placeholder="Enter value"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              onPressEnter={handleArrayValueAdd}
-              size="small"
-              className="flex-1"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  handleArrayValueAdd();
+                }
+              }}
+              className="flex-1 h-7 text-xs"
             />
             <button
               type="button"
               onClick={handleArrayValueAdd}
               className="rounded bg-emerald-600 px-2 py-1 text-sm text-white hover:bg-emerald-700"
             >
-              <PlusOutlined />
+              <Plus className="size-3" />
             </button>
           </div>
 
           {arrayValues.length > 0 && (
             <div className="flex flex-wrap gap-1">
               {arrayValues.map((value, index) => (
-                <Tag
+                <Badge
                   key={index}
-                  closable
-                  onClose={() => handleArrayValueRemove(index)}
-                  className="border-emerald-200 bg-emerald-50"
+                  variant="secondary"
+                  className="border-emerald-200 bg-emerald-50 text-emerald-800 gap-1 pr-1"
                 >
                   {value}
-                </Tag>
+                  <button
+                    type="button"
+                    onClick={() => handleArrayValueRemove(index)}
+                    className="ml-1 rounded-full hover:bg-emerald-200 p-0.5"
+                  >
+                    <X className="size-3" />
+                  </button>
+                </Badge>
               ))}
             </div>
           )}
@@ -275,7 +292,7 @@ export const ConditionEditorComponent = ({
       );
     }
 
-    // Date picker for timestamp fields and comparison operators
+    // Date input for timestamp fields and comparison operators
     if (
       isTimestampField(condition?.field || '') &&
       [
@@ -287,20 +304,20 @@ export const ConditionEditorComponent = ({
         'not_equals',
       ].includes(currentOperator)
     ) {
+      const dateValue = condition?.value
+        ? dayjs(condition.value as string).format('YYYY-MM-DDTHH:mm')
+        : '';
+
       return (
-        <DatePicker
-          showTime={{
-            format: timeFormat.use12Hours ? 'h:mm A' : 'HH:mm',
-            use12Hours: timeFormat.use12Hours,
-          }}
-          format={timeFormat.format}
-          value={condition?.value ? dayjs(condition.value as string) : null}
-          onChange={(date) => {
-            handleValueChange(date ? date.toISOString() : '');
+        <Input
+          type="datetime-local"
+          value={dateValue}
+          onChange={(e) => {
+            const val = e.target.value;
+            handleValueChange(val ? dayjs(val).toISOString() : '');
           }}
           placeholder="Select date and time"
-          size="small"
-          className="w-full"
+          className="w-full h-7 text-xs"
         />
       );
     }
@@ -311,7 +328,7 @@ export const ConditionEditorComponent = ({
         placeholder="Enter value"
         value={(condition?.value as string) || ''}
         onChange={(e) => handleValueChange(e.target.value)}
-        size="small"
+        className="h-7 text-xs"
       />
     );
   };
@@ -338,19 +355,20 @@ export const ConditionEditorComponent = ({
     not_exists: 'does not exist',
   };
 
-  const fieldOptions = (() => {
-    const options = localFields.map((field) => ({
+  const filteredFieldOptions = (() => {
+    let options = localFields.map((field) => ({
       value: field.name,
-      label: (
-        <div className="flex items-center justify-between">
-          <span>{field.name}</span>
-          <span className="text-xs text-gray-400">{field.type}</span>
-        </div>
-      ),
+      label: field.name,
+      type: field.type,
     }));
 
+    if (fieldSearchText) {
+      const lowerSearch = fieldSearchText.toLowerCase();
+      options = options.filter((opt) => opt.value.toLowerCase().includes(lowerSearch));
+    }
+
     // If field input is empty, move "message" option to the top
-    if (!condition?.field || condition.field.trim() === '') {
+    if (!fieldSearchText) {
       const messageIndex = options.findIndex((option) => option.value === 'message');
       if (messageIndex > 0) {
         const messageOption = options.splice(messageIndex, 1)[0];
@@ -360,6 +378,23 @@ export const ConditionEditorComponent = ({
 
     return options;
   })();
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node) &&
+        fieldInputRef.current &&
+        !fieldInputRef.current.contains(event.target as Node)
+      ) {
+        setShowFieldDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     // Initialize array values if condition has array value
@@ -398,22 +433,44 @@ export const ConditionEditorComponent = ({
         <div className="col-span-4">
           <label className="mb-1 block text-xs font-medium text-gray-600">Field</label>
           <div className="relative">
-            <AutoComplete
+            <Input
+              ref={fieldInputRef}
               value={condition?.field || ''}
-              onChange={handleFieldChange}
-              onSearch={debouncedSearchFields}
-              options={fieldOptions}
+              onChange={(e) => {
+                const val = e.target.value;
+                setFieldSearchText(val);
+                setShowFieldDropdown(true);
+                debouncedSearchFields(val);
+              }}
+              onFocus={() => setShowFieldDropdown(true)}
               placeholder="Type or select field name"
-              size="small"
-              className="w-full"
-              allowClear
-              backfill={false}
-              notFoundContent={null}
-              filterOption={false}
+              className="w-full h-7 text-xs pr-7"
             />
             {isLocalSearching && (
               <div className="absolute top-1/2 right-2 -translate-y-1/2">
-                <Spin indicator={<LoadingOutlined spin style={{ fontSize: 14 }} />} />
+                <Spinner size="sm" />
+              </div>
+            )}
+            {showFieldDropdown && filteredFieldOptions.length > 0 && (
+              <div
+                ref={dropdownRef}
+                className="absolute z-50 mt-1 max-h-48 w-full overflow-y-auto rounded-md border border-gray-200 bg-white shadow-lg"
+              >
+                {filteredFieldOptions.map((option) => (
+                  <div
+                    key={option.value}
+                    className="flex cursor-pointer items-center justify-between px-3 py-1.5 text-xs hover:bg-emerald-50"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      setFieldSearchText('');
+                      setShowFieldDropdown(false);
+                      handleFieldChange(option.value);
+                    }}
+                  >
+                    <span>{option.label}</span>
+                    <span className="text-gray-400">{option.type}</span>
+                  </div>
+                ))}
               </div>
             )}
           </div>
@@ -424,15 +481,18 @@ export const ConditionEditorComponent = ({
           <label className="mb-1 block text-xs font-medium text-gray-600">Operator</label>
           <Select
             value={currentOperator}
-            onChange={handleOperatorChange}
-            size="small"
-            className="w-full"
+            onValueChange={(val) => handleOperatorChange(val as QueryOperator)}
           >
-            {currentField?.operations.map((op) => (
-              <Option key={op} value={op}>
-                {operatorDisplayNames[op]}
-              </Option>
-            ))}
+            <SelectTrigger className="h-7 text-xs w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {currentField?.operations.map((op) => (
+                <SelectItem key={op} value={op}>
+                  {operatorDisplayNames[op]}
+                </SelectItem>
+              ))}
+            </SelectContent>
           </Select>
         </div>
 

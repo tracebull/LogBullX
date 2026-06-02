@@ -1,5 +1,3 @@
-import { LoadingOutlined } from '@ant-design/icons';
-import { App, Button, Spin, Switch } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useRef, useState } from 'react';
 
@@ -8,6 +6,10 @@ import { queryApi } from '../../../entity/query/api/queryApi';
 import type { LogsStats } from '../../../entity/query/model/ProjectLogStats';
 import { settingsApi } from '../../../entity/users/api/settingsApi';
 import type { UsersSettings } from '../../../entity/users/model/UsersSettings';
+import { toastMessage } from '../../../shared/lib/toastMessage';
+import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
+import { Switch } from '@/components/ui/switch';
 import { AuditLogsComponent } from './AuditLogsComponent';
 import { PlansSettingsComponent } from './PlansSettingsComponent';
 
@@ -16,7 +18,6 @@ interface Props {
 }
 
 export function SettingsComponent({ contentHeight }: Props) {
-  const { message } = App.useApp();
   const [settings, setSettings] = useState<UsersSettings | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -51,7 +52,7 @@ export function SettingsComponent({ contentHeight }: Props) {
       setHasChanges(false);
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to load settings';
-      message.error(errorMessage);
+      toastMessage.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -66,7 +67,7 @@ export function SettingsComponent({ contentHeight }: Props) {
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error ? error.message : 'Failed to load system statistics';
-      message.error(errorMessage);
+      toastMessage.error(errorMessage);
     } finally {
       setIsLoadingStats(false);
     }
@@ -96,10 +97,10 @@ export function SettingsComponent({ contentHeight }: Props) {
       setSettings(updatedSettings);
       setFormSettings(updatedSettings);
       setHasChanges(false);
-      message.success('Settings updated successfully');
+      toastMessage.success('Settings updated successfully');
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to update settings';
-      message.error(errorMessage);
+      toastMessage.error(errorMessage);
     } finally {
       setIsSaving(false);
     }
@@ -111,8 +112,6 @@ export function SettingsComponent({ contentHeight }: Props) {
       setHasChanges(false);
     }
   };
-
-  console.log(`isCloud = ${IS_CLOUD}`);
 
   return (
     <div className="flex grow pl-3">
@@ -127,7 +126,7 @@ export function SettingsComponent({ contentHeight }: Props) {
           <div className="mt-6">
             {isLoading ? (
               <div>
-                <Spin indicator={<LoadingOutlined spin />} />
+                <Spinner />
               </div>
             ) : (
               <div className="max-w-lg text-sm">
@@ -145,14 +144,10 @@ export function SettingsComponent({ contentHeight }: Props) {
                     <div className="ml-4">
                       <Switch
                         checked={formSettings.isAllowExternalRegistrations}
-                        onChange={(checked) =>
+                        onCheckedChange={(checked) =>
                           handleSettingChange('isAllowExternalRegistrations', checked)
                         }
-                        style={{
-                          backgroundColor: formSettings.isAllowExternalRegistrations
-                            ? '#059669'
-                            : undefined,
-                        }}
+                        className="data-[state=checked]:bg-emerald-600"
                       />
                     </div>
                   </div>
@@ -172,14 +167,10 @@ export function SettingsComponent({ contentHeight }: Props) {
                       <div className="ml-4">
                         <Switch
                           checked={formSettings.isAllowMemberInvitations}
-                          onChange={(checked) =>
+                          onCheckedChange={(checked) =>
                             handleSettingChange('isAllowMemberInvitations', checked)
                           }
-                          style={{
-                            backgroundColor: formSettings.isAllowMemberInvitations
-                              ? '#059669'
-                              : undefined,
-                          }}
+                          className="data-[state=checked]:bg-emerald-600"
                         />
                       </div>
                     </div>
@@ -198,14 +189,10 @@ export function SettingsComponent({ contentHeight }: Props) {
                     <div className="ml-4">
                       <Switch
                         checked={formSettings.isMemberAllowedToCreateProjects}
-                        onChange={(checked) =>
+                        onCheckedChange={(checked) =>
                           handleSettingChange('isMemberAllowedToCreateProjects', checked)
                         }
-                        style={{
-                          backgroundColor: formSettings.isMemberAllowedToCreateProjects
-                            ? '#059669'
-                            : undefined,
-                        }}
+                        className="data-[state=checked]:bg-emerald-600"
                       />
                     </div>
                   </div>
@@ -215,16 +202,15 @@ export function SettingsComponent({ contentHeight }: Props) {
                 {hasChanges && (
                   <div className="mt-8 flex space-x-2">
                     <Button
-                      type="primary"
                       onClick={handleSave}
-                      loading={isSaving}
                       disabled={isSaving}
                       className="border-emerald-600 bg-emerald-600 hover:border-emerald-700 hover:bg-emerald-700"
                     >
+                      {isSaving && <Spinner size="sm" className="mr-2" />}
                       {isSaving ? 'Saving...' : 'Save Changes'}
                     </Button>
 
-                    <Button type="default" onClick={handleReset} disabled={isSaving}>
+                    <Button variant="outline" onClick={handleReset} disabled={isSaving}>
                       Reset
                     </Button>
                   </div>
@@ -264,14 +250,14 @@ export function SettingsComponent({ contentHeight }: Props) {
                   {getApplicationServer()}/api/v1/downdetect/is-available
                 </code>
                 <Button
-                  type="text"
-                  size="small"
+                  variant="ghost"
+                  size="sm"
                   className="ml-2 opacity-0 transition-opacity group-hover:opacity-100"
                   onClick={() => {
                     navigator.clipboard.writeText(
                       `${getApplicationServer()}/api/v1/downdetect/is-available`,
                     );
-                    message.success('Health-check endpoint copied to clipboard');
+                    toastMessage.success('Health-check endpoint copied to clipboard');
                   }}
                 >
                   📋
@@ -288,7 +274,7 @@ export function SettingsComponent({ contentHeight }: Props) {
             <h2 className="mb-4 text-xl font-bold text-gray-900">System statistics</h2>
             {isLoadingStats ? (
               <div className="flex items-center py-2">
-                <Spin indicator={<LoadingOutlined spin />} />
+                <Spinner />
                 <span className="ml-2 text-sm text-gray-500">Loading statistics...</span>
               </div>
             ) : systemStats ? (

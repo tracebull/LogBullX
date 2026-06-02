@@ -1,5 +1,4 @@
-import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Select } from 'antd';
+import { Plus, Trash2 } from 'lucide-react';
 import React from 'react';
 
 import type {
@@ -8,6 +7,14 @@ import type {
   QueryNode,
   QueryableField,
 } from '../../../entity/query';
+import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { ConditionEditorComponent } from './ConditionEditorComponent';
 
 interface Props {
@@ -213,13 +220,13 @@ export const QueryBuilderComponent = ({
 
             {path.length > 0 && (
               <Button
-                type="text"
-                size="small"
-                icon={<DeleteOutlined />}
+                variant="ghost"
+                size="icon"
+                className="flex-shrink-0 size-8 text-destructive hover:text-destructive"
                 onClick={() => removeNode(path)}
-                danger
-                className="flex-shrink-0"
-              />
+              >
+                <Trash2 className="size-4" />
+              </Button>
             )}
           </div>
         </div>
@@ -238,19 +245,22 @@ export const QueryBuilderComponent = ({
                 <div className="flex items-center gap-2">
                   <Select
                     value={node.logic.operator}
-                    onChange={(operator: LogicalOperator) => {
+                    onValueChange={(operator: LogicalOperator) => {
                       const updatedNode = {
                         ...node,
                         logic: { ...node.logic!, operator },
                       };
                       updateNode(path, updatedNode);
                     }}
-                    size="small"
-                    className="w-20"
                   >
-                    <Select.Option value="and">AND</Select.Option>
-                    <Select.Option value="or">OR</Select.Option>
-                    <Select.Option value="not">NOT</Select.Option>
+                    <SelectTrigger className="h-7 w-20 text-xs">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="and">AND</SelectItem>
+                      <SelectItem value="or">OR</SelectItem>
+                      <SelectItem value="not">NOT</SelectItem>
+                    </SelectContent>
                   </Select>
                   <span className="text-xs text-gray-500">
                     ({node.logic.children.length} condition
@@ -260,12 +270,13 @@ export const QueryBuilderComponent = ({
 
                 {path.length > 0 && (
                   <Button
-                    type="text"
-                    size="small"
-                    icon={<DeleteOutlined />}
+                    variant="ghost"
+                    size="icon"
+                    className="size-8 text-destructive hover:text-destructive"
                     onClick={() => removeNode(path)}
-                    danger
-                  />
+                  >
+                    <Trash2 className="size-4" />
+                  </Button>
                 )}
               </div>
             </div>
@@ -279,9 +290,8 @@ export const QueryBuilderComponent = ({
                 {(node.logic.operator !== 'not' || node.logic.children.length === 0) && (
                   <div className="flex justify-start pt-2">
                     <Button
-                      type="dashed"
-                      size="small"
-                      icon={<PlusOutlined />}
+                      variant="outline"
+                      size="sm"
                       onClick={() => {
                         const newCondition = createEmptyCondition();
                         const updatedNode = {
@@ -295,6 +305,7 @@ export const QueryBuilderComponent = ({
                       }}
                       disabled={node.logic.operator === 'not' && node.logic.children.length >= 1}
                     >
+                      <Plus className="mr-1 size-3" />
                       Add Condition
                     </Button>
                   </div>
@@ -308,8 +319,6 @@ export const QueryBuilderComponent = ({
 
     return <div key={`unknown-${path.join('-')}`}>Unknown node type</div>;
   };
-
-  // Always show the query builder, even with no fields - users can enter custom field names
 
   return (
     <div className="space-y-4">
@@ -328,28 +337,30 @@ export const QueryBuilderComponent = ({
       <div className="flex justify-center">
         <div className="flex flex-wrap gap-2">
           <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={handleAddCondition}
             className="border-emerald-600 bg-emerald-600 hover:border-emerald-700 hover:bg-emerald-700"
+            onClick={handleAddCondition}
           >
+            <Plus className="mr-1 size-4" />
             Add Condition
           </Button>
 
-          <Button icon={<PlusOutlined />} onClick={() => handleAddLogicalGroup('and')}>
+          <Button variant="outline" onClick={() => handleAddLogicalGroup('and')}>
+            <Plus className="mr-1 size-4" />
             Add AND Group
           </Button>
 
-          <Button icon={<PlusOutlined />} onClick={() => handleAddLogicalGroup('or')}>
+          <Button variant="outline" onClick={() => handleAddLogicalGroup('or')}>
+            <Plus className="mr-1 size-4" />
             Add OR Group
           </Button>
 
-          <Button icon={<PlusOutlined />} onClick={() => handleAddLogicalGroup('not')}>
+          <Button variant="outline" onClick={() => handleAddLogicalGroup('not')}>
+            <Plus className="mr-1 size-4" />
             Add NOT Group
           </Button>
 
           {query && (
-            <Button danger onClick={() => onChange(null)}>
+            <Button variant="destructive" onClick={() => onChange(null)}>
               Clear All
             </Button>
           )}

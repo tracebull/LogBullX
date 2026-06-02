@@ -1,11 +1,15 @@
-import { ClockCircleOutlined } from '@ant-design/icons';
-import { DatePicker, Select } from 'antd';
+import { Clock } from 'lucide-react';
 import dayjs from 'dayjs';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { getUserShortTimeFormat } from '../../../shared/time';
-
-const { RangePicker } = DatePicker;
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 export interface TimeRange {
   from: dayjs.Dayjs;
@@ -122,15 +126,18 @@ export const TimeRangePickerComponent = ({
 }: Props): React.JSX.Element => {
   // States
   const [selectedPreset, setSelectedPreset] = useState<string>('24h');
-  const [customRange, setCustomRange] = useState<[dayjs.Dayjs, dayjs.Dayjs] | null>(null);
-
-  // Get user's time format preference
-  const timeFormat = useMemo(() => getUserShortTimeFormat(), []);
+  const [customFrom, setCustomFrom] = useState<string>('');
+  const [customTo, setCustomTo] = useState<string>('');
 
   // Functions
+  const getCustomRange = (): TimeRange | null => {
+    if (!customFrom || !customTo) return null;
+    return { from: dayjs(customFrom), to: dayjs(customTo) };
+  };
+
   const getCurrentRange = (): TimeRange | null => {
     if (selectedPreset === 'custom') {
-      return customRange ? { from: customRange[0], to: customRange[1] } : null;
+      return getCustomRange();
     }
 
     const preset = presets.find((p) => p.value === selectedPreset);
@@ -158,7 +165,7 @@ export const TimeRangePickerComponent = ({
 
     if (presetValue === 'custom') {
       // Keep custom range if available, otherwise notify parent with null
-      const range = customRange ? { from: customRange[0], to: customRange[1] } : null;
+      const range = getCustomRange();
       onChange(range);
     } else {
       // Calculate and notify parent with preset range
@@ -170,12 +177,17 @@ export const TimeRangePickerComponent = ({
     }
   };
 
-  const handleCustomRangeChange = (dates: [dayjs.Dayjs, dayjs.Dayjs] | null) => {
-    setCustomRange(dates);
+  const handleCustomFromChange = (value: string) => {
+    setCustomFrom(value);
+    if (selectedPreset === 'custom' && value && customTo) {
+      onChange({ from: dayjs(value), to: dayjs(customTo) });
+    }
+  };
 
-    if (selectedPreset === 'custom') {
-      const range = dates ? { from: dates[0], to: dates[1] } : null;
-      onChange(range);
+  const handleCustomToChange = (value: string) => {
+    setCustomTo(value);
+    if (selectedPreset === 'custom' && customFrom && value) {
+      onChange({ from: dayjs(customFrom), to: dayjs(value) });
     }
   };
 
@@ -192,7 +204,7 @@ export const TimeRangePickerComponent = ({
     if (onGetCurrentRange) {
       onGetCurrentRange(getCurrentRange);
     }
-  }, [selectedPreset, customRange, onGetCurrentRange]);
+  }, [selectedPreset, customFrom, customTo, onGetCurrentRange]);
 
   useEffect(() => {
     if (onGetRangeHelpers) {
@@ -201,25 +213,26 @@ export const TimeRangePickerComponent = ({
         refreshRange,
       });
     }
-  }, [selectedPreset, customRange, onGetRangeHelpers]);
+  }, [selectedPreset, customFrom, customTo, onGetRangeHelpers]);
 
   return (
     <div className="space-y-3">
       <div>
         <label className="mb-1 block text-sm font-medium text-gray-700">Time Range</label>
-        <Select
-          value={selectedPreset}
-          onChange={handlePresetChange}
-          className="w-48"
-          suffixIcon={<ClockCircleOutlined />}
-        >
-          <Select.Option value="custom">Custom Range</Select.Option>
+        <Select value={selectedPreset} onValueChange={handlePresetChange}>
+          <SelectTrigger className="w-48">
+            <Clock className="mr-2 size-4 opacity-50" />
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="custom">Custom Range</SelectItem>
 
-          {presets.map((preset) => (
-            <Select.Option key={preset.value} value={preset.value}>
-              {preset.label}
-            </Select.Option>
-          ))}
+            {presets.map((preset) => (
+              <SelectItem key={preset.value} value={preset.value}>
+                {preset.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
         </Select>
       </div>
 
@@ -228,22 +241,23 @@ export const TimeRangePickerComponent = ({
           <label className="mb-1 block text-sm font-medium text-gray-700">
             Select Custom Time Range
           </label>
-          <RangePicker
-            showTime={{
-              format: timeFormat.use12Hours ? 'h:mm A' : 'HH:mm',
-              use12Hours: timeFormat.use12Hours,
-            }}
-            value={customRange}
-            onChange={(dates) => {
-              const validDates =
-                dates && dates[0] && dates[1]
-                  ? ([dates[0], dates[1]] as [dayjs.Dayjs, dayjs.Dayjs])
-                  : null;
-              handleCustomRangeChange(validDates);
-            }}
-            placeholder={['Start time', 'End time']}
-            className="w-96"
-          />
+          <div className="flex items-center gap-2">
+            <Input
+              type="datetime-local"
+              value={customFrom}
+              onChange={(e) => handleCustomFromChange(e.target.value)}
+              placeholder="Start time"
+              className="w-48"
+            />
+            <span className="text-gray-400">to</span>
+            <Input
+              type="datetime-local"
+              value={customTo}
+              onChange={(e) => handleCustomToChange(e.target.value)}
+              placeholder="End time"
+              className="w-48"
+            />
+          </div>
         </div>
       )}
     </div>

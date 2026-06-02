@@ -1,20 +1,26 @@
-import { LoadingOutlined } from '@ant-design/icons';
-import { App, Spin, Table } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { auditLogApi } from '../../../entity/audit-logs/api/auditLogApi';
 import type { AuditLog } from '../../../entity/audit-logs/model/AuditLog';
 import type { GetAuditLogsRequest } from '../../../entity/audit-logs/model/GetAuditLogsRequest';
+import { toastMessage } from '../../../shared/lib/toastMessage';
 import { getUserShortTimeFormat } from '../../../shared/time';
+import { Spinner } from '@/components/ui/spinner';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 
 interface Props {
   scrollContainerRef?: React.RefObject<HTMLDivElement | null>;
 }
 
 export function AuditLogsComponent({ scrollContainerRef: externalScrollRef }: Props) {
-  const { message } = App.useApp();
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -87,7 +93,7 @@ export function AuditLogsComponent({ scrollContainerRef: externalScrollRef }: Pr
       setHasMore(response.auditLogs.length === pageSize);
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to load audit logs';
-      message.error(errorMessage);
+      toastMessage.error(errorMessage);
     } finally {
       loadingRef.current = false;
       setIsLoading(false);
@@ -95,68 +101,25 @@ export function AuditLogsComponent({ scrollContainerRef: externalScrollRef }: Pr
     }
   };
 
-  const columns: ColumnsType<AuditLog> = [
-    {
-      title: 'User',
-      key: 'user',
-      width: 300,
-      render: (_, record: AuditLog) => {
-        if (!record.userEmail && !record.userName) {
-          return (
-            <span className="inline-block rounded-full bg-gray-100 px-1.5 py-0.5 text-xs font-medium text-gray-600">
-              System
-            </span>
-          );
-        }
-
-        const displayText = record.userName
-          ? `${record.userName} (${record.userEmail})`
-          : record.userEmail;
-
-        return (
-          <span className="inline-block rounded-full bg-emerald-100 px-1.5 py-0.5 text-xs font-medium text-emerald-800">
-            {displayText}
-          </span>
-        );
-      },
-    },
-    {
-      title: 'Message',
-      dataIndex: 'message',
-      key: 'message',
-      render: (message: string) => <span className="text-xs text-gray-900">{message}</span>,
-    },
-    {
-      title: 'Project',
-      dataIndex: 'projectName',
-      key: 'projectName',
-      width: 200,
-      render: (projectId: string | undefined) => (
-        <span
-          className={`inline-block rounded-full px-1.5 py-0.5 text-xs font-medium ${
-            projectId ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-600'
-          }`}
-        >
-          {projectId || '-'}
+  const renderUser = (record: AuditLog) => {
+    if (!record.userEmail && !record.userName) {
+      return (
+        <span className="inline-block rounded-full bg-gray-100 px-1.5 py-0.5 text-xs font-medium text-gray-600">
+          System
         </span>
-      ),
-    },
-    {
-      title: 'Created',
-      dataIndex: 'createdAt',
-      key: 'createdAt',
-      width: 250,
-      render: (createdAt: string) => {
-        const date = dayjs(createdAt);
-        const timeFormat = getUserShortTimeFormat();
-        return (
-          <span className="text-xs text-gray-700">
-            {`${date.format(timeFormat.format)} (${date.fromNow()})`}
-          </span>
-        );
-      },
-    },
-  ];
+      );
+    }
+
+    const displayText = record.userName
+      ? `${record.userName} (${record.userEmail})`
+      : record.userEmail;
+
+    return (
+      <span className="inline-block rounded-full bg-emerald-100 px-1.5 py-0.5 text-xs font-medium text-emerald-800">
+        {displayText}
+      </span>
+    );
+  };
 
   return (
     <div className="max-w-[1200px]">
@@ -164,7 +127,7 @@ export function AuditLogsComponent({ scrollContainerRef: externalScrollRef }: Pr
         <h2 className="text-xl font-bold">Audit Logs</h2>
         <div className="text-sm text-gray-500">
           {isLoading ? (
-            <Spin indicator={<LoadingOutlined spin />} />
+            <Spinner size="sm" />
           ) : (
             `${auditLogs.length} of ${total} logs`
           )}
@@ -173,22 +136,54 @@ export function AuditLogsComponent({ scrollContainerRef: externalScrollRef }: Pr
 
       {isLoading ? (
         <div className="flex h-64 items-center justify-center">
-          <Spin indicator={<LoadingOutlined spin />} size="large" />
+          <Spinner size="lg" />
         </div>
       ) : (
         <>
-          <Table
-            columns={columns}
-            dataSource={auditLogs}
-            pagination={false}
-            rowKey="id"
-            size="small"
-            className="mb-4"
-          />
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[300px]">User</TableHead>
+                <TableHead>Message</TableHead>
+                <TableHead className="w-[200px]">Project</TableHead>
+                <TableHead className="w-[250px]">Created</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {auditLogs.map((record) => {
+                const date = dayjs(record.createdAt);
+                const tf = getUserShortTimeFormat();
+                return (
+                  <TableRow key={record.id}>
+                    <TableCell>{renderUser(record)}</TableCell>
+                    <TableCell>
+                      <span className="text-xs text-gray-900">{record.message}</span>
+                    </TableCell>
+                    <TableCell>
+                      <span
+                        className={`inline-block rounded-full px-1.5 py-0.5 text-xs font-medium ${
+                          record.projectName
+                            ? 'bg-blue-100 text-blue-800'
+                            : 'bg-gray-100 text-gray-600'
+                        }`}
+                      >
+                        {record.projectName || '-'}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-xs text-gray-700">
+                        {`${date.format(tf.format)} (${date.fromNow()})`}
+                      </span>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
 
           {isLoadingMore && (
             <div className="flex justify-center py-4">
-              <Spin indicator={<LoadingOutlined spin />} />
+              <Spinner />
               <span className="ml-2 text-sm text-gray-500">Loading more logs...</span>
             </div>
           )}
