@@ -5,6 +5,7 @@ import { useSearchParams } from 'react-router';
 
 import { settingsApi, userApi } from '../entity/users';
 import { AuthNavbarComponent } from '../features/users';
+import { ThemeToggle } from '../features/users/ui/ThemeToggle';
 
 const AdminPasswordComponent = lazy(() =>
   import('../features/users/ui/AdminPasswordComponent').then((m) => ({
@@ -59,6 +60,9 @@ export function AuthPageComponent() {
 
   return (
     <div>
+      <div className="fixed right-4 bottom-4 z-50">
+        <ThemeToggle />
+      </div>
       {isLoading ? (
         <div className="flex h-screen w-screen items-center justify-center">
           <Spin indicator={<LoadingOutlined spin />} size="large" />

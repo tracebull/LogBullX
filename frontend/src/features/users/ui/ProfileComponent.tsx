@@ -200,7 +200,7 @@ export function ProfileComponent({ contentHeight }: Props) {
     <div className="flex grow pl-3">
       <div className="w-full">
         <div
-          className="grow overflow-y-auto rounded bg-white p-5 shadow"
+          className="grow overflow-y-auto rounded bg-card p-5 shadow"
           style={{ height: contentHeight }}
         >
           <h1 className="text-2xl font-bold">Profile</h1>
@@ -212,7 +212,7 @@ export function ProfileComponent({ contentHeight }: Props) {
                   <h3 className="mb-4 text-lg font-semibold">Profile Information</h3>
                   <div className="max-w-md">
                     <div className="mb-2 text-xs font-semibold">User ID</div>
-                    <div className="mb-4 text-sm text-gray-600">{user.id}</div>
+                    <div className="mb-4 text-sm text-muted-foreground">{user.id}</div>
 
                     <div className="mb-1 text-xs font-semibold">Name</div>
                     <Input
@@ -240,7 +240,7 @@ export function ProfileComponent({ contentHeight }: Props) {
                       disabled={user.email === 'admin'}
                     />
                     {user.email === 'admin' && (
-                      <div className="mb-4 text-xs text-gray-500">
+                      <div className="mb-4 text-xs text-muted-foreground">
                         Admin email cannot be changed
                       </div>
                     )}

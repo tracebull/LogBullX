@@ -141,6 +141,10 @@ div, p, span, a, button, input, textarea, select, option, label, h1, h2, h3, h4,
 *::-webkit-scrollbar-thumb { background: #adadad; border-radius: 360px; }
 *::-webkit-scrollbar-thumb:hover { background: #555; cursor: pointer; }
 
+.dark *::-webkit-scrollbar-track { background: #2a2a2a; }
+.dark *::-webkit-scrollbar-thumb { background: #555; border-radius: 360px; }
+.dark *::-webkit-scrollbar-thumb:hover { background: #888; cursor: pointer; }
+
 code, code * {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
 }
