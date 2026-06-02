@@ -31,7 +31,7 @@ const (
 )
 
 type LogReceivingService struct {
-	logRepository    *logs_core.LogCoreRepository
+	logRepository    logs_core.LogStorage
 	rateLimiter      *rate_limit.RateLimiter
 	projectService   *projects_services.ProjectService
 	apiKeyService    *api_keys_services.ApiKeyService

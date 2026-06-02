@@ -11,12 +11,12 @@ import (
 var rateLimiter = rate_limit.NewRateLimiter()
 
 var logWorkerService = NewLogWorkerService(
-	logs_core.GetLogCoreRepository(),
+	logs_core.GetLogStorage(),
 	logger.GetLogger(),
 )
 
 var logReceivingService = &LogReceivingService{
-	logs_core.GetLogCoreRepository(),
+	logs_core.GetLogStorage(),
 	rateLimiter,
 	projects_services.GetProjectService(),
 	api_keys.GetApiKeyService(),

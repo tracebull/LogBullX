@@ -90,7 +90,7 @@ func GetFirstProjectID(testLogEntries map[uuid.UUID][]*logs_core.LogItem) uuid.U
 
 func StoreTestLogsAndFlush(
 	t *testing.T,
-	repository *logs_core.LogCoreRepository,
+	repository logs_core.LogStorage,
 	testLogEntries map[uuid.UUID][]*logs_core.LogItem,
 ) {
 	storeErr := repository.StoreLogsBatch(testLogEntries)
@@ -175,7 +175,7 @@ func MergeLogEntries(
 
 func WaitForLogsDeletion(
 	t *testing.T,
-	repository *logs_core.LogCoreRepository,
+	repository logs_core.LogStorage,
 	projectID uuid.UUID,
 	query *logs_core.LogQueryRequestDTO,
 	timeout time.Duration,
@@ -205,7 +205,7 @@ func WaitForLogsDeletion(
 
 func WaitForLogsPartialDeletion(
 	t *testing.T,
-	repository *logs_core.LogCoreRepository,
+	repository logs_core.LogStorage,
 	projectID uuid.UUID,
 	query *logs_core.LogQueryRequestDTO,
 	expectedCount int64,
@@ -236,7 +236,7 @@ func WaitForLogsPartialDeletion(
 
 func WaitForLogsToAppear(
 	t *testing.T,
-	repository *logs_core.LogCoreRepository,
+	repository logs_core.LogStorage,
 	projectID uuid.UUID,
 	expectedCount int64,
 	timeoutMs int,
@@ -273,7 +273,7 @@ func WaitForLogsToAppear(
 
 func WaitForSystemLogsToAppear(
 	t *testing.T,
-	repository *logs_core.LogCoreRepository,
+	repository logs_core.LogStorage,
 	minExpectedCount int64,
 	timeoutMs int,
 ) *logs_core.LogsStatsDTO {

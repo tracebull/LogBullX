@@ -17,7 +17,7 @@ var queryValidator = &QueryValidator{
 }
 
 var logQueryService = &LogQueryService{
-	logs_core.GetLogCoreRepository(),
+	logs_core.GetLogStorage(),
 	projects_services.GetProjectService(),
 	concurrentQueryLimiter,
 	queryValidator,

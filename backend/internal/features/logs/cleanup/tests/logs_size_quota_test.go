@@ -41,7 +41,7 @@ func Test_EnforceProjectQuotas_WhenStorageSizeExceedsMaxLogsSizeMB_DeletesOldest
 	projects_testing.UpdateProject(project, updateData, owner.Token, router)
 
 	// Get repository and cleanup service
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	cleanupService := logs_cleanup.GetLogCleanupBackgroundService()
 
 	// Create test timestamps
@@ -156,7 +156,7 @@ func Test_EnforceProjectQuotas_WhenStorageSizeIsWithinMaxLogsSizeMB_NoLogsDelete
 	projects_testing.UpdateProject(project, updateData, owner.Token, router)
 
 	// Get repository and cleanup service
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	cleanupService := logs_cleanup.GetLogCleanupBackgroundService()
 
 	// Create test timestamps
@@ -263,7 +263,7 @@ func Test_EnforceProjectQuotas_WhenMaxLogsSizeMBIsZero_NoSizeQuotaEnforcement(t 
 	projects_testing.UpdateProject(project, updateData, owner.Token, router)
 
 	// Get repository and cleanup service
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	cleanupService := logs_cleanup.GetLogCleanupBackgroundService()
 
 	// Create test timestamps
@@ -375,7 +375,7 @@ func Test_EnforceProjectQuotas_WhenStorageSizeExceedsQuota_DeletesToNinetyPercen
 	projects_testing.UpdateProject(project, updateData, owner.Token, router)
 
 	// Get repository and cleanup service
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	cleanupService := logs_cleanup.GetLogCleanupBackgroundService()
 
 	// Create test timestamps
@@ -518,7 +518,7 @@ func Test_EnforceProjectQuotas_WithDifferentProjectsSizeQuotas_DeletesOnlyTarget
 	projects_testing.UpdateProject(project2, updateData2, owner2.Token, router)
 
 	// Get repository and cleanup service
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	cleanupService := logs_cleanup.GetLogCleanupBackgroundService()
 
 	// Create test timestamps

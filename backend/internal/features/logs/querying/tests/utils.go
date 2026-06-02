@@ -283,7 +283,7 @@ func WaitForLogsToBeIndexed(
 	pollInterval := 100 * time.Millisecond
 	startTime := time.Now()
 
-	err := logs_core.GetLogCoreRepository().ForceFlush()
+	err := logs_core.GetLogStorage().ForceFlush()
 	if err != nil {
 		t.Fatalf("Failed to flush logs: %v", err)
 	}

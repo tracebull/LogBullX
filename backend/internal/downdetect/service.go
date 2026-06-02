@@ -9,22 +9,19 @@ import (
 )
 
 type DowndetectService struct {
-	logCoreRepository *logs_core.LogCoreRepository
+	logStorage logs_core.LogStorage
 }
 
 func (s *DowndetectService) IsAvailable() error {
-	// Check database connection
 	if err := storage.GetDb().Exec("SELECT 1").Error; err != nil {
 		return fmt.Errorf("database check failed: %w", err)
 	}
 
-	// Check Valkey cache connection
 	if err := s.testCacheConnection(); err != nil {
 		return fmt.Errorf("cache check failed: %w", err)
 	}
 
-	// Check log storage connection
-	if err := s.logCoreRepository.HealthCheck(); err != nil {
+	if err := s.logStorage.HealthCheck(); err != nil {
 		return fmt.Errorf("log storage check failed: %w", err)
 	}
 

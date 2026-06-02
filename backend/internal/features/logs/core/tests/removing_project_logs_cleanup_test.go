@@ -25,7 +25,7 @@ func Test_LogsCleanedUpOnProjectDeletion(t *testing.T) {
 
 	router := createProjectDeletionTestRouter()
 	owner := users_testing.CreateTestUser(users_enums.UserRoleMember)
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 
 	uniqueID := uuid.New().String()
 	projectName := fmt.Sprintf("Project Deletion Test %s", uniqueID[:8])

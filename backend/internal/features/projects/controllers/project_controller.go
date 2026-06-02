@@ -227,7 +227,7 @@ func (c *ProjectController) DeleteProject(ctx *gin.Context) {
 // @Param limit query int false "Limit number of results" default(100)
 // @Param offset query int false "Offset for pagination" default(0)
 // @Param beforeDate query string false "Filter logs created before this date (RFC3339 format)" format(date-time)
-// @Success 200 {object} audit_logs.GetAuditLogsResponse
+// @Success 200 {object} audit_logs_dto.GetAuditLogsResponse
 // @Failure 400 {object} map[string]string
 // @Failure 401 {object} map[string]string
 // @Failure 403 {object} map[string]string

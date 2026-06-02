@@ -11,7 +11,7 @@ import (
 )
 
 func Test_ExecuteQueryForProject_WithLogicalOrAndNotOperators_ReturnsMatchingLogs(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 
 	projectID := uuid.New()
 	currentTime := time.Now().UTC()

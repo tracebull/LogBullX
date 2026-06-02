@@ -39,7 +39,7 @@ func Test_EnforceProjectQuotas_WhenLogCountExceedsMaxLogsAmount_DeletesOldestLog
 	projects_testing.UpdateProject(project, updateData, owner.Token, router)
 
 	// Get repository and cleanup service
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	cleanupService := logs_cleanup.GetLogCleanupBackgroundService()
 
 	// Create test timestamps
@@ -152,7 +152,7 @@ func Test_EnforceProjectQuotas_WhenLogCountIsWithinMaxLogsAmount_NoLogsDeleted(t
 	projects_testing.UpdateProject(project, updateData, owner.Token, router)
 
 	// Get repository and cleanup service
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	cleanupService := logs_cleanup.GetLogCleanupBackgroundService()
 
 	// Create test timestamps
@@ -250,7 +250,7 @@ func Test_EnforceProjectQuotas_WhenMaxLogsAmountIsZero_NoQuotaEnforcement(t *tes
 	projects_testing.UpdateProject(project, updateData, owner.Token, router)
 
 	// Get repository and cleanup service
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	cleanupService := logs_cleanup.GetLogCleanupBackgroundService()
 
 	// Create test timestamps
@@ -363,7 +363,7 @@ func Test_EnforceProjectQuotas_WithDifferentProjectsCountQuotas_DeletesOnlyTarge
 	projects_testing.UpdateProject(project2, updateData2, owner2.Token, router)
 
 	// Get repository and cleanup service
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	cleanupService := logs_cleanup.GetLogCleanupBackgroundService()
 
 	// Create test timestamps
@@ -523,7 +523,7 @@ func Test_EnforceProjectQuotas_WhenLogsCreatedWithNanosecondPrecision_KeepsNewes
 
 	t.Logf("Project MaxLogsAmount after update: %d", project.MaxLogsAmount)
 
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	cleanupService := logs_cleanup.GetLogCleanupBackgroundService()
 
 	now := time.Now().UTC()
@@ -616,7 +616,7 @@ func Test_EnforceProjectQuotas_WhenLogsCreatedWithinSameNanosecond_CannotDeleteL
 
 	t.Logf("Project MaxLogsAmount after update: %d", project.MaxLogsAmount)
 
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	cleanupService := logs_cleanup.GetLogCleanupBackgroundService()
 
 	now := time.Now().UTC()

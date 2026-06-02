@@ -12,7 +12,7 @@ import (
 )
 
 func Test_GetProjectLogStats_WithMultipleLogs_ReturnsCorrectStats(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	projectID := uuid.New()
 	uniqueTestSession := uuid.New().String()[:8]
 	baseTime := time.Now().UTC()
@@ -58,7 +58,7 @@ func Test_GetProjectLogStats_WithMultipleLogs_ReturnsCorrectStats(t *testing.T) 
 }
 
 func Test_GetProjectLogStats_WithNoLogs_ReturnsZeroStats(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	projectID := uuid.New()
 
 	err := repository.ForceFlush()
@@ -75,7 +75,7 @@ func Test_GetProjectLogStats_WithNoLogs_ReturnsZeroStats(t *testing.T) {
 }
 
 func Test_GetProjectLogStats_WithSingleLog_ReturnsCorrectStats(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	projectID := uuid.New()
 	uniqueTestSession := uuid.New().String()[:8]
 	logTime := time.Now().UTC()
@@ -102,7 +102,7 @@ func Test_GetProjectLogStats_WithSingleLog_ReturnsCorrectStats(t *testing.T) {
 }
 
 func Test_GetProjectLogStats_WithTwelveHourTimeGap_ReturnsCorrectTimestamps(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	projectID := uuid.New()
 	uniqueTestSession := uuid.New().String()[:8]
 
@@ -149,7 +149,7 @@ func Test_GetProjectLogStats_WithTwelveHourTimeGap_ReturnsCorrectTimestamps(t *t
 }
 
 func Test_GetSystemLogStats_WithMultipleProjects_ReturnsAggregatedStats(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	uniqueTestSession := uuid.New().String()[:8]
 
 	// Create logs for multiple projects with different timestamps

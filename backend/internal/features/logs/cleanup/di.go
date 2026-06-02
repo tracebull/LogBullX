@@ -8,7 +8,7 @@ import (
 )
 
 var logCleanupBackgroundService = &LogCleanupBackgroundService{
-	logs_core.GetLogCoreRepository(),
+	logs_core.GetLogStorage(),
 	projects_services.GetProjectService(),
 	logger.GetLogger(),
 	nil,

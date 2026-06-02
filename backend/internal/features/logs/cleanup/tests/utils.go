@@ -12,7 +12,7 @@ import (
 
 func WaitForLogsToAppear(
 	t *testing.T,
-	repository *logs_core.LogCoreRepository,
+	repository logs_core.LogStorage,
 	projectID uuid.UUID,
 	expectedCount int64,
 	timeoutMs int,
@@ -49,7 +49,7 @@ func WaitForLogsToAppear(
 
 func WaitForLogDeletion(
 	t *testing.T,
-	repository *logs_core.LogCoreRepository,
+	repository logs_core.LogStorage,
 	projectID uuid.UUID,
 	expectedCount int64,
 	timeoutMs int,
@@ -86,7 +86,7 @@ func WaitForLogDeletion(
 
 func WaitForLogDeletionWithMaxCount(
 	t *testing.T,
-	repository *logs_core.LogCoreRepository,
+	repository logs_core.LogStorage,
 	projectID uuid.UUID,
 	maxCount int64,
 	timeoutMs int,

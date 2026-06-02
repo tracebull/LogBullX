@@ -16,7 +16,7 @@ import (
 )
 
 type LogCleanupBackgroundService struct {
-	logCoreRepository *logs_core.LogCoreRepository
+	logStorage logs_core.LogStorage
 	projectService    *projects_services.ProjectService
 	logger            *slog.Logger
 
@@ -202,7 +202,7 @@ func (s *LogCleanupBackgroundService) enforceProjectQuotas(
 ) error {
 	cleanupPercentage := s.calculateCleanupPercentage(project.MaxLogsSizeMB)
 
-	stats, err := s.logCoreRepository.GetProjectLogStats(projectID)
+	stats, err := s.logStorage.GetProjectLogStats(projectID)
 	if err != nil {
 		return fmt.Errorf("failed to get project log stats: %w", err)
 	}
@@ -214,7 +214,7 @@ func (s *LogCleanupBackgroundService) enforceProjectQuotas(
 
 		if logsToDelete > 0 {
 			cutoffTime := s.calculateCutoffTimeForLogCount(projectID, logsToDelete, stats)
-			if err := s.logCoreRepository.DeleteOldLogs(projectID, cutoffTime); err != nil {
+			if err := s.logStorage.DeleteOldLogs(projectID, cutoffTime); err != nil {
 				s.logger.Error("Failed to delete old logs for count quota",
 					slog.String("projectId", projectID.String()),
 					slog.String("error", err.Error()))
@@ -234,7 +234,7 @@ func (s *LogCleanupBackgroundService) enforceProjectQuotas(
 
 		if excessSizeMB > 0 {
 			cutoffTime := s.calculateCutoffTimeForSize(excessSizeMB, stats)
-			if err := s.logCoreRepository.DeleteOldLogs(projectID, cutoffTime); err != nil {
+			if err := s.logStorage.DeleteOldLogs(projectID, cutoffTime); err != nil {
 				s.logger.Error("Failed to delete old logs for size quota",
 					slog.String("projectId", projectID.String()),
 					slog.String("error", err.Error()))
@@ -257,7 +257,7 @@ func (s *LogCleanupBackgroundService) enforceLogRetention(projectID uuid.UUID, m
 
 	cutoffTime := time.Now().UTC().AddDate(0, 0, -maxLifeDays)
 
-	err := s.logCoreRepository.DeleteOldLogs(projectID, cutoffTime)
+	err := s.logStorage.DeleteOldLogs(projectID, cutoffTime)
 	if err != nil {
 		return fmt.Errorf("failed to delete old logs: %w", err)
 	}
@@ -289,7 +289,7 @@ func (s *LogCleanupBackgroundService) calculateCutoffTimeForLogCount(
 		SortOrder: "asc",
 	}
 
-	response, err := s.logCoreRepository.ExecuteQueryForProject(projectID, queryRequest)
+	response, err := s.logStorage.ExecuteQueryForProject(projectID, queryRequest)
 	if err != nil {
 		s.logger.Error("Failed to query log at offset for cutoff calculation",
 			slog.String("projectId", projectID.String()),

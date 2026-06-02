@@ -2,14 +2,13 @@ package logs_core
 
 import "time"
 
-// Repository DTOs for querying OpenSearch
 type LogQueryRequestDTO struct {
 	Query      *QueryNode    `json:"query,omitempty"`
 	TimeRange  *TimeRangeDTO `json:"timeRange,omitempty"`
 	Limit      int           `json:"limit,omitempty"`
 	Offset     int           `json:"offset,omitempty"`
-	SortBy     string        `json:"sortBy,omitempty"`    // always "timestamp" for now
-	SortOrder  string        `json:"sortOrder,omitempty"` // "asc" or "desc"
+	SortBy     string        `json:"sortBy,omitempty"`
+	SortOrder  string        `json:"sortOrder,omitempty"`
 	TrackTotal bool          `json:"trackTotal,omitempty"`
 }
 
@@ -121,61 +120,4 @@ var PredefinedQueryableFields = []QueryableField{
 			ConditionOperatorExists, ConditionOperatorNotExists,
 		},
 	},
-}
-
-// OpenSearch API DTOs (partial – only fields we need)
-
-type openSearchSearchResponse struct {
-	Took int64 `json:"took"`
-	Hits struct {
-		Total struct {
-			Value int64  `json:"value"`
-			Rel   string `json:"relation"`
-		} `json:"total"`
-		Hits []struct {
-			Index  string         `json:"_index"`
-			ID     string         `json:"_id"`
-			Source map[string]any `json:"_source"`
-			Sort   []any          `json:"sort,omitempty"`
-		} `json:"hits"`
-	} `json:"hits"`
-}
-
-type openSearchBulkResponse struct {
-	Errors bool `json:"errors"`
-	Items  []struct {
-		Index struct {
-			Status int    `json:"status"`
-			Error  any    `json:"error,omitempty"`
-			Index  string `json:"_index,omitempty"`
-			ID     string `json:"_id,omitempty"`
-		} `json:"index,omitempty"`
-		Create struct {
-			Status int    `json:"status"`
-			Error  any    `json:"error,omitempty"`
-			Index  string `json:"_index,omitempty"`
-			ID     string `json:"_id,omitempty"`
-		} `json:"create,omitempty"`
-	} `json:"items"`
-}
-
-type openSearchStatsResponse struct {
-	Took         int64 `json:"took"`
-	TimedOut     bool  `json:"timed_out"`
-	Aggregations struct {
-		TotalLogs struct {
-			Value int64 `json:"value"`
-		} `json:"total_logs"`
-		TotalSizeBytes struct {
-			Value float64 `json:"value"`
-		} `json:"total_size_bytes"`
-		OldestLog struct {
-			Value         float64 `json:"value,omitempty"`
-			ValueAsString string  `json:"value_as_string,omitempty"`
-		} `json:"oldest_log"`
-		NewestLog struct {
-			Value         float64 `json:"value,omitempty"`
-			ValueAsString string  `json:"value_as_string,omitempty"`
-		} `json:"newest_log"`
-	} `json:"aggregations"`
 }

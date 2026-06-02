@@ -660,3 +660,38 @@ func toInt64(value any) int64 {
 		return 0
 	}
 }
+
+func asString(value any) string {
+	switch v := value.(type) {
+	case string:
+		return v
+	case fmt.Stringer:
+		return v.String()
+	default:
+		return fmt.Sprintf("%v", v)
+	}
+}
+
+func asStringSlice(value any) []string {
+	switch v := value.(type) {
+	case []string:
+		return v
+	case []any:
+		result := make([]string, 0, len(v))
+		for _, item := range v {
+			result = append(result, asString(item))
+		}
+		return result
+	default:
+		return []string{asString(value)}
+	}
+}
+
+var systemFields = map[string]bool{
+	"id":         true,
+	"level":      true,
+	"message":    true,
+	"client_ip":  true,
+	"project_id": true,
+	"timestamp":  true,
+}

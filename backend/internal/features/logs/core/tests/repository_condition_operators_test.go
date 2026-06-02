@@ -13,7 +13,7 @@ import (
 // String Operations Tests
 
 func Test_ExecuteQueryForProject_WithNotEqualsOperator_ReturnsNonMatchingLogs(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	projectID := uuid.New()
 	uniqueTestSession := uuid.New().String()[:8]
 	currentTime := time.Now().UTC()
@@ -91,7 +91,7 @@ func Test_ExecuteQueryForProject_WithNotEqualsOperator_ReturnsNonMatchingLogs(t 
 }
 
 func Test_ExecuteQueryForProject_WithNotContainsOperator_ReturnsNonMatchingLogs(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	projectID := uuid.New()
 	uniqueTestSession := uuid.New().String()[:8]
 	currentTime := time.Now().UTC()
@@ -168,7 +168,7 @@ func Test_ExecuteQueryForProject_WithNotContainsOperator_ReturnsNonMatchingLogs(
 }
 
 func Test_ExecuteQueryForProject_WithContainsOperator_UserAgentField_ReturnsMatchingLogs(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	projectID := uuid.New()
 	uniqueTestSession := uuid.New().String()[:8]
 	currentTime := time.Now().UTC()
@@ -225,7 +225,7 @@ func Test_ExecuteQueryForProject_WithContainsOperator_UserAgentField_ReturnsMatc
 // Array Operations Tests
 
 func Test_ExecuteQueryForProject_WithInOperator_ReturnsMatchingLogs(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	projectID := uuid.New()
 	uniqueTestSession := uuid.New().String()[:8]
 	currentTime := time.Now().UTC()
@@ -345,7 +345,7 @@ func Test_ExecuteQueryForProject_WithInOperator_ReturnsMatchingLogs(t *testing.T
 }
 
 func Test_ExecuteQueryForProject_WithNotInOperator_ReturnsNonMatchingLogs(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	projectID := uuid.New()
 	uniqueTestSession := uuid.New().String()[:8]
 	currentTime := time.Now().UTC()
@@ -411,7 +411,7 @@ func Test_ExecuteQueryForProject_WithNotInOperator_ReturnsNonMatchingLogs(t *tes
 }
 
 func Test_ExecuteQueryForProject_WithInOperator_EmptyArray_ReturnsNoLogs(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	projectID := uuid.New()
 	uniqueTestSession := uuid.New().String()[:8]
 	currentTime := time.Now().UTC()
@@ -445,7 +445,7 @@ func Test_ExecuteQueryForProject_WithInOperator_EmptyArray_ReturnsNoLogs(t *test
 }
 
 func Test_ExecuteQueryForProject_WithInOperator_SingleValue_ReturnsMatchingLogs(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	projectID := uuid.New()
 	uniqueTestSession := uuid.New().String()[:8]
 	currentTime := time.Now().UTC()
@@ -510,7 +510,7 @@ func Test_ExecuteQueryForProject_WithInOperator_SingleValue_ReturnsMatchingLogs(
 // Existence Operations Tests
 
 func Test_ExecuteQueryForProject_WithExistsOperator_ReturnsLogsWithField(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	projectID := uuid.New()
 	uniqueTestSession := uuid.New().String()[:8]
 	currentTime := time.Now().UTC()
@@ -598,7 +598,7 @@ func Test_ExecuteQueryForProject_WithExistsOperator_ReturnsLogsWithField(t *test
 }
 
 func Test_ExecuteQueryForProject_WithNotExistsOperator_ReturnsLogsWithoutField(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	projectID := uuid.New()
 	uniqueTestSession := uuid.New().String()[:8]
 	currentTime := time.Now().UTC()
@@ -660,7 +660,7 @@ func Test_ExecuteQueryForProject_WithNotExistsOperator_ReturnsLogsWithoutField(t
 }
 
 func Test_ExecuteQueryForProject_WithExistsOperator_SystemField_ReturnsAllLogs(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	projectID := uuid.New()
 	uniqueTestSession := uuid.New().String()[:8]
 	currentTime := time.Now().UTC()
@@ -723,7 +723,7 @@ func Test_ExecuteQueryForProject_WithExistsOperator_SystemField_ReturnsAllLogs(t
 }
 
 func Test_ExecuteQueryForProject_WithNotExistsOperator_SystemField_ReturnsNoLogs(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	projectID := uuid.New()
 	uniqueTestSession := uuid.New().String()[:8]
 	currentTime := time.Now().UTC()
@@ -762,7 +762,7 @@ func Test_ExecuteQueryForProject_WithNotExistsOperator_SystemField_ReturnsNoLogs
 // Numeric/Range Operations Tests
 
 func Test_ExecuteQueryForProject_WithGreaterThanOperator_SystemField_ReturnsMatchingLogs(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	projectID := uuid.New()
 	uniqueTestSession := uuid.New().String()[:8]
 	baseTime := time.Now().UTC()
@@ -819,7 +819,7 @@ func Test_ExecuteQueryForProject_WithGreaterThanOperator_SystemField_ReturnsMatc
 }
 
 func Test_ExecuteQueryForProject_WithGreaterOrEqualOperator_SystemField_ReturnsMatchingLogs(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	projectID := uuid.New()
 	uniqueTestSession := uuid.New().String()[:8]
 	baseTime := time.Now().UTC()
@@ -891,7 +891,7 @@ func Test_ExecuteQueryForProject_WithGreaterOrEqualOperator_SystemField_ReturnsM
 }
 
 func Test_ExecuteQueryForProject_WithLessThanOperator_SystemField_ReturnsMatchingLogs(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	projectID := uuid.New()
 	uniqueTestSession := uuid.New().String()[:8]
 	baseTime := time.Now().UTC()
@@ -948,7 +948,7 @@ func Test_ExecuteQueryForProject_WithLessThanOperator_SystemField_ReturnsMatchin
 }
 
 func Test_ExecuteQueryForProject_WithLessOrEqualOperator_SystemField_ReturnsMatchingLogs(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	projectID := uuid.New()
 	uniqueTestSession := uuid.New().String()[:8]
 	baseTime := time.Now().UTC()
@@ -1017,7 +1017,7 @@ func Test_ExecuteQueryForProject_WithLessOrEqualOperator_SystemField_ReturnsMatc
 }
 
 func Test_ExecuteQueryForProject_WithRangeOperators_CustomField_ReturnsNoLogs(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	projectID := uuid.New()
 	uniqueTestSession := uuid.New().String()[:8]
 	currentTime := time.Now().UTC()
@@ -1079,7 +1079,7 @@ func Test_ExecuteQueryForProject_WithRangeOperators_CustomField_ReturnsNoLogs(t 
 
 // Edge Cases and Error Conditions
 func Test_ExecuteQueryForProject_WithSpecialCharactersInValue_ReturnsMatchingLogs(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	projectID := uuid.New()
 	uniqueTestSession := uuid.New().String()[:8]
 	currentTime := time.Now().UTC()
@@ -1167,7 +1167,7 @@ func Test_ExecuteQueryForProject_WithSpecialCharactersInValue_ReturnsMatchingLog
 }
 
 func Test_ExecuteQueryForProject_WithUnicodeValue_ReturnsMatchingLogs(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	projectID := uuid.New()
 	uniqueTestSession := uuid.New().String()[:8]
 	currentTime := time.Now().UTC()
@@ -1253,7 +1253,7 @@ func Test_ExecuteQueryForProject_WithUnicodeValue_ReturnsMatchingLogs(t *testing
 // Boundary Testing
 
 func Test_ExecuteQueryForProject_WithExactBoundaryTimestamp_ReturnsMatchingLogs(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	projectID := uuid.New()
 	uniqueTestSession := uuid.New().String()[:8]
 	baseTime := time.Now().UTC()

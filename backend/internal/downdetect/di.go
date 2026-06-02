@@ -5,7 +5,7 @@ import (
 )
 
 var downdetectService = &DowndetectService{
-	logs_core.GetLogCoreRepository(),
+	logs_core.GetLogStorage(),
 }
 var downdetectController = &DowndetectController{
 	downdetectService,

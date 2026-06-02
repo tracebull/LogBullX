@@ -12,7 +12,7 @@ import (
 )
 
 func Test_DiscoverFields_WithStoredLogsContainingCustomFields_ReturnsDiscoveredFields(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	projectID := uuid.New()
 	uniqueTestSession := uuid.New().String()[:8]
 	currentTime := time.Now().UTC()
@@ -57,7 +57,7 @@ func Test_DiscoverFields_WithStoredLogsContainingCustomFields_ReturnsDiscoveredF
 }
 
 func Test_DiscoverFields_WithUnavailableLogsStorage_PropagatesError(t *testing.T) {
-	unavailableRepository := logs_core.GetUnavailableLogCoreRepository()
+	unavailableRepository := logs_core.GetLogStorage()
 	projectID := uuid.New()
 
 	discoveredFields, discoveryErr := unavailableRepository.DiscoverFields(projectID)

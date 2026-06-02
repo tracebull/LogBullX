@@ -42,9 +42,9 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-// @title LogBull Backend API
+// @title TraceBull Backend API
 // @version 1.0
-// @description API for LogBull
+// @description API for TraceBull
 // @termsOfService http://swagger.io/terms/
 
 // @host localhost:4005

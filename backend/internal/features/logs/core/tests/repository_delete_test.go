@@ -11,7 +11,7 @@ import (
 )
 
 func Test_DeleteOldLogs_WhenOldLogsExist_DeletesLogsOlderThanSpecifiedTime(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	projectID := uuid.New()
 	uniqueTestSession := uuid.New().String()[:8]
 	baseTime := time.Now().UTC()
@@ -120,7 +120,7 @@ func Test_DeleteOldLogs_WhenOldLogsExist_DeletesLogsOlderThanSpecifiedTime(t *te
 }
 
 func Test_DeleteLogsByProject_WhenProjectLogsExist_DeletesAllProjectLogs(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	project1ID := uuid.New()
 	project2ID := uuid.New()
 	uniqueTestSession := uuid.New().String()[:8]
@@ -210,7 +210,7 @@ func Test_DeleteLogsByProject_WhenProjectLogsExist_DeletesAllProjectLogs(t *test
 }
 
 func Test_DeleteLogsByProject_WithNonExistentProject_DoesNotFail(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	nonExistentProjectID := uuid.New()
 
 	// Delete logs for non-existent project should not fail
@@ -219,7 +219,7 @@ func Test_DeleteLogsByProject_WithNonExistentProject_DoesNotFail(t *testing.T) {
 }
 
 func Test_DeleteOldLogs_WithNoOldLogs_DoesNotFail(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	projectID := uuid.New()
 	uniqueTestSession := uuid.New().String()[:8]
 	currentTime := time.Now().UTC()
@@ -257,7 +257,7 @@ func Test_DeleteOldLogs_WithNoOldLogs_DoesNotFail(t *testing.T) {
 }
 func waitForDeletionCompletion(
 	t *testing.T,
-	repository *logs_core.LogCoreRepository,
+	repository logs_core.LogStorage,
 	projectID uuid.UUID,
 	query *logs_core.LogQueryRequestDTO,
 	expectedTotal int64,
@@ -296,7 +296,7 @@ func waitForDeletionCompletion(
 
 func waitForDeletionWithCondition(
 	t *testing.T,
-	repository *logs_core.LogCoreRepository,
+	repository logs_core.LogStorage,
 	projectID uuid.UUID,
 	query *logs_core.LogQueryRequestDTO,
 	conditionCheck func(*logs_core.LogQueryResponseDTO) bool,

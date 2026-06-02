@@ -12,7 +12,7 @@ import (
 )
 
 func Test_ExecuteQueryForProject_WithLogicalAndConditions_ReturnsMatchingLogs(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	projectID := uuid.New()
 	uniqueTestSession := uuid.New().String()[:8]
 	currentTime := time.Now().UTC()
@@ -73,7 +73,7 @@ func Test_ExecuteQueryForProject_WithLogicalAndConditions_ReturnsMatchingLogs(t 
 }
 
 func Test_ExecuteQueryForProject_WithSingleCondition_ReturnsMatchingLogs(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	projectID := uuid.New()
 	uniqueTestSession := uuid.New().String()[:8]
 	differentTestSession := uuid.New().String()[:8]
@@ -145,7 +145,7 @@ func Test_ExecuteQueryForProject_WithSingleCondition_ReturnsMatchingLogs(t *test
 }
 
 func Test_DiscoverFields_WithCustomFieldsInLogs_ReturnsDiscoveredFields(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	projectID := uuid.New()
 	uniqueTestSession := uuid.New().String()[:8]
 	currentTime := time.Now().UTC()
@@ -200,7 +200,7 @@ func Test_DiscoverFields_WithCustomFieldsInLogs_ReturnsDiscoveredFields(t *testi
 }
 
 func Test_DiscoverFields_WithUnavailableRepository_ReturnsError(t *testing.T) {
-	unavailableRepository := logs_core.GetUnavailableLogCoreRepository()
+	unavailableRepository := logs_core.GetLogStorage()
 	projectID := uuid.New()
 
 	discoveredFields, discoveryErr := unavailableRepository.DiscoverFields(projectID)
@@ -210,7 +210,7 @@ func Test_DiscoverFields_WithUnavailableRepository_ReturnsError(t *testing.T) {
 }
 
 func Test_ExecuteQueryForProject_WithTimeRange_ReturnsFilteredLogs(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	projectID := uuid.New()
 	uniqueTestSession := uuid.New().String()[:8]
 	baseTime := time.Now().UTC()
@@ -315,7 +315,7 @@ func Test_ExecuteQueryForProject_WithTimeRange_ReturnsFilteredLogs(t *testing.T)
 }
 
 func Test_ExecuteQueryForProject_FieldsSortedAscending_IncludingClientIp(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	projectID := uuid.New()
 	uniqueTestSession := uuid.New().String()[:8]
 	currentTime := time.Now().UTC()
@@ -395,7 +395,7 @@ func Test_ExecuteQueryForProject_FieldsSortedAscending_IncludingClientIp(t *test
 }
 
 func Test_StoreLogsBatch_WithMixedFieldTypes_ConvertsAllToStrings(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	projectID := uuid.New()
 	uniqueTestSession := uuid.New().String()[:8]
 	currentTime := time.Now().UTC()
@@ -491,7 +491,7 @@ func Test_StoreLogsBatch_WithMixedFieldTypes_ConvertsAllToStrings(t *testing.T) 
 }
 
 func Test_ExecuteQueryForProject_WithNanosecondTimestamp_PreservesFullPrecision(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	projectID := uuid.New()
 	uniqueTestSession := uuid.New().String()[:8]
 
@@ -548,7 +548,7 @@ func Test_ExecuteQueryForProject_WithNanosecondTimestamp_PreservesFullPrecision(
 }
 
 func Test_ExecuteQueryForProject_WithMultipleLogsAt2NanosecondSteps_PreservesNanosecondPrecision(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	projectID := uuid.New()
 	uniqueTestSession := uuid.New().String()[:8]
 

@@ -14,7 +14,7 @@ import (
 )
 
 type LogQueryService struct {
-	logRepository          *logs_core.LogCoreRepository
+	logRepository          logs_core.LogStorage
 	projectService         *projects_services.ProjectService
 	concurrentQueryLimiter *ConcurrentQueryLimiter
 	queryValidator         *QueryValidator

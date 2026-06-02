@@ -11,7 +11,7 @@ import (
 )
 
 func Test_ExecuteQueryForProject_WithPaginationAndOffset_ReturnsSameTotalCount(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	projectID := uuid.New()
 	currentTime := time.Now().UTC()
 	uniqueTestSession := uuid.New().String()[:8]
@@ -58,7 +58,7 @@ func Test_ExecuteQueryForProject_WithPaginationAndOffset_ReturnsSameTotalCount(t
 }
 
 func Test_ExecuteQueryForProject_WithNanosecondPrecision_MaintainsProperDESCOrdering(t *testing.T) {
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 	projectID := uuid.New()
 	baseTime := time.Now().UTC()
 	uniqueTestSession := uuid.New().String()[:8]

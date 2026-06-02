@@ -47,7 +47,7 @@ import (
 // both API and worker will be on one very performant VPS. It is possible that API will be on many VPS
 // and worker on single node (always single node).
 type LogWorkerService struct {
-	logRepository *logs_core.LogCoreRepository
+	logRepository logs_core.LogStorage
 	queueService  *cache_utils.ValkeyQueueService
 	logger        *slog.Logger
 
@@ -79,7 +79,7 @@ var (
 )
 
 func NewLogWorkerService(
-	logRepository *logs_core.LogCoreRepository,
+	logRepository logs_core.LogStorage,
 	logger *slog.Logger,
 ) *LogWorkerService {
 	service := &LogWorkerService{

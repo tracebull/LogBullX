@@ -35,6 +35,6 @@ func (c *DowndetectController) IsAvailable(ctx *gin.Context) {
 
 	ctx.JSON(
 		http.StatusOK,
-		gin.H{"message": "API, DB (PostgreSQL), logs storage (OpenSearch) and cache (Valkey) are available"},
+		gin.H{"message": "API, DB (PostgreSQL), log storage (VictoriaLogs) and cache (Valkey) are available"},
 	)
 }

@@ -19,7 +19,7 @@ import (
 func Test_ExecuteQuery_FilterByTimestampGreaterThan_ReturnsMatchingLogs(t *testing.T) {
 	router := CreateLogQueryTestRouter()
 	owner := users_testing.CreateTestUser(users_enums.UserRoleMember)
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 
 	uniqueID := uuid.New().String()
 	projectName := fmt.Sprintf("Timestamp Greater Than Test %s", uniqueID[:8])
@@ -75,7 +75,7 @@ func Test_ExecuteQuery_FilterByTimestampGreaterThan_ReturnsMatchingLogs(t *testi
 func Test_ExecuteQuery_FilterByTimestampLessThan_ReturnsMatchingLogs(t *testing.T) {
 	router := CreateLogQueryTestRouter()
 	owner := users_testing.CreateTestUser(users_enums.UserRoleMember)
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 
 	uniqueID := uuid.New().String()
 	projectName := fmt.Sprintf("Timestamp Less Than Test %s", uniqueID[:8])
@@ -138,7 +138,7 @@ func Test_ExecuteQuery_FilterByTimestampLessThan_ReturnsMatchingLogs(t *testing.
 func Test_ExecuteQuery_WithTimeRangeFilter_ReturnsLogsInRange(t *testing.T) {
 	router := CreateLogQueryTestRouter()
 	owner := users_testing.CreateTestUser(users_enums.UserRoleMember)
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 
 	uniqueID := uuid.New().String()
 	projectName := fmt.Sprintf("Time Range Filter Test %s", uniqueID[:8])
@@ -201,7 +201,7 @@ func Test_ExecuteQuery_WithTimeRangeFilter_ReturnsLogsInRange(t *testing.T) {
 func Test_ExecuteQuery_WithTimeRangeAndConditions_ReturnsMatchingLogs(t *testing.T) {
 	router := CreateLogQueryTestRouter()
 	owner := users_testing.CreateTestUser(users_enums.UserRoleMember)
-	repository := logs_core.GetLogCoreRepository()
+	repository := logs_core.GetLogStorage()
 
 	uniqueID := uuid.New().String()
 	projectName := fmt.Sprintf("Time Range And Conditions Test %s", uniqueID[:8])
@@ -294,7 +294,7 @@ func Test_ExecuteQuery_WithTimeRangeAndConditions_ReturnsMatchingLogs(t *testing
 // storeLogEntriesWithTimestamp stores logs directly via repository to preserve exact timestamps
 func storeLogEntriesWithTimestamp(
 	t *testing.T,
-	repository *logs_core.LogCoreRepository,
+	repository logs_core.LogStorage,
 	projectID uuid.UUID,
 	timestamp time.Time,
 	message string,
@@ -332,7 +332,7 @@ func storeLogEntriesWithTimestamp(
 
 // waitForTimestampLogsIndexing waits for logs to be indexed with debug output if needed
 func waitForTimestampLogsIndexing(t *testing.T, router *gin.Engine, projectID uuid.UUID, uniqueID, token string) {
-	err := logs_core.GetLogCoreRepository().ForceFlush()
+	err := logs_core.GetLogStorage().ForceFlush()
 	assert.NoError(t, err, "Failed to flush logs")
 
 	time.Sleep(100 * time.Millisecond)
