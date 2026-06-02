@@ -2,6 +2,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+import { Copy, Check } from 'lucide-react';
+
 import { type ProjectResponse } from '../../../entity/projects';
 import type { UsersSettings } from '../../../entity/users';
 import type { UserProfile } from '../../../entity/users';
@@ -26,7 +28,16 @@ export const ProjectSelectionComponent = ({
 }: Props) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [searchValue, setSearchValue] = useState('');
+  const [copied, setCopied] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const copyProjectId = () => {
+    if (selectedProject?.id) {
+      navigator.clipboard.writeText(selectedProject.id);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
 
   const filteredProjects = useMemo(() => {
     if (!searchValue.trim()) return projects;
@@ -70,7 +81,7 @@ export const ProjectSelectionComponent = ({
     return (
       <Button
         onClick={onCreateProject}
-        className="border-emerald-600 bg-emerald-600 hover:border-emerald-700 hover:bg-emerald-700"
+        className="bg-primary text-primary-foreground hover:bg-primary/90"
       >
         Create project
       </Button>
@@ -102,6 +113,21 @@ export const ProjectSelectionComponent = ({
             />
           </div>
         </div>
+
+        {selectedProject?.id && (
+          <div className="mt-1 flex items-center gap-1">
+            <span className="truncate !font-mono text-[11px] text-muted-foreground">
+              {selectedProject.id}
+            </span>
+            <button
+              onClick={copyProjectId}
+              className="shrink-0 rounded p-0.5 text-muted-foreground hover:text-foreground"
+              title="Copy project ID"
+            >
+              {copied ? <Check className="size-3" /> : <Copy className="size-3" />}
+            </button>
+          </div>
+        )}
 
         {/* Dropdown Menu */}
         {isDropdownOpen && (
@@ -138,7 +164,7 @@ export const ProjectSelectionComponent = ({
             {canCreateProjects && (
               <div className="border-t border-border">
                 <div
-                  className="cursor-pointer px-3 py-2 text-sm text-emerald-600 hover:bg-accent hover:text-emerald-700"
+                  className="cursor-pointer px-3 py-2 text-sm text-primary hover:bg-accent hover:text-primary/80"
                   onClick={() => {
                     onCreateProject();
                     setIsDropdownOpen(false);
