@@ -284,7 +284,7 @@ export const MainScreenComponent = () => {
                 .map((tab) => (
                   <div key={tab.text} className="flex justify-center">
                     <div
-                      className={`flex h-[50px] w-[50px] cursor-pointer items-center justify-center rounded ${selectedTab === tab.name ? 'bg-primary' : 'hover:bg-accent'}`}
+                      className={`flex h-[50px] w-[50px] cursor-pointer items-center justify-center rounded ${selectedTab === tab.name ? 'bg-primary text-primary-foreground' : 'hover:bg-accent'}`}
                       onClick={tab.onClick}
                       style={{ marginTop: tab.marginTop }}
                     >
@@ -295,6 +295,7 @@ export const MainScreenComponent = () => {
                             width={20}
                             alt={tab.text}
                             loading="lazy"
+                            className="dark:invert"
                           />
                         </div>
                       </div>
