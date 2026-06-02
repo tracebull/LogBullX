@@ -116,7 +116,7 @@ export function BulkInviteComponent({ open, onClose, onInviteComplete }: Props) 
                   onChange={(e) => setTextValue(e.target.value)}
                 />
                 {emailCount > 0 && (
-                  <div className="mt-1 text-xs text-gray-500">
+                  <div className="mt-1 text-xs text-muted-foreground">
                     {emailCount} valid email{emailCount !== 1 ? 's' : ''} detected
                     {emailCount >= MAX_EMAILS && ` (max ${MAX_EMAILS})`}
                   </div>
@@ -124,7 +124,7 @@ export function BulkInviteComponent({ open, onClose, onInviteComplete }: Props) 
               </div>
             </TabsContent>
             <TabsContent value="csv">
-              <div className="flex items-center justify-center rounded border-2 border-dashed border-gray-300 p-8">
+              <div className="flex items-center justify-center rounded border-2 border-dashed border-input p-8">
                 <input
                   type="file"
                   accept=".csv,.txt"

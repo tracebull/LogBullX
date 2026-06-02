@@ -46,7 +46,7 @@ const getRoleColor = (role: UserRole): string => {
     case UserRole.MEMBER:
       return 'text-emerald-500';
     default:
-      return 'text-gray-500';
+      return 'text-muted-foreground';
   }
 };
 
@@ -131,18 +131,20 @@ export function UsersComponent({ contentHeight, globalSettings, user }: Props) {
 
       const response = await userManagementApi.getUsers(request);
 
+      const fetchedUsers = response.users ?? [];
+
       if (isInitialLoad) {
-        setUsers(response.users);
+        setUsers(fetchedUsers);
       } else {
         setUsers((prev) => {
           const existingIds = new Set(prev.map((user) => user.id));
-          const newUsers = response.users.filter((user) => !existingIds.has(user.id));
+          const newUsers = fetchedUsers.filter((user) => !existingIds.has(user.id));
           return [...prev, ...newUsers];
         });
       }
 
       setTotal(response.total);
-      setHasMore(response.users.length === pageSize);
+      setHasMore(fetchedUsers.length === pageSize);
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to load users';
       toastMessage.error(errorMessage);
@@ -235,7 +237,7 @@ export function UsersComponent({ contentHeight, globalSettings, user }: Props) {
           style={{ height: contentHeight }}
         >
           <div className="mb-4 flex items-center justify-between">
-            <h1 className="text-2xl font-bold">LogBull Users</h1>
+            <h1 className="text-2xl font-bold">TraceBull Users</h1>
             <div className="flex items-center gap-3">
               {(user?.role === UserRole.ADMIN ||
                 globalSettings?.isAllowMemberInvitations !== false) && (

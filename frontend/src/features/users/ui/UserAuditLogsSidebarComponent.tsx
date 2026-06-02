@@ -112,7 +112,7 @@ export function UserAuditLogsSidebarComponent({ user }: Props) {
     <div className="h-full">
       <div ref={scrollContainerRef} className="h-full overflow-y-auto">
         <div className="mb-4 flex items-center justify-between">
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-muted-foreground">
             {isLoading ? (
               <Spinner size="sm" />
             ) : (
@@ -139,19 +139,19 @@ export function UserAuditLogsSidebarComponent({ user }: Props) {
                 {auditLogs.map((log) => (
                   <TableRow key={log.id}>
                     <TableCell>
-                      <span className="text-xs text-gray-900">{log.message}</span>
+                      <span className="text-xs text-foreground">{log.message}</span>
                     </TableCell>
                     <TableCell>
                       <span
                         className={`inline-block rounded-full px-2 py-1 text-xs font-medium ${
-                          log.projectName ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-600'
+                          log.projectName ? 'bg-blue-100 text-blue-800' : 'bg-muted text-muted-foreground'
                         }`}
                       >
                         {log.projectName || '-'}
                       </span>
                     </TableCell>
                     <TableCell>
-                      <span className="text-xs text-gray-700">
+                      <span className="text-xs text-foreground">
                         {formatCreatedAt(log.createdAt)}
                       </span>
                     </TableCell>
@@ -163,18 +163,18 @@ export function UserAuditLogsSidebarComponent({ user }: Props) {
             {isLoadingMore && (
               <div className="flex justify-center py-4">
                 <Spinner size="sm" />
-                <span className="ml-2 text-sm text-gray-500">Loading more logs...</span>
+                <span className="ml-2 text-sm text-muted-foreground">Loading more logs...</span>
               </div>
             )}
 
             {!hasMore && auditLogs.length > 0 && (
-              <div className="py-4 text-center text-sm text-gray-500">
+              <div className="py-4 text-center text-sm text-muted-foreground">
                 All logs loaded ({total} total)
               </div>
             )}
 
             {!isLoading && auditLogs.length === 0 && (
-              <div className="py-8 text-center text-sm text-gray-500">
+              <div className="py-8 text-center text-sm text-muted-foreground">
                 No audit logs found for this user.
               </div>
             )}

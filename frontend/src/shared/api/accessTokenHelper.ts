@@ -1,4 +1,4 @@
-const AUTHORIZED_USER_ID_KEY = 'logbull_user_id';
+const AUTHORIZED_USER_ID_KEY = 'tracebull_user_id';
 
 export const accessTokenHelper = {
   saveUserId: (id: string) => {

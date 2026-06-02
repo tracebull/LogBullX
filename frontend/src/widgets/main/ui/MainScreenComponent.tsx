@@ -154,7 +154,7 @@ export const MainScreenComponent = () => {
         {/* ===================== NAVBAR ===================== */}
         <div className="mb-3 flex h-[60px] items-center rounded bg-card p-3 shadow">
           <div className="flex items-center gap-3 hover:opacity-80">
-            <a href="https://logbull.com" target="_blank" rel="noreferrer">
+            <a href="/">
               <img className="h-[35px] w-[35px]" src="/logo.svg" />
             </a>
           </div>
@@ -259,7 +259,7 @@ export const MainScreenComponent = () => {
                   isVisible: true,
                 },
                 {
-                  text: 'LogBull settings',
+                  text: 'TraceBull settings',
                   name: 'logbull-settings',
                   icon: '/icons/menu/global-settings-gray.svg',
                   selectedIcon: '/icons/menu/global-settings-white.svg',

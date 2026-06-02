@@ -1,3 +1,4 @@
+import { accessTokenHelper } from './accessTokenHelper';
 import RequestOptions from './RequestOptions';
 
 const MAX_RETRIES = 10;
@@ -9,6 +10,7 @@ const handleOrThrowMessageIfResponseError = async (
   handleNotAuthorizedError = true,
 ): Promise<void> => {
   if (handleNotAuthorizedError && response.status === 401) {
+    accessTokenHelper.clearUserId();
     window.location.reload();
   }
 
