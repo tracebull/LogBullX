@@ -210,7 +210,7 @@ export function SignUpComponent({ onSwitchToSignIn }: SignUpComponentProps): JSX
           <button
             type="button"
             onClick={onSwitchToSignIn}
-            className="cursor-pointer font-medium text-emerald-600 hover:text-emerald-700"
+            className="cursor-pointer font-medium text-primary hover:text-primary/80"
           >
             Sign in
           </button>

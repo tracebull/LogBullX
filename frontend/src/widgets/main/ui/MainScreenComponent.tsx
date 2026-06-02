@@ -284,7 +284,7 @@ export const MainScreenComponent = () => {
                 .map((tab) => (
                   <div key={tab.text} className="flex justify-center">
                     <div
-                      className={`flex h-[50px] w-[50px] cursor-pointer items-center justify-center rounded ${selectedTab === tab.name ? 'bg-emerald-600' : 'hover:bg-accent'}`}
+                      className={`flex h-[50px] w-[50px] cursor-pointer items-center justify-center rounded ${selectedTab === tab.name ? 'bg-primary' : 'hover:bg-accent'}`}
                       onClick={tab.onClick}
                       style={{ marginTop: tab.marginTop }}
                     >
@@ -337,7 +337,7 @@ export const MainScreenComponent = () => {
                     <Button
                       size="lg"
                       onClick={handleCreateProject}
-                      className="border-emerald-600 bg-emerald-600 hover:border-emerald-700 hover:bg-emerald-700"
+                      className="bg-primary text-primary-foreground hover:bg-primary/90"
                     >
                       Create project
                     </Button>

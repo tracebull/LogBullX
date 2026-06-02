@@ -579,7 +579,7 @@ export function ProjectMembershipComponent({ contentHeight, projectResponse, use
                 </DialogHeader>
                 <div className="py-4">
                   <div className="flex items-center">
-                    <UserPlus className="mr-3 size-6 text-emerald-600" />
+                    <UserPlus className="mr-3 size-6 text-primary" />
                     <div>
                       <div className="font-medium text-foreground">
                         Invitation sent to {invitedEmail}

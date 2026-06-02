@@ -337,7 +337,7 @@ export const QueryBuilderComponent = ({
       <div className="flex justify-center">
         <div className="flex flex-wrap gap-2">
           <Button
-            className="border-emerald-600 bg-emerald-600 hover:border-emerald-700 hover:bg-emerald-700"
+            className="bg-primary text-primary-foreground hover:bg-primary/90"
             onClick={handleAddCondition}
           >
             <Plus className="mr-1 size-4" />

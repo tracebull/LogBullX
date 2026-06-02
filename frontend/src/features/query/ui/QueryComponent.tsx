@@ -517,7 +517,7 @@ export const QueryComponentComponent = ({
             <Button
               onClick={handleHowToSendLogsClick}
               disabled={isExecuting}
-              className="border-emerald-600 bg-emerald-600 hover:border-emerald-700 hover:bg-emerald-700"
+              className="bg-primary text-primary-foreground hover:bg-primary/90"
             >
               How to send logs from code?
             </Button>
@@ -552,8 +552,8 @@ export const QueryComponentComponent = ({
                 variant={hasSearched ? 'outline' : 'default'}
                 className={`ml-auto ${
                   hasSearched
-                    ? 'border-emerald-600 text-emerald-600 hover:border-emerald-700 hover:text-emerald-700'
-                    : 'border-emerald-600 bg-emerald-600 hover:border-emerald-700 hover:bg-emerald-700'
+                    ? 'border-primary text-primary hover:border-primary/80 hover:text-primary/80'
+                    : 'bg-primary text-primary-foreground hover:bg-primary/90'
                 }`}
               >
                 <Play className="mr-2 size-4" />

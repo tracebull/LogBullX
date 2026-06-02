@@ -147,7 +147,7 @@ export function SignInComponent({ onSwitchToSignUp }: SignInComponentProps): JSX
           <button
             type="button"
             onClick={onSwitchToSignUp}
-            className="cursor-pointer font-medium text-emerald-600 hover:text-emerald-700"
+            className="cursor-pointer font-medium text-primary hover:text-primary/80"
           >
             Sign up
           </button>

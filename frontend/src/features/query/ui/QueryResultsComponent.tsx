@@ -248,7 +248,7 @@ export const QueryResultsComponent = ({
                     <AlertDialogFooter>
                       <AlertDialogCancel>No</AlertDialogCancel>
                       <AlertDialogAction
-                        className="bg-emerald-600 hover:bg-emerald-700"
+                        className="bg-primary text-primary-foreground hover:bg-primary/90"
                         onClick={() => {
                           if (onAddFieldToQuery) {
                             onAddFieldToQuery(key, log.fields?.[key] || '');
@@ -267,7 +267,7 @@ export const QueryResultsComponent = ({
           <div className="text-xs">
             <span className="!font-mono break-all text-muted-foreground">{displayText}</span>
             {isTruncated && (
-              <span className="ml-1 cursor-pointer text-emerald-600 hover:text-emerald-700">
+              <span className="ml-1 cursor-pointer text-primary hover:text-primary/80">
                 (expand)
               </span>
             )}
@@ -325,7 +325,7 @@ export const QueryResultsComponent = ({
                 type="number"
                 value={messageLength}
                 onChange={(e) => setMessageLength(Math.max(1, parseInt(e.target.value)))}
-                className="w-16 rounded border border-input px-1 py-0.5 text-xs focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 focus:outline-none"
+                className="w-16 rounded border border-input px-1 py-0.5 text-xs focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
                 min="1"
                 max="1000"
               />
@@ -413,7 +413,7 @@ export const QueryResultsComponent = ({
                   >
                     {displayMessage}
                     {messageIsTruncated && !isExpanded && (
-                      <span className="ml-1 text-emerald-600 hover:text-emerald-700">(expand)</span>
+                      <span className="ml-1 text-primary hover:text-primary/80">(expand)</span>
                     )}
                   </div>
 

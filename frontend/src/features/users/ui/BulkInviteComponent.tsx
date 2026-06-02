@@ -77,7 +77,7 @@ export function BulkInviteComponent({ open, onClose, onInviteComplete }: Props) 
           <div className="space-y-3">
             {results.invited.length > 0 && (
               <div>
-                <div className="mb-1 text-sm font-semibold text-emerald-600">
+                <div className="mb-1 text-sm font-semibold text-primary">
                   Invited ({results.invited.length})
                 </div>
                 <div className="max-h-40 overflow-y-auto rounded bg-emerald-50 p-2 text-sm">

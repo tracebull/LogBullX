@@ -309,7 +309,7 @@ export const PlansSettingsComponent = () => {
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-xl font-bold text-foreground">Plans Management</h2>
         <Button
-          className="border-emerald-600 bg-emerald-600 hover:border-emerald-700 hover:bg-emerald-700"
+          className="bg-primary text-primary-foreground hover:bg-primary/90"
           onClick={handleCreate}
         >
           Create Plan
@@ -539,7 +539,7 @@ export const PlansSettingsComponent = () => {
             <Button
               onClick={handleModalOk}
               disabled={isSaving || (editingPlan ? !isUnsaved : false)}
-              className="border-emerald-600 bg-emerald-600 hover:border-emerald-700 hover:bg-emerald-700"
+              className="bg-primary text-primary-foreground hover:bg-primary/90"
             >
               {isSaving && <Spinner size="sm" className="mr-2" />}
               {editingPlan ? (isUnsaved ? 'Update' : 'No Changes') : 'Create'}

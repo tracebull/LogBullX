@@ -522,7 +522,7 @@ export function ProjectSettingsComponent({ projectResponse, user, contentHeight 
                                   <button
                                     type="button"
                                     onClick={() => removeDomainTag(index)}
-                                    className="ml-0.5 text-emerald-600 hover:text-emerald-800"
+                                    className="ml-0.5 text-primary hover:text-primary/80"
                                   >
                                     <X className="size-3" />
                                   </button>
@@ -617,7 +617,7 @@ export function ProjectSettingsComponent({ projectResponse, user, contentHeight 
                                   <button
                                     type="button"
                                     onClick={() => removeIpTag(index)}
-                                    className="ml-0.5 text-emerald-600 hover:text-emerald-800"
+                                    className="ml-0.5 text-primary hover:text-primary/80"
                                   >
                                     <X className="size-3" />
                                   </button>
@@ -714,7 +714,7 @@ export function ProjectSettingsComponent({ projectResponse, user, contentHeight 
                       href="https://logbull.com/settings"
                       target="_blank"
                       rel="noreferrer"
-                      className="font-bold !text-emerald-600"
+                      className="font-bold !text-primary"
                     >
                       here
                     </a>

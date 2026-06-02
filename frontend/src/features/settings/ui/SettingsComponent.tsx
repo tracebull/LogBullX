@@ -147,7 +147,7 @@ export function SettingsComponent({ contentHeight }: Props) {
                         onCheckedChange={(checked) =>
                           handleSettingChange('isAllowExternalRegistrations', checked)
                         }
-                        className="data-[state=checked]:bg-emerald-600"
+                        className="data-[state=checked]:bg-primary"
                       />
                     </div>
                   </div>
@@ -170,7 +170,7 @@ export function SettingsComponent({ contentHeight }: Props) {
                           onCheckedChange={(checked) =>
                             handleSettingChange('isAllowMemberInvitations', checked)
                           }
-                          className="data-[state=checked]:bg-emerald-600"
+                          className="data-[state=checked]:bg-primary"
                         />
                       </div>
                     </div>
@@ -192,7 +192,7 @@ export function SettingsComponent({ contentHeight }: Props) {
                         onCheckedChange={(checked) =>
                           handleSettingChange('isMemberAllowedToCreateProjects', checked)
                         }
-                        className="data-[state=checked]:bg-emerald-600"
+                        className="data-[state=checked]:bg-primary"
                       />
                     </div>
                   </div>
@@ -204,7 +204,7 @@ export function SettingsComponent({ contentHeight }: Props) {
                     <Button
                       onClick={handleSave}
                       disabled={isSaving}
-                      className="border-emerald-600 bg-emerald-600 hover:border-emerald-700 hover:bg-emerald-700"
+                      className="bg-primary text-primary-foreground hover:bg-primary/90"
                     >
                       {isSaving && <Spinner size="sm" className="mr-2" />}
                       {isSaving ? 'Saving...' : 'Save Changes'}
@@ -225,7 +225,7 @@ export function SettingsComponent({ contentHeight }: Props) {
               href="#"
               target="_blank"
               rel="noreferrer"
-              className="!text-emerald-600"
+              className="!text-primary"
             >
               here
             </a>
@@ -238,7 +238,7 @@ export function SettingsComponent({ contentHeight }: Props) {
             <div className="group relative">
               <div className="flex items-center rounded-md border border-input bg-muted px-3 py-2 !font-mono text-sm text-foreground">
                 <code
-                  className="flex-1 cursor-pointer transition-colors select-all hover:text-emerald-600"
+                  className="flex-1 cursor-pointer transition-colors select-all hover:text-primary"
                   onClick={() => {
                     window.open(
                       `${getApplicationServer()}/api/v1/downdetect/is-available`,

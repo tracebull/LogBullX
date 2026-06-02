@@ -262,7 +262,7 @@ export const ConditionEditorComponent = ({
             <button
               type="button"
               onClick={handleArrayValueAdd}
-              className="rounded bg-emerald-600 px-2 py-1 text-sm text-white hover:bg-emerald-700"
+              className="rounded bg-primary px-2 py-1 text-sm text-primary-foreground hover:bg-primary/90"
             >
               <Plus className="size-3" />
             </button>
