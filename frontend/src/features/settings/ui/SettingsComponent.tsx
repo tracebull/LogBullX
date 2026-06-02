@@ -118,10 +118,10 @@ export function SettingsComponent({ contentHeight }: Props) {
       <div className="w-full">
         <div
           ref={scrollContainerRef}
-          className="grow overflow-y-auto rounded bg-white p-5 shadow"
+          className="grow overflow-y-auto rounded bg-card p-5 shadow"
           style={{ height: contentHeight }}
         >
-          <h1 className="text-2xl font-bold">LogBull Settings</h1>
+          <h1 className="text-2xl font-bold">TraceBull Settings</h1>
 
           <div className="mt-6">
             {isLoading ? (
@@ -132,11 +132,11 @@ export function SettingsComponent({ contentHeight }: Props) {
               <div className="max-w-lg text-sm">
                 <div className="space-y-6">
                   {/* External Registrations Setting */}
-                  <div className="flex items-start justify-between border-b border-gray-200 pb-4">
+                  <div className="flex items-start justify-between border-b border-border pb-4">
                     <div className="flex-1 pr-20">
-                      <div className="font-medium text-gray-900">Allow external registrations</div>
-                      <div className="mt-1 text-gray-500">
-                        When enabled, new users can register accounts in LogBull. If disabled, new
+                      <div className="font-medium text-foreground">Allow external registrations</div>
+                      <div className="mt-1 text-muted-foreground">
+                        When enabled, new users can register accounts in TraceBull. If disabled, new
                         users can only register via invitation
                       </div>
                     </div>
@@ -154,12 +154,12 @@ export function SettingsComponent({ contentHeight }: Props) {
 
                   {/* Member Invitations Setting */}
                   {!formSettings.isAllowExternalRegistrations && (
-                    <div className="flex items-start justify-between border-b border-gray-200 pb-4">
+                    <div className="flex items-start justify-between border-b border-border pb-4">
                       <div className="flex-1 pr-20">
-                        <div className="font-medium text-gray-900">Allow member invitations</div>
+                        <div className="font-medium text-foreground">Allow member invitations</div>
 
-                        <div className="mt-1 text-gray-500">
-                          When enabled, existing members can invite new users to join LogBull. If
+                        <div className="mt-1 text-muted-foreground">
+                          When enabled, existing members can invite new users to join TraceBull. If
                           not - only admins can invite users.
                         </div>
                       </div>
@@ -177,11 +177,11 @@ export function SettingsComponent({ contentHeight }: Props) {
                   )}
 
                   {/* Member Project Creation Setting */}
-                  <div className="flex items-start justify-between border-b border-gray-200 pb-4">
+                  <div className="flex items-start justify-between border-b border-border pb-4">
                     <div className="flex-1 pr-20">
-                      <div className="font-medium text-gray-900">Members can create projects</div>
+                      <div className="font-medium text-foreground">Members can create projects</div>
 
-                      <div className="mt-1 text-gray-500">
+                      <div className="mt-1 text-muted-foreground">
                         When enabled, members (non-admin users) can create new projects. If not -
                         only admins can create projects.
                       </div>
@@ -219,10 +219,10 @@ export function SettingsComponent({ contentHeight }: Props) {
             )}
           </div>
 
-          <div className="mt-3 text-sm text-gray-500">
+          <div className="mt-3 text-sm text-muted-foreground">
             Read more about settings you can{' '}
             <a
-              href="https://logbull.com/settings"
+              href="#"
               target="_blank"
               rel="noreferrer"
               className="!text-emerald-600"
@@ -236,7 +236,7 @@ export function SettingsComponent({ contentHeight }: Props) {
             <h2 className="mb-3 text-xl font-bold">Health-check</h2>
 
             <div className="group relative">
-              <div className="flex items-center rounded-md border border-gray-300 bg-gray-50 px-3 py-2 !font-mono text-sm text-gray-700">
+              <div className="flex items-center rounded-md border border-input bg-muted px-3 py-2 !font-mono text-sm text-foreground">
                 <code
                   className="flex-1 cursor-pointer transition-colors select-all hover:text-emerald-600"
                   onClick={() => {
@@ -263,32 +263,32 @@ export function SettingsComponent({ contentHeight }: Props) {
                   📋
                 </Button>
               </div>
-              <div className="mt-1 text-xs text-gray-500">
-                Use this endpoint to monitor your LogBull system&apos;s availability
+              <div className="mt-1 text-xs text-muted-foreground">
+                Use this endpoint to monitor your TraceBull system&apos;s availability
               </div>
             </div>
           </div>
 
           {/* System statistics */}
           <div className="my-8 max-w-[300px]">
-            <h2 className="mb-4 text-xl font-bold text-gray-900">System statistics</h2>
+            <h2 className="mb-4 text-xl font-bold text-foreground">System statistics</h2>
             {isLoadingStats ? (
               <div className="flex items-center py-2">
                 <Spinner />
-                <span className="ml-2 text-sm text-gray-500">Loading statistics...</span>
+                <span className="ml-2 text-sm text-muted-foreground">Loading statistics...</span>
               </div>
             ) : systemStats ? (
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Total logs:</span>
+                  <span className="text-muted-foreground">Total logs:</span>
                   <span className="font-medium">{systemStats.totalLogs.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Storage size:</span>
+                  <span className="text-muted-foreground">Storage size:</span>
                   <span className="font-medium">{systemStats.totalSizeMb.toFixed(2)} MB</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Date range:</span>
+                  <span className="text-muted-foreground">Date range:</span>
                   <span className="font-medium">
                     {dayjs(systemStats.oldestLogTime).format('D MMM YYYY')} -{' '}
                     {dayjs(systemStats.newestLogTime).format('D MMM YYYY')}
@@ -296,7 +296,7 @@ export function SettingsComponent({ contentHeight }: Props) {
                 </div>
               </div>
             ) : (
-              <div className="text-sm text-gray-500">No statistics available</div>
+              <div className="text-sm text-muted-foreground">No statistics available</div>
             )}
           </div>
 

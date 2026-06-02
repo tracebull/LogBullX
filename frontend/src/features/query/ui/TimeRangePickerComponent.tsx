@@ -218,7 +218,7 @@ export const TimeRangePickerComponent = ({
   return (
     <div className="space-y-3">
       <div>
-        <label className="mb-1 block text-sm font-medium text-gray-700">Time Range</label>
+        <label className="mb-1 block text-sm font-medium text-foreground">Time Range</label>
         <Select value={selectedPreset} onValueChange={handlePresetChange}>
           <SelectTrigger className="w-48">
             <Clock className="mr-2 size-4 opacity-50" />
@@ -238,7 +238,7 @@ export const TimeRangePickerComponent = ({
 
       {selectedPreset === 'custom' && (
         <div>
-          <label className="mb-1 block text-sm font-medium text-gray-700">
+          <label className="mb-1 block text-sm font-medium text-foreground">
             Select Custom Time Range
           </label>
           <div className="flex items-center gap-2">
@@ -249,7 +249,7 @@ export const TimeRangePickerComponent = ({
               placeholder="Start time"
               className="w-48"
             />
-            <span className="text-gray-400">to</span>
+            <span className="text-muted-foreground">to</span>
             <Input
               type="datetime-local"
               value={customTo}

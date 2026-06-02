@@ -104,7 +104,7 @@ export function AuditLogsComponent({ scrollContainerRef: externalScrollRef }: Pr
   const renderUser = (record: AuditLog) => {
     if (!record.userEmail && !record.userName) {
       return (
-        <span className="inline-block rounded-full bg-gray-100 px-1.5 py-0.5 text-xs font-medium text-gray-600">
+        <span className="inline-block rounded-full bg-muted px-1.5 py-0.5 text-xs font-medium text-muted-foreground">
           System
         </span>
       );
@@ -125,7 +125,7 @@ export function AuditLogsComponent({ scrollContainerRef: externalScrollRef }: Pr
     <div className="max-w-[1200px]">
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-xl font-bold">Audit Logs</h2>
-        <div className="text-sm text-gray-500">
+        <div className="text-sm text-muted-foreground">
           {isLoading ? (
             <Spinner size="sm" />
           ) : (
@@ -157,21 +157,21 @@ export function AuditLogsComponent({ scrollContainerRef: externalScrollRef }: Pr
                   <TableRow key={record.id}>
                     <TableCell>{renderUser(record)}</TableCell>
                     <TableCell>
-                      <span className="text-xs text-gray-900">{record.message}</span>
+                      <span className="text-xs text-foreground">{record.message}</span>
                     </TableCell>
                     <TableCell>
                       <span
                         className={`inline-block rounded-full px-1.5 py-0.5 text-xs font-medium ${
                           record.projectName
                             ? 'bg-blue-100 text-blue-800'
-                            : 'bg-gray-100 text-gray-600'
+                            : 'bg-muted text-muted-foreground'
                         }`}
                       >
                         {record.projectName || '-'}
                       </span>
                     </TableCell>
                     <TableCell>
-                      <span className="text-xs text-gray-700">
+                       <span className="text-xs text-foreground">
                         {`${date.format(tf.format)} (${date.fromNow()})`}
                       </span>
                     </TableCell>
@@ -184,12 +184,12 @@ export function AuditLogsComponent({ scrollContainerRef: externalScrollRef }: Pr
           {isLoadingMore && (
             <div className="flex justify-center py-4">
               <Spinner />
-              <span className="ml-2 text-sm text-gray-500">Loading more logs...</span>
+              <span className="ml-2 text-sm text-muted-foreground">Loading more logs...</span>
             </div>
           )}
 
           {!hasMore && auditLogs.length > 0 && (
-            <div className="py-4 text-center text-sm text-gray-500">
+            <div className="py-4 text-center text-sm text-muted-foreground">
               All logs loaded ({total} total)
             </div>
           )}

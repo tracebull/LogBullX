@@ -107,8 +107,8 @@ export function ProjectAuditLogsComponent({
   return (
     <div className="max-w-[1200px]">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-xl font-bold text-gray-900">Project Audit Logs</h2>
-        <div className="text-sm text-gray-500">
+        <h2 className="text-xl font-bold text-foreground">Project Audit Logs</h2>
+        <div className="text-sm text-muted-foreground">
           {isLoading ? (
             <Spinner size="sm" />
           ) : (
@@ -122,7 +122,7 @@ export function ProjectAuditLogsComponent({
           <Spinner size="lg" />
         </div>
       ) : auditLogs.length === 0 ? (
-        <div className="flex h-32 items-center justify-center text-gray-500">
+        <div className="flex h-32 items-center justify-center text-muted-foreground">
           No audit logs found for this project.
         </div>
       ) : (
@@ -140,7 +140,7 @@ export function ProjectAuditLogsComponent({
                 <TableRow key={record.id}>
                   <TableCell>
                     {!record.userEmail && !record.userName ? (
-                      <span className="inline-block rounded-full bg-gray-100 px-1.5 py-0.5 text-xs font-medium text-gray-600">
+                      <span className="inline-block rounded-full bg-muted px-1.5 py-0.5 text-xs font-medium text-muted-foreground">
                         System
                       </span>
                     ) : (
@@ -152,10 +152,10 @@ export function ProjectAuditLogsComponent({
                     )}
                   </TableCell>
                   <TableCell>
-                    <span className="text-xs text-gray-900">{record.message}</span>
+                    <span className="text-xs text-foreground">{record.message}</span>
                   </TableCell>
                   <TableCell>
-                    <span className="text-xs text-gray-700">
+                    <span className="text-xs text-muted-foreground">
                       {(() => {
                         const date = dayjs(record.createdAt);
                         const timeFormat = getUserShortTimeFormat();
@@ -171,12 +171,12 @@ export function ProjectAuditLogsComponent({
           {isLoadingMore && (
             <div className="flex justify-center py-4">
               <Spinner size="sm" />
-              <span className="ml-2 text-sm text-gray-500">Loading more logs...</span>
+              <span className="ml-2 text-sm text-muted-foreground">Loading more logs...</span>
             </div>
           )}
 
           {!hasMore && auditLogs.length > 0 && (
-            <div className="py-4 text-center text-sm text-gray-500">
+            <div className="py-4 text-center text-sm text-muted-foreground">
               All logs loaded ({total} total)
             </div>
           )}

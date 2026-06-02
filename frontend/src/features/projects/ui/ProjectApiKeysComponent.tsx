@@ -226,7 +226,7 @@ export function ProjectApiKeysComponent({ contentHeight, projectResponse, user }
     <div className="flex grow pl-3">
       <div className="w-full">
         <div
-          className="grow overflow-y-auto rounded bg-white p-5 shadow"
+          className="grow overflow-y-auto rounded bg-card p-5 shadow"
           style={{ height: contentHeight }}
         >
           <div className="max-w-[850px]">
@@ -268,14 +268,14 @@ export function ProjectApiKeysComponent({ contentHeight, projectResponse, user }
               </div>
             ) : (
               <div>
-                <div className="mb-4 text-sm text-gray-500">
+                <div className="mb-4 text-sm text-muted-foreground">
                   {apiKeys.length === 0
                     ? 'No API keys found'
                     : `${apiKeys.length} API key${apiKeys.length !== 1 ? 's' : ''}`}
                 </div>
 
                 {apiKeys.length === 0 ? (
-                  <div className="py-8 text-center text-gray-500">
+                  <div className="py-8 text-center text-muted-foreground">
                     <div className="mb-2">No API keys created yet</div>
                     {canManageKeys && (
                       <div className="text-sm">
@@ -338,7 +338,7 @@ export function ProjectApiKeysComponent({ contentHeight, projectResponse, user }
                             )}
                           </TableCell>
                           <TableCell>
-                            <code className="rounded bg-gray-100 px-2 py-1 !font-mono text-sm text-gray-700">
+                            <code className="rounded bg-muted px-2 py-1 !font-mono text-sm text-foreground">
                               {record.tokenPrefix}...
                             </code>
                           </TableCell>
@@ -355,9 +355,9 @@ export function ProjectApiKeysComponent({ contentHeight, projectResponse, user }
                             </div>
                           </TableCell>
                           <TableCell>
-                            <div className="text-sm text-gray-600">
+                            <div className="text-sm text-muted-foreground">
                               <div>{dayjs(record.createdAt).format('MMM D, YYYY')}</div>
-                              <div className="text-xs text-gray-400">
+                              <div className="text-xs text-muted-foreground">
                                 {dayjs(record.createdAt).format('HH:mm')} ({dayjs(record.createdAt).fromNow()})
                               </div>
                             </div>
@@ -446,7 +446,7 @@ export function ProjectApiKeysComponent({ contentHeight, projectResponse, user }
                 </DialogHeader>
                 <div className="py-4">
                   <div className="mb-4">
-                    <div className="mb-2 font-medium text-gray-900">API key name</div>
+                    <div className="mb-2 font-medium text-foreground">API key name</div>
                     <Input
                       value={createForm.name}
                       onChange={(e) => {
@@ -457,7 +457,7 @@ export function ProjectApiKeysComponent({ contentHeight, projectResponse, user }
                       maxLength={100}
                       className={createNameError ? 'border-destructive' : undefined}
                     />
-                    <div className="mt-1 text-xs text-gray-500">
+                    <div className="mt-1 text-xs text-muted-foreground">
                       Choose a name that helps you identify this key&apos;s purpose (e.g.,
                       &quot;Production&quot;, &quot;Development&quot;)
                     </div>
@@ -499,12 +499,12 @@ export function ProjectApiKeysComponent({ contentHeight, projectResponse, user }
                 {createdApiKey && (
                   <div className="mt-2">
                     <div className="mb-4">
-                      <div className="mb-2 font-medium text-gray-900">API key name:</div>
-                      <div className="text-gray-700">{createdApiKey.name}</div>
+                      <div className="mb-2 font-medium text-foreground">API key name:</div>
+                      <div className="text-foreground">{createdApiKey.name}</div>
                     </div>
 
                     <div className="mb-4">
-                      <div className="mb-2 font-medium text-gray-900">Full API token:</div>
+                      <div className="mb-2 font-medium text-foreground">Full API token:</div>
                       <div className="rounded-lg border-2 border-emerald-200 bg-emerald-50 p-4">
                         <div className="flex items-center justify-between">
                           <code className="!font-mono text-sm break-all text-emerald-800 select-all">

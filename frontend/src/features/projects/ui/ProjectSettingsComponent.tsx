@@ -376,7 +376,7 @@ export function ProjectSettingsComponent({ projectResponse, user, contentHeight 
       <div className="w-full">
         <div
           ref={scrollContainerRef}
-          className="grow overflow-y-auto rounded bg-white p-5 shadow"
+          className="grow overflow-y-auto rounded bg-card p-5 shadow"
           style={{ height: contentHeight }}
         >
           <h1 className="mb-6 text-2xl font-bold">Settings</h1>
@@ -397,9 +397,9 @@ export function ProjectSettingsComponent({ projectResponse, user, contentHeight 
               )}
 
               <div className="space-y-6 text-sm">
-                <div className="max-w-2xl border-b border-gray-200 pb-6">
+                <div className="max-w-2xl border-b border-border pb-6">
                   <div className="max-w-md">
-                    <div className="mb-1 font-medium text-gray-900">Project name</div>
+                    <div className="mb-1 font-medium text-foreground">Project name</div>
                     <Input
                       value={formProject.name || ''}
                       onChange={(e) => {
@@ -449,14 +449,14 @@ export function ProjectSettingsComponent({ projectResponse, user, contentHeight 
                 </div>
 
                 {/* Security Policies */}
-                <div className="max-w-2xl border-b border-gray-200 pb-6">
-                  <h2 className="mb-4 text-xl font-bold text-gray-900">Security policies</h2>
+                <div className="max-w-2xl border-b border-border pb-6">
+                  <h2 className="mb-4 text-xl font-bold text-foreground">Security policies</h2>
 
                   <div className="space-y-4">
                     <div className="flex items-start justify-between">
                       <div className="flex-1 pr-20">
-                        <div className="font-medium text-gray-900">Require API key</div>
-                        <div className="mt-1 text-gray-500">
+                        <div className="font-medium text-foreground">Require API key</div>
+                        <div className="mt-1 text-muted-foreground">
                           When enabled, all log ingestion requests must include a valid API key
                         </div>
                       </div>
@@ -472,8 +472,8 @@ export function ProjectSettingsComponent({ projectResponse, user, contentHeight 
                     <div className="space-y-3">
                       <div className="flex items-start justify-between">
                         <div className="flex-1 pr-20">
-                          <div className="font-medium text-gray-900">Filter by domain</div>
-                          <div className="mt-1 text-gray-500">
+                          <div className="font-medium text-foreground">Filter by domain</div>
+                          <div className="mt-1 text-muted-foreground">
                             When enabled, only requests from allowed domains will be accepted
                           </div>
                         </div>
@@ -508,7 +508,7 @@ export function ProjectSettingsComponent({ projectResponse, user, contentHeight 
 
                       {formProject.isFilterByDomain && (
                         <div className="ml-0">
-                          <div className="mb-2 text-sm font-medium text-gray-700">
+                          <div className="mb-2 text-sm font-medium text-foreground">
                             Allowed domains
                           </div>
                           <div className={`flex flex-wrap gap-1.5 rounded-md border p-2 ${domainErrors.some((error) => error) ? 'border-destructive' : 'border-input'}`}>
@@ -556,7 +556,7 @@ export function ProjectSettingsComponent({ projectResponse, user, contentHeight 
                               )}
                             </div>
                           )}
-                          <div className="mt-1 text-xs text-gray-500">
+                          <div className="mt-1 text-xs text-muted-foreground">
                             Press Enter or comma to add multiple domains. Only requests from these
                             domains will be accepted.
                           </div>
@@ -567,8 +567,8 @@ export function ProjectSettingsComponent({ projectResponse, user, contentHeight 
                     <div className="space-y-3">
                       <div className="flex items-start justify-between">
                         <div className="flex-1 pr-20">
-                          <div className="font-medium text-gray-900">Filter by IP address</div>
-                          <div className="mt-1 text-gray-500">
+                          <div className="font-medium text-foreground">Filter by IP address</div>
+                          <div className="mt-1 text-muted-foreground">
                             When enabled, only requests from allowed IP addresses will be accepted
                           </div>
                         </div>
@@ -603,7 +603,7 @@ export function ProjectSettingsComponent({ projectResponse, user, contentHeight 
 
                       {formProject.isFilterByIp && (
                         <div className="ml-0">
-                          <div className="mb-2 text-sm font-medium text-gray-700">
+                          <div className="mb-2 text-sm font-medium text-foreground">
                             Allowed IP addresses
                           </div>
                           <div className={`flex flex-wrap gap-1.5 rounded-md border p-2 ${ipErrors.some((error) => error) ? 'border-destructive' : 'border-input'}`}>
@@ -651,7 +651,7 @@ export function ProjectSettingsComponent({ projectResponse, user, contentHeight 
                               )}
                             </div>
                           )}
-                          <div className="mt-1 text-xs text-gray-500">
+                          <div className="mt-1 text-xs text-muted-foreground">
                             Press Enter or comma to add multiple IP addresses. Supports both IPv4
                             and IPv6 formats.
                           </div>
@@ -703,12 +703,12 @@ export function ProjectSettingsComponent({ projectResponse, user, contentHeight 
                 </div>
 
                 {/* Rate Limiting & Quotas */}
-                <div className="max-w-2xl border-b border-gray-200 pb-6">
-                  <h2 className="text-xl leading-1.5 font-bold text-gray-900">
+                <div className="max-w-2xl border-b border-border pb-6">
+                  <h2 className="text-xl leading-1.5 font-bold text-foreground">
                     Rate limiting & quotas
                   </h2>
 
-                  <div className="mt-3 text-sm text-gray-500">
+                  <div className="mt-3 text-sm text-muted-foreground">
                     Read more about settings you can{' '}
                     <a
                       href="https://logbull.com/settings"
@@ -728,7 +728,7 @@ export function ProjectSettingsComponent({ projectResponse, user, contentHeight 
 
                   <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div>
-                      <div className="mb-1 font-medium text-gray-900">Logs per second limit</div>
+                      <div className="mb-1 font-medium text-foreground">Logs per second limit</div>
                       <Input
                         type="text"
                         inputMode="numeric"
@@ -739,13 +739,13 @@ export function ProjectSettingsComponent({ projectResponse, user, contentHeight 
                         }
                         className="w-[150px]"
                       />
-                      <div className="mt-1 text-xs text-gray-500">
+                      <div className="mt-1 text-xs text-muted-foreground">
                         Maximum logs that can be ingested per second
                       </div>
                     </div>
 
                     <div>
-                      <div className="mb-1 font-medium text-gray-900">Maximum log size (KB)</div>
+                      <div className="mb-1 font-medium text-foreground">Maximum log size (KB)</div>
                       <Input
                         type="text"
                         inputMode="numeric"
@@ -754,13 +754,13 @@ export function ProjectSettingsComponent({ projectResponse, user, contentHeight 
                         disabled={!canEdit || (project.plan && project.plan.maxLogSizeKb != 0)}
                         className="w-[150px]"
                       />
-                      <div className="mt-1 text-xs text-gray-500">
+                      <div className="mt-1 text-xs text-muted-foreground">
                         Maximum size allowed for a single log entry
                       </div>
                     </div>
 
                     <div>
-                      <div className="mb-1 font-medium text-gray-900">Maximum logs amount</div>
+                      <div className="mb-1 font-medium text-foreground">Maximum logs amount</div>
                       <Input
                         type="text"
                         inputMode="numeric"
@@ -769,13 +769,13 @@ export function ProjectSettingsComponent({ projectResponse, user, contentHeight 
                         disabled={!canEdit || (project.plan && project.plan.maxLogsAmount != 0)}
                         className="w-[150px]"
                       />
-                      <div className="mt-1 text-xs text-gray-500">
+                      <div className="mt-1 text-xs text-muted-foreground">
                         Maximum total number of logs that can be stored
                       </div>
                     </div>
 
                     <div>
-                      <div className="mb-1 font-medium text-gray-900">
+                      <div className="mb-1 font-medium text-foreground">
                         Maximum storage size (MB)
                       </div>
                       <Input
@@ -786,13 +786,13 @@ export function ProjectSettingsComponent({ projectResponse, user, contentHeight 
                         disabled={!canEdit || (project.plan && project.plan.maxLogsSizeMb != 0)}
                         className="w-[150px]"
                       />
-                      <div className="mt-1 text-xs text-gray-500">
+                      <div className="mt-1 text-xs text-muted-foreground">
                         Maximum total storage size for all logs
                       </div>
                     </div>
 
                     <div>
-                      <div className="mb-1 font-medium text-gray-900">Log retention (days)</div>
+                      <div className="mb-1 font-medium text-foreground">Log retention (days)</div>
                       <Input
                         type="text"
                         inputMode="numeric"
@@ -801,7 +801,7 @@ export function ProjectSettingsComponent({ projectResponse, user, contentHeight 
                         disabled={!canEdit || (project.plan && project.plan.maxLogsLifeDays != 0)}
                         className="w-[150px]"
                       />
-                      <div className="mt-1 text-xs text-gray-500">
+                      <div className="mt-1 text-xs text-muted-foreground">
                         How long logs should be kept before automatic deletion
                       </div>
                     </div>
@@ -848,8 +848,8 @@ export function ProjectSettingsComponent({ projectResponse, user, contentHeight 
                 </div>
 
                 {/* Project Deletion */}
-                <div className="max-w-2xl border-b border-gray-200 pb-6">
-                  <h2 className="mb-4 text-xl font-bold text-gray-900">Danger Zone</h2>
+                <div className="max-w-2xl border-b border-border pb-6">
+                  <h2 className="mb-4 text-xl font-bold text-foreground">Danger Zone</h2>
 
                   <div className="rounded-lg border border-red-200 bg-red-50 p-4">
                     <div className="flex items-start justify-between">
@@ -908,28 +908,28 @@ export function ProjectSettingsComponent({ projectResponse, user, contentHeight 
 
                 {/* Project statistics */}
                 <div className="max-w-[300px]">
-                  <h2 className="mb-4 text-xl font-bold text-gray-900">Project statistics</h2>
+                  <h2 className="mb-4 text-xl font-bold text-foreground">Project statistics</h2>
                   {isLoadingStats ? (
                     <div className="flex items-center py-2">
                       <Spinner size="sm" />
-                      <span className="ml-2 text-sm text-gray-500">Loading statistics...</span>
+                      <span className="ml-2 text-sm text-muted-foreground">Loading statistics...</span>
                     </div>
                   ) : projectStats ? (
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Total logs:</span>
+                        <span className="text-muted-foreground">Total logs:</span>
                         <span className="font-medium">
                           {projectStats.totalLogs.toLocaleString()}
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Storage size:</span>
+                        <span className="text-muted-foreground">Storage size:</span>
                         <span className="font-medium">
                           {projectStats.totalSizeMb.toFixed(2)} MB
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Date range:</span>
+                        <span className="text-muted-foreground">Date range:</span>
                         <span className="font-medium">
                           {dayjs(projectStats.oldestLogTime).format('D MMM YYYY')} -{' '}
                           {dayjs(projectStats.newestLogTime).format('D MMM YYYY')}
@@ -937,7 +937,7 @@ export function ProjectSettingsComponent({ projectResponse, user, contentHeight 
                       </div>
                     </div>
                   ) : (
-                    <div className="text-sm text-gray-500">No statistics available</div>
+                    <div className="text-sm text-muted-foreground">No statistics available</div>
                   )}
                 </div>
 

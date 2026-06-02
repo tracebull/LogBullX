@@ -17,7 +17,7 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import { Spinner } from '@/components/ui/spinner';
 
-const STORAGE_KEY = 'logbull-message-length';
+const STORAGE_KEY = 'tracebull-message-length';
 
 /**
  * Get default message length based on screen width
@@ -132,7 +132,7 @@ export const QueryResultsComponent = ({
       ERROR: 'bg-red-100 text-red-800 border-red-200',
       WARN: 'bg-yellow-100 text-yellow-800 border-yellow-200',
       INFO: 'bg-blue-100 text-blue-800 border-blue-200',
-      DEBUG: 'bg-gray-100 text-gray-800 border-gray-200',
+      DEBUG: 'bg-muted text-foreground border-border',
       TRACE: 'bg-purple-100 text-purple-800 border-purple-200',
       FATAL: 'bg-red-200 text-red-900 border-red-300',
       CRITICAL: 'bg-red-200 text-red-900 border-red-300',
@@ -195,7 +195,7 @@ export const QueryResultsComponent = ({
     const fieldKeys = Object.keys(log.fields || {});
 
     if (fieldKeys.length === 0) {
-      return <span className="text-xs text-gray-400">-</span>;
+      return <span className="text-xs text-muted-foreground">-</span>;
     }
 
     // Create a string representation of all fields
@@ -206,7 +206,7 @@ export const QueryResultsComponent = ({
       : truncateText(fieldsString, maxLength);
 
     if (fieldsString.length === 0) {
-      return <span className="text-xs text-gray-400">-</span>;
+      return <span className="text-xs text-muted-foreground">-</span>;
     }
 
     return (
@@ -227,9 +227,9 @@ export const QueryResultsComponent = ({
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <div className="cursor-pointer rounded px-1 hover:bg-emerald-200">
-                      <span className="!font-mono font-medium text-gray-700">{key}:</span>{' '}
+                      <span className="!font-mono font-medium text-muted-foreground">{key}:</span>{' '}
                       <span
-                        className={`!font-mono text-gray-600 ${
+                        className={`!font-mono text-muted-foreground ${
                           isJson || formatted.includes(' ') ? 'whitespace-pre-wrap' : ''
                         }`}
                       >
@@ -265,7 +265,7 @@ export const QueryResultsComponent = ({
           })
         ) : (
           <div className="text-xs">
-            <span className="!font-mono break-all text-gray-600">{displayText}</span>
+            <span className="!font-mono break-all text-muted-foreground">{displayText}</span>
             {isTruncated && (
               <span className="ml-1 cursor-pointer text-emerald-600 hover:text-emerald-700">
                 (expand)
@@ -310,13 +310,13 @@ export const QueryResultsComponent = ({
   }
 
   return (
-    <div ref={containerRef} className="w-full rounded-lg border border-gray-200 bg-white shadow-sm">
-      <div className="border-b border-gray-200 px-4 py-2">
+    <div ref={containerRef} className="w-full rounded-lg border border-border bg-card shadow-sm">
+      <div className="border-b border-border px-4 py-2">
         <div className="flex items-center justify-between">
-          <h3 className="text-base font-medium text-gray-900">Query Results</h3>
+          <h3 className="text-base font-medium text-foreground">Query Results</h3>
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
-              <label htmlFor="messageLength" className="text-xs font-normal text-gray-500">
+              <label htmlFor="messageLength" className="text-xs font-normal text-muted-foreground">
                 Message length:
               </label>
 
@@ -325,7 +325,7 @@ export const QueryResultsComponent = ({
                 type="number"
                 value={messageLength}
                 onChange={(e) => setMessageLength(Math.max(1, parseInt(e.target.value)))}
-                className="w-16 rounded border border-gray-300 px-1 py-0.5 text-xs focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 focus:outline-none"
+                className="w-16 rounded border border-input px-1 py-0.5 text-xs focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 focus:outline-none"
                 min="1"
                 max="1000"
               />
@@ -337,11 +337,11 @@ export const QueryResultsComponent = ({
                 onCheckedChange={(checked) => setShowFields(checked === true)}
                 className="text-xs"
               />
-              <label htmlFor="showFields" className="text-xs font-normal text-gray-500">
+              <label htmlFor="showFields" className="text-xs font-normal text-muted-foreground">
                 Show fields
               </label>
             </div>
-            <span className="text-xs font-normal text-gray-500">
+            <span className="text-xs font-normal text-muted-foreground">
               {isExecuting && queryResults.length === 0 ? (
                 <Spinner size="sm" />
               ) : (
@@ -359,13 +359,13 @@ export const QueryResultsComponent = ({
             <span className="ml-2 text-sm">Executing query...</span>
           </div>
         ) : queryResults.length === 0 ? (
-          <div className="flex h-20 items-center justify-center text-sm text-gray-500">
+          <div className="flex h-20 items-center justify-center text-sm text-muted-foreground">
             No logs found matching your query.
           </div>
         ) : (
           <div className="space-y-1">
             {/* Header Row */}
-            <div className="flex gap-2 border-b border-gray-200 pb-1 text-xs font-medium text-gray-700">
+            <div className="flex gap-2 border-b border-border pb-1 text-xs font-medium text-foreground">
               <div style={{ width: '150px' }}>Timestamp</div>
               <div style={{ width: '85px' }}>Level</div>
               <div className={showFields ? 'flex-1' : 'flex-[2]'}>Message</div>
@@ -387,17 +387,17 @@ export const QueryResultsComponent = ({
               return (
                 <div
                   key={log.id}
-                  className="flex cursor-pointer items-start gap-2 border-b border-gray-100 py-1 !font-mono text-xs hover:bg-gray-50"
+                  className="flex cursor-pointer items-start gap-2 border-b border-border py-1 !font-mono text-xs hover:bg-accent"
                   onClick={() => toggleRowExpansion(log.id)}
                 >
                   <div
                     style={{ width: '150px', lineHeight: 1.1 }}
-                    className="text-xs text-gray-600"
+                    className="text-xs text-muted-foreground"
                   >
                     <div className="!font-mono" style={{ fontSize: '12px' }}>
                       {dayjs(log.timestamp).format(timeFormat.format)}
                     </div>
-                    <div className="!font-mono text-gray-400" style={{ fontSize: '10px' }}>
+                    <div className="!font-mono text-muted-foreground" style={{ fontSize: '10px' }}>
                       {dayjs(log.timestamp).fromNow()}
                     </div>
                   </div>
@@ -407,7 +407,7 @@ export const QueryResultsComponent = ({
                   </div>
 
                   <div
-                    className={`${showFields ? 'flex-1' : 'flex-[2]'} !font-mono text-xs break-all text-gray-900 ${
+                    className={`${showFields ? 'flex-1' : 'flex-[2]'} !font-mono text-xs break-all text-foreground ${
                       isExpanded && displayMessage.includes(' ') ? 'whitespace-pre-wrap' : ''
                     }`}
                   >
@@ -433,13 +433,13 @@ export const QueryResultsComponent = ({
             {isExecuting && queryResults.length > 0 && (
               <div className="flex justify-center py-2">
                 <Spinner size="sm" />
-                <span className="ml-2 text-xs text-gray-500">Loading more results...</span>
+                <span className="ml-2 text-xs text-muted-foreground">Loading more results...</span>
               </div>
             )}
 
             {/* End of results indicator */}
             {!hasMoreResults && queryResults.length > 0 && (
-              <div className="py-2 text-center text-xs text-gray-500">
+              <div className="py-2 text-center text-xs text-muted-foreground">
                 All {totalResults.toLocaleString()} results loaded
               </div>
             )}

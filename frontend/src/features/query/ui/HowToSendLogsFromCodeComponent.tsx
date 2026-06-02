@@ -122,14 +122,14 @@ export const HowToSendLogsFromCodeComponent = ({
             <div className="mb-4 flex">
               <div className="mr-5 w-80">
                 <div className="mb-1">
-                  <span className="text-xs font-medium text-gray-600">LogBull URL:</span>
+                  <span className="text-xs font-medium text-muted-foreground">LogBull URL:</span>
                 </div>
-                <div className="flex items-center justify-between rounded border border-gray-200 bg-gray-100 px-3 py-1.5">
-                  <span className="truncate !font-mono text-xs text-gray-800">{baseUrl}</span>
+                <div className="flex items-center justify-between rounded border border-border bg-muted px-3 py-1.5">
+                  <span className="truncate !font-mono text-xs text-foreground">{baseUrl}</span>
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="ml-2 size-5 min-w-5 p-0.5 text-gray-600"
+                    className="ml-2 size-5 min-w-5 p-0.5 text-muted-foreground"
                     onClick={() => handleCopyToClipboard(baseUrl)}
                     disabled={copyingStates['logbull-url']}
                   >
@@ -144,14 +144,14 @@ export const HowToSendLogsFromCodeComponent = ({
 
               <div className="w-80">
                 <div className="mb-1">
-                  <span className="text-xs font-medium text-gray-600">Project ID:</span>
+                  <span className="text-xs font-medium text-muted-foreground">Project ID:</span>
                 </div>
-                <div className="flex items-center justify-between rounded border border-gray-200 bg-gray-100 px-3 py-1.5">
-                  <span className="truncate !font-mono text-xs text-gray-800">{projectId}</span>
+                <div className="flex items-center justify-between rounded border border-border bg-muted px-3 py-1.5">
+                  <span className="truncate !font-mono text-xs text-foreground">{projectId}</span>
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="ml-2 size-5 min-w-5 p-0.5 text-gray-600"
+                    className="ml-2 size-5 min-w-5 p-0.5 text-muted-foreground"
                     onClick={() => handleCopyToClipboard(projectId)}
                     disabled={copyingStates['project-id']}
                   >

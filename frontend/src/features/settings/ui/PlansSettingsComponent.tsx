@@ -307,7 +307,7 @@ export const PlansSettingsComponent = () => {
   return (
     <div className="my-8 max-w-4xl">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-xl font-bold text-gray-900">Plans Management</h2>
+        <h2 className="text-xl font-bold text-foreground">Plans Management</h2>
         <Button
           className="border-emerald-600 bg-emerald-600 hover:border-emerald-700 hover:bg-emerald-700"
           onClick={handleCreate}
@@ -319,7 +319,7 @@ export const PlansSettingsComponent = () => {
       {isLoading ? (
         <div className="flex items-center py-4">
           <Spinner />
-          <span className="ml-2 text-sm text-gray-500">Loading plans...</span>
+          <span className="ml-2 text-sm text-muted-foreground">Loading plans...</span>
         </div>
       ) : (
         <Table>
@@ -475,7 +475,7 @@ export const PlansSettingsComponent = () => {
             </div>
 
             {/* Limit Fields */}
-            <div className="rounded border border-gray-200 p-3">
+            <div className="rounded border border-border p-3">
               <h3 className="mb-2 text-sm font-semibold">Limits</h3>
 
               <div className="space-y-2 text-sm">
@@ -600,7 +600,7 @@ function LimitRow({
 }: LimitRowProps) {
   return (
     <div className="flex items-center justify-between">
-      <span className="w-40 text-gray-600">{label}</span>
+      <span className="w-40 text-muted-foreground">{label}</span>
 
       <div className="flex flex-1 items-center space-x-2">
         <Input

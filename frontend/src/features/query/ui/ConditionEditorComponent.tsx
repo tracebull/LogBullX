@@ -431,7 +431,7 @@ export const ConditionEditorComponent = ({
       <div className="grid grid-cols-12 items-center gap-2">
         {/* Field Selection */}
         <div className="col-span-4">
-          <label className="mb-1 block text-xs font-medium text-gray-600">Field</label>
+          <label className="mb-1 block text-xs font-medium text-muted-foreground">Field</label>
           <div className="relative">
             <Input
               ref={fieldInputRef}
@@ -454,7 +454,7 @@ export const ConditionEditorComponent = ({
             {showFieldDropdown && filteredFieldOptions.length > 0 && (
               <div
                 ref={dropdownRef}
-                className="absolute z-50 mt-1 max-h-48 w-full overflow-y-auto rounded-md border border-gray-200 bg-white shadow-lg"
+                className="absolute z-50 mt-1 max-h-48 w-full overflow-y-auto rounded-md border border-border bg-card shadow-lg"
               >
                 {filteredFieldOptions.map((option) => (
                   <div
@@ -468,7 +468,7 @@ export const ConditionEditorComponent = ({
                     }}
                   >
                     <span>{option.label}</span>
-                    <span className="text-gray-400">{option.type}</span>
+                    <span className="text-muted-foreground">{option.type}</span>
                   </div>
                 ))}
               </div>
@@ -478,7 +478,7 @@ export const ConditionEditorComponent = ({
 
         {/* Operator Selection */}
         <div className="col-span-3">
-          <label className="mb-1 block text-xs font-medium text-gray-600">Operator</label>
+          <label className="mb-1 block text-xs font-medium text-muted-foreground">Operator</label>
           <Select
             value={currentOperator}
             onValueChange={(val) => handleOperatorChange(val as QueryOperator)}
@@ -500,19 +500,19 @@ export const ConditionEditorComponent = ({
         <div className="col-span-5">
           {operatorNeedsValue(currentOperator) && (
             <>
-              <label className="mb-1 block text-xs font-medium text-gray-600">Value</label>
+              <label className="mb-1 block text-xs font-medium text-muted-foreground">Value</label>
               {renderValueInput()}
             </>
           )}
 
           {!operatorNeedsValue(currentOperator) && (
-            <div className="pt-4 text-xs text-gray-400">No value needed</div>
+            <div className="pt-4 text-xs text-muted-foreground">No value needed</div>
           )}
         </div>
       </div>
 
       {/* Field info */}
-      <div className="flex items-center justify-between text-xs text-gray-500">
+      <div className="flex items-center justify-between text-xs text-muted-foreground">
         <div>
           <span className="font-medium">{currentField?.type}</span> field{' '}
           {currentField?.type === 'string' ? '(case-sensitive)' : ''}

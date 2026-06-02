@@ -147,7 +147,7 @@ export const OnboardingTooltipComponent: React.FC<Props> = ({ targetRef, show })
 
       {/* Tooltip with arrow */}
       <div
-        className={`absolute rounded-lg bg-white px-4 py-3 shadow-xl transition-all duration-500 ${isVisible ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'}`}
+        className={`absolute rounded-lg bg-card px-4 py-3 shadow-xl transition-all duration-500 ${isVisible ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'}`}
         style={{
           left: `${targetRect.left + targetRect.width / 2}px`,
           top: `${targetRect.bottom + 20}px`,
@@ -158,7 +158,7 @@ export const OnboardingTooltipComponent: React.FC<Props> = ({ targetRef, show })
         <div className="text-center text-sm font-medium text-emerald-600">Click here</div>
         {/* Arrow pointing up */}
         <div
-          className="absolute -top-2 left-1/2 h-0 w-0 -translate-x-1/2 border-8 border-transparent border-b-white"
+          className="absolute -top-2 left-1/2 h-0 w-0 -translate-x-1/2 border-8 border-transparent border-b-card"
           style={{
             borderTopWidth: 0,
           }}

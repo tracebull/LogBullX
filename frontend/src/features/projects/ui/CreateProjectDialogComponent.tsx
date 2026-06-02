@@ -78,7 +78,7 @@ export const CreateProjectDialogComponent = ({
           <DialogTitle>Create project</DialogTitle>
         </DialogHeader>
         <div className="mb-4">
-          <label className="mb-2 block text-sm font-medium text-gray-700">Project name</label>
+          <label className="mb-2 block text-sm font-medium text-foreground">Project name</label>
           <Input
             value={projectName}
             onChange={(e) => setProjectName(e.target.value)}

@@ -206,7 +206,7 @@ export const QueryBuilderComponent = ({
           key={`condition-${path.join('-')}`}
           className={`relative max-w-[800px] ${indentClass}`}
         >
-          <div className="flex items-start space-x-2 rounded-lg border border-gray-200 bg-gray-50 p-3">
+          <div className="flex items-start space-x-2 rounded-lg border border-border bg-muted p-3">
             <div className="flex-1">
               <ConditionEditorComponent
                 fields={fields}
@@ -239,7 +239,7 @@ export const QueryBuilderComponent = ({
           key={`logical-${path.join('-')}`}
           className={`relative w-full max-w-[820px] ${indentClass} pr-4`}
         >
-          <div className="rounded-lg border border-emerald-200 bg-white shadow-sm">
+          <div className="rounded-lg border border-emerald-200 bg-card shadow-sm">
             <div className="border-b border-emerald-200 px-4 py-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -262,7 +262,7 @@ export const QueryBuilderComponent = ({
                       <SelectItem value="not">NOT</SelectItem>
                     </SelectContent>
                   </Select>
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs text-muted-foreground">
                     ({node.logic.children.length} condition
                     {node.logic.children.length !== 1 ? 's' : ''})
                   </span>
@@ -325,9 +325,9 @@ export const QueryBuilderComponent = ({
       {query ? (
         renderQueryNode(query)
       ) : (
-        <div className="rounded-lg border-2 border-dashed border-gray-300 py-8 text-center">
-          <p className="mb-4 text-gray-500">No query built yet</p>
-          <p className="mb-6 text-sm text-gray-400">
+        <div className="rounded-lg border-2 border-dashed border-input py-8 text-center">
+          <p className="mb-4 text-muted-foreground">No query built yet</p>
+          <p className="mb-6 text-sm text-muted-foreground">
             Start by adding a condition or logical group, or execute without a query to see all logs
           </p>
         </div>

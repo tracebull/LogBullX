@@ -293,7 +293,7 @@ export function ProjectMembershipComponent({ contentHeight, projectResponse, use
     <div className="flex grow pl-3">
       <div className="w-full">
         <div
-          className="grow overflow-y-auto rounded bg-white p-5 shadow"
+          className="grow overflow-y-auto rounded bg-card p-5 shadow"
           style={{ height: contentHeight }}
         >
           <div className="max-w-[850px]">
@@ -328,14 +328,14 @@ export function ProjectMembershipComponent({ contentHeight, projectResponse, use
               </div>
             ) : (
               <div>
-                <div className="mb-4 text-sm text-gray-500">
+                <div className="mb-4 text-sm text-muted-foreground">
                   {members.length === 0
                     ? 'No members found'
                     : `${members.length} member${members.length !== 1 ? 's' : ''}`}
                 </div>
 
                 {members.length === 0 ? (
-                  <div className="py-8 text-center text-gray-500">
+                  <div className="py-8 text-center text-muted-foreground">
                     <div className="mb-2">No members found</div>
                     {canManageMembers && (
                       <div className="text-sm">Click &quot;Add member&quot; to get started</div>
@@ -359,10 +359,10 @@ export function ProjectMembershipComponent({ contentHeight, projectResponse, use
                           <TableRow key={record.id}>
                             <TableCell>
                               <div className="flex items-center">
-                                <User className="mr-2 size-4 text-gray-400" />
+                                <User className="mr-2 size-4 text-muted-foreground" />
                                 <div>
                                   <div className="font-medium">{record.name}</div>
-                                  <div className="text-xs text-gray-500">{record.email}</div>
+                                  <div className="text-xs text-muted-foreground">{record.email}</div>
                                 </div>
                               </div>
                             </TableCell>
@@ -392,9 +392,9 @@ export function ProjectMembershipComponent({ contentHeight, projectResponse, use
                               )}
                             </TableCell>
                             <TableCell>
-                              <div className="text-sm text-gray-600">
+                              <div className="text-sm text-muted-foreground">
                                 <div>{dayjs(record.createdAt).format(getUserShortTimeFormat().format)}</div>
-                                <div className="text-xs text-gray-400">{dayjs(record.createdAt).fromNow()}</div>
+                                <div className="text-xs text-muted-foreground">{dayjs(record.createdAt).fromNow()}</div>
                               </div>
                             </TableCell>
                             <TableCell>
@@ -470,7 +470,7 @@ export function ProjectMembershipComponent({ contentHeight, projectResponse, use
                 </DialogHeader>
                 <div className="py-4">
                   <div className="mb-4">
-                    <div className="mb-2 font-medium text-gray-900">Email address</div>
+                    <div className="mb-2 font-medium text-foreground">Email address</div>
                     {user.role === UserRole.ADMIN ? (
                       <div className="relative">
                         <Input
@@ -490,7 +490,7 @@ export function ProjectMembershipComponent({ contentHeight, projectResponse, use
                           className={addMemberEmailError ? 'border-destructive' : undefined}
                         />
                         {userSearchResults.length > 0 && (
-                          <div className="absolute top-full z-50 mt-1 w-full rounded-md border bg-white shadow-lg">
+                          <div className="absolute top-full z-50 mt-1 w-full rounded-md border bg-card shadow-lg">
                             {isSearchingUsers ? (
                               <div className="flex justify-center py-2">
                                 <Spinner size="sm" />
@@ -530,14 +530,14 @@ export function ProjectMembershipComponent({ contentHeight, projectResponse, use
                         className={addMemberEmailError ? 'border-destructive' : undefined}
                       />
                     )}
-                    <div className="mt-1 text-xs text-gray-500">
+                    <div className="mt-1 text-xs text-muted-foreground">
                       If the user exists, they will be added directly. Otherwise, an invitation will
                       be sent.
                     </div>
                   </div>
 
                   <div className="mb-4">
-                    <div className="mb-2 font-medium text-gray-900">Role</div>
+                    <div className="mb-2 font-medium text-foreground">Role</div>
                     <Select
                       value={addMemberForm.role}
                       onValueChange={(role) => setAddMemberForm({ ...addMemberForm, role: role as ProjectRole })}
@@ -581,10 +581,10 @@ export function ProjectMembershipComponent({ contentHeight, projectResponse, use
                   <div className="flex items-center">
                     <UserPlus className="mr-3 size-6 text-emerald-600" />
                     <div>
-                      <div className="font-medium text-gray-900">
+                      <div className="font-medium text-foreground">
                         Invitation sent to {invitedEmail}
                       </div>
-                      <div className="mt-1 text-sm text-gray-600">
+                      <div className="mt-1 text-sm text-muted-foreground">
                         The user is not present in the system yet, but has been invited to the
                         project. After the user signs up via specified email, they will automatically
                         become a member of the project.
@@ -618,15 +618,15 @@ export function ProjectMembershipComponent({ contentHeight, projectResponse, use
                   </div>
 
                   {eligibleMembers.length === 0 ? (
-                    <div className="rounded-md bg-gray-50 p-4 text-center">
-                      <div className="text-sm text-gray-600">
+                    <div className="rounded-md bg-muted p-4 text-center">
+                      <div className="text-sm text-muted-foreground">
                         No members available to transfer ownership to. You need to have at least one
                         other member in the project to transfer ownership.
                       </div>
                     </div>
                   ) : (
                     <div className="mb-4">
-                      <div className="mb-2 font-medium text-gray-900">Select new owner</div>
+                      <div className="mb-2 font-medium text-foreground">Select new owner</div>
                       <Select
                         value={transferForm.selectedMemberId || undefined}
                         onValueChange={(memberId) => {
@@ -641,17 +641,17 @@ export function ProjectMembershipComponent({ contentHeight, projectResponse, use
                           {eligibleMembers.map((member) => (
                             <SelectItem key={member.userId} value={member.userId}>
                               <div className="flex items-center">
-                                <User className="mr-2 size-3.5 text-gray-400" />
+                                <User className="mr-2 size-3.5 text-muted-foreground" />
                                 <div>
                                   <div className="font-medium">{member.name}</div>
-                                  <div className="text-xs text-gray-500">{member.email}</div>
+                                  <div className="text-xs text-muted-foreground">{member.email}</div>
                                 </div>
                               </div>
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
-                      <div className="mt-1 text-xs text-gray-500">
+                      <div className="mt-1 text-xs text-muted-foreground">
                         The selected member will become the project owner
                       </div>
                     </div>

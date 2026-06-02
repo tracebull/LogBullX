@@ -105,12 +105,12 @@ export const QueryComponentComponent = ({
   const shouldShowOnboarding = (): boolean => {
     if (!user) return false;
     if (!isUserNewlyRegistered(user)) return false;
-    const onboardingShown = localStorage.getItem('logbull-onboarding-shown');
+    const onboardingShown = localStorage.getItem('tracebull-onboarding-shown');
     return !onboardingShown;
   };
 
   const handleDismissOnboarding = () => {
-    localStorage.setItem('logbull-onboarding-shown', 'true');
+    localStorage.setItem('tracebull-onboarding-shown', 'true');
     setShowOnboarding(false);
   };
 
@@ -123,7 +123,7 @@ export const QueryComponentComponent = ({
 
   // Query persistence functions
   const getSavedQueryKey = (projectId: string): string => {
-    return `logbull-query-${projectId}`;
+    return `tracebull-query-${projectId}`;
   };
 
   const saveQueryToStorage = (query: QueryNode | null, sortOrder: 'asc' | 'desc') => {
@@ -474,7 +474,7 @@ export const QueryComponentComponent = ({
       {/* Query Builder Section */}
       <div
         ref={queryBuilderRef}
-        className="w-full rounded-lg border border-gray-200 bg-white shadow-sm"
+        className="w-full rounded-lg border border-border bg-card shadow-sm"
       >
         <div className="flex items-center px-6 py-4">
           <TimeRangePickerComponent
@@ -490,10 +490,10 @@ export const QueryComponentComponent = ({
           />
 
           <div className="ml-5">
-            <label className="mb-1 block text-sm font-medium text-gray-700">Sort Order</label>
+            <label className="mb-1 block text-sm font-medium text-muted-foreground">Sort Order</label>
             <div className="flex items-center gap-2">
               <span
-                className={`text-sm ${sortOrder === 'desc' ? 'text-gray-900' : 'text-gray-400'}`}
+                className={`text-sm ${sortOrder === 'desc' ? 'text-foreground' : 'text-muted-foreground'}`}
               >
                 Newest first
               </span>
@@ -506,7 +506,7 @@ export const QueryComponentComponent = ({
                 size="sm"
               />
               <span
-                className={`text-sm ${sortOrder === 'asc' ? 'text-gray-900' : 'text-gray-400'}`}
+                className={`text-sm ${sortOrder === 'asc' ? 'text-foreground' : 'text-muted-foreground'}`}
               >
                 Oldest first
               </span>

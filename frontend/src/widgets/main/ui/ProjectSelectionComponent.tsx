@@ -60,7 +60,7 @@ export const ProjectSelectionComponent = ({
     if (!canCreateProjects) {
       return (
         <div className="my-1 w-[250px] select-none">
-          <div className="mb-1 text-xs text-gray-400" style={{ lineHeight: 0.7 }}>
+          <div className="mb-1 text-xs text-muted-foreground" style={{ lineHeight: 0.7 }}>
             No projects
           </div>
         </div>
@@ -79,14 +79,14 @@ export const ProjectSelectionComponent = ({
 
   return (
     <div className="my-1 w-[250px] select-none" ref={dropdownRef}>
-      <div className="mb-1 text-xs text-gray-400" style={{ lineHeight: 0.7 }}>
+      <div className="mb-1 text-xs text-muted-foreground" style={{ lineHeight: 0.7 }}>
         Selected project
       </div>
 
       <div className="relative">
         {/* Dropdown Trigger */}
         <div
-          className="cursor-pointer rounded bg-gray-100 p-1 px-2 hover:bg-gray-200"
+          className="cursor-pointer rounded bg-muted p-1 px-2 hover:bg-accent"
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
         >
           <div className="flex items-center justify-between text-sm">
@@ -105,9 +105,9 @@ export const ProjectSelectionComponent = ({
 
         {/* Dropdown Menu */}
         {isDropdownOpen && (
-          <div className="absolute top-full left-0 z-50 mt-1 min-w-full rounded-md border border-gray-200 bg-white shadow-lg">
+          <div className="absolute top-full left-0 z-50 mt-1 min-w-full rounded-md border border-border bg-card shadow-lg">
             {/* Search Input */}
-            <div className="border-b border-gray-100 p-2">
+            <div className="border-b border-border p-2">
               <Input
                 placeholder="Search projects..."
                 value={searchValue}
@@ -122,7 +122,7 @@ export const ProjectSelectionComponent = ({
               {filteredProjects.map((project) => (
                 <div
                   key={project.id}
-                  className="max-w-[250px] cursor-pointer truncate px-3 py-2 text-sm hover:bg-gray-50"
+                  className="max-w-[250px] cursor-pointer truncate px-3 py-2 text-sm hover:bg-accent"
                   onClick={() => openProject(project)}
                 >
                   {project.name}
@@ -130,15 +130,15 @@ export const ProjectSelectionComponent = ({
               ))}
 
               {filteredProjects.length === 0 && searchValue && (
-                <div className="px-3 py-2 text-sm text-gray-500">No projects found</div>
+                <div className="px-3 py-2 text-sm text-muted-foreground">No projects found</div>
               )}
             </div>
 
             {/* Create New Project Button - Fixed at bottom */}
             {canCreateProjects && (
-              <div className="border-t border-gray-100">
+              <div className="border-t border-border">
                 <div
-                  className="cursor-pointer px-3 py-2 text-sm text-emerald-600 hover:bg-gray-50 hover:text-emerald-700"
+                  className="cursor-pointer px-3 py-2 text-sm text-emerald-600 hover:bg-accent hover:text-emerald-700"
                   onClick={() => {
                     onCreateProject();
                     setIsDropdownOpen(false);

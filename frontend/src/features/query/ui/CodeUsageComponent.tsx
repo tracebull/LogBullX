@@ -1182,7 +1182,7 @@ export function CodeUsageComponent({
             className={`cursor-pointer rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
               selectedLanguage === lang
                 ? 'bg-emerald-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                : 'bg-muted text-muted-foreground hover:bg-accent'
             }`}
           >
             {lang}
@@ -1199,7 +1199,7 @@ export function CodeUsageComponent({
             className={`cursor-pointer rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
               selectedIntegration === index
                 ? 'bg-emerald-100 text-emerald-700 ring-2 ring-emerald-600'
-                : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
+                : 'bg-muted text-muted-foreground hover:bg-accent'
             }`}
           >
             {integration.label}
@@ -1217,7 +1217,7 @@ export function CodeUsageComponent({
               className={`cursor-pointer rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
                 selectedInstallMethod === index
                   ? 'bg-blue-100 text-blue-700 ring-2 ring-blue-600'
-                  : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
+                  : 'bg-muted text-muted-foreground hover:bg-accent'
               }`}
             >
               {method.label}
@@ -1228,8 +1228,8 @@ export function CodeUsageComponent({
 
       {/* Installation section */}
       {getInstallationCommand() && (
-        <div className="mb-4 overflow-hidden rounded-lg bg-gray-50 p-4">
-          <div className="mb-2 text-sm font-semibold text-gray-700">Installation</div>
+        <div className="mb-4 overflow-hidden rounded-lg bg-muted p-4">
+          <div className="mb-2 text-sm font-semibold text-foreground">Installation</div>
           <div className="relative overflow-auto rounded-lg bg-[#2d2d2d] shadow-lg">
             {/* Copy button */}
             <button
@@ -1289,8 +1289,8 @@ export function CodeUsageComponent({
 
       {/* Configuration section (only if configuration exists) */}
       {hasConfiguration && (
-        <div className="mb-4 overflow-hidden rounded-lg bg-gray-50 p-4">
-          <div className="mb-2 text-sm font-semibold text-gray-700">Configuration</div>
+        <div className="mb-4 overflow-hidden rounded-lg bg-muted p-4">
+          <div className="mb-2 text-sm font-semibold text-foreground">Configuration</div>
           <div className="relative overflow-auto rounded-lg bg-[#2d2d2d] shadow-lg">
             {/* Copy button */}
             <button
@@ -1344,8 +1344,8 @@ export function CodeUsageComponent({
       )}
 
       {/* Usage section */}
-      <div className="mb-4 overflow-hidden rounded-lg bg-gray-50 p-4">
-        <div className="mb-2 text-sm font-semibold text-gray-700">Usage</div>
+      <div className="mb-4 overflow-hidden rounded-lg bg-muted p-4">
+        <div className="mb-2 text-sm font-semibold text-foreground">Usage</div>
         <div className="relative overflow-auto rounded-lg bg-[#2d2d2d] shadow-lg">
           {/* Copy button */}
           <button
