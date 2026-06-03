@@ -13,10 +13,6 @@ import type { UpdateUserInfoRequest } from '../../../entity/users/model/UpdateUs
 import type { UserProfile } from '../../../entity/users/model/UserProfile';
 import { UserRole } from '../../../entity/users/model/UserRole';
 
-interface Props {
-  contentHeight: number;
-}
-
 const getRoleDisplayText = (role: UserRole): string => {
   switch (role) {
     case UserRole.ADMIN:
@@ -28,7 +24,7 @@ const getRoleDisplayText = (role: UserRole): string => {
   }
 };
 
-export function ProfileComponent({ contentHeight }: Props) {
+export function ProfileComponent() {
   const [user, setUser] = useState<UserProfile | undefined>(undefined);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
 
@@ -200,12 +196,9 @@ export function ProfileComponent({ contentHeight }: Props) {
   };
 
   return (
-    <div className="flex grow pl-3">
-      <div className="w-full">
-        <div
-          className="grow overflow-y-auto rounded bg-card p-6 shadow"
-          style={{ height: contentHeight }}
-        >
+    <div className="flex h-full pl-3">
+      <div className="h-full w-full">
+        <div className="h-full overflow-y-auto rounded bg-card p-6 shadow">
           <div className="mt-5">
             {user ? (
               <>

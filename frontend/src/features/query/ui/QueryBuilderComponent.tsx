@@ -1,5 +1,5 @@
-import { Plus, Trash2 } from 'lucide-react';
-import React from 'react';
+import { ChevronDown, Plus, Trash2 } from 'lucide-react';
+import React, { useState } from 'react';
 
 import type {
   ConditionNode,
@@ -8,6 +8,12 @@ import type {
   QueryableField,
 } from '../../../entity/query';
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import {
   Select,
   SelectContent,
@@ -30,6 +36,7 @@ export const QueryBuilderComponent = ({
   onChange,
   onFieldSearch,
 }: Props): React.JSX.Element => {
+  const [isGroupMenuOpen, setIsGroupMenuOpen] = useState(false);
   const createEmptyCondition = (): QueryNode => ({
     type: 'condition',
     condition: {
@@ -336,28 +343,31 @@ export const QueryBuilderComponent = ({
       {/* Action Buttons */}
       <div className="flex justify-center">
         <div className="flex flex-wrap gap-2">
-          <Button
-            className="bg-primary text-primary-foreground hover:bg-primary/90"
-            onClick={handleAddCondition}
-          >
+          <Button onClick={handleAddCondition}>
             <Plus className="mr-1 size-4" />
             Add Condition
           </Button>
 
-          <Button variant="outline" onClick={() => handleAddLogicalGroup('and')}>
-            <Plus className="mr-1 size-4" />
-            Add AND Group
-          </Button>
-
-          <Button variant="outline" onClick={() => handleAddLogicalGroup('or')}>
-            <Plus className="mr-1 size-4" />
-            Add OR Group
-          </Button>
-
-          <Button variant="outline" onClick={() => handleAddLogicalGroup('not')}>
-            <Plus className="mr-1 size-4" />
-            Add NOT Group
-          </Button>
+          <DropdownMenu open={isGroupMenuOpen} onOpenChange={setIsGroupMenuOpen}>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">
+                <Plus className="mr-1 size-4" />
+                Add Group
+                <ChevronDown className="ml-1 size-3" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+              <DropdownMenuItem onClick={() => { handleAddLogicalGroup('and'); setIsGroupMenuOpen(false); }}>
+                AND Group
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => { handleAddLogicalGroup('or'); setIsGroupMenuOpen(false); }}>
+                OR Group
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => { handleAddLogicalGroup('not'); setIsGroupMenuOpen(false); }}>
+                NOT Group
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           {query && (
             <Button variant="destructive" onClick={() => onChange(null)}>

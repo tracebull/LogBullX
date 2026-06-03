@@ -13,11 +13,7 @@ import { Switch } from '@/components/ui/switch';
 import { AuditLogsComponent } from './AuditLogsComponent';
 import { PlansSettingsComponent } from './PlansSettingsComponent';
 
-interface Props {
-  contentHeight: number;
-}
-
-export function SettingsComponent({ contentHeight }: Props) {
+export function SettingsComponent() {
   const [settings, setSettings] = useState<UsersSettings | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -114,12 +110,11 @@ export function SettingsComponent({ contentHeight }: Props) {
   };
 
   return (
-    <div className="flex grow pl-3">
-      <div className="w-full">
+    <div className="flex h-full pl-3">
+      <div className="h-full w-full">
         <div
           ref={scrollContainerRef}
-          className="grow overflow-y-auto rounded bg-card p-6 shadow"
-          style={{ height: contentHeight }}
+          className="h-full overflow-y-auto rounded bg-card p-6 shadow"
         >
           <div className="mt-6">
             {isLoading ? (

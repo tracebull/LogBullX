@@ -31,12 +31,11 @@ import { UserRole } from '../../../entity/users/model/UserRole';
 import { StringUtils } from '../../../shared/lib';
 
 interface Props {
-  contentHeight: number;
   projectResponse: ProjectResponse;
   user: UserProfile;
 }
 
-export function ProjectMembershipComponent({ contentHeight, projectResponse, user }: Props) {
+export function ProjectMembershipComponent({ projectResponse, user }: Props) {
   const [members, setMembers] = useState<ProjectMemberResponse[]>([]);
   const [isLoadingMembers, setIsLoadingMembers] = useState(true);
 
@@ -290,12 +289,9 @@ export function ProjectMembershipComponent({ contentHeight, projectResponse, use
   }, [projectResponse.id]);
 
   return (
-    <div className="flex grow pl-3">
-      <div className="w-full">
-        <div
-          className="grow overflow-y-auto rounded bg-card p-6 shadow"
-          style={{ height: contentHeight }}
-        >
+    <div className="flex h-full pl-3">
+      <div className="h-full w-full">
+        <div className="h-full overflow-y-auto rounded bg-card p-6 shadow">
           <div className="max-w-[850px]">
             <div className="mb-6 flex items-center justify-end">
               <div className="flex space-x-2">

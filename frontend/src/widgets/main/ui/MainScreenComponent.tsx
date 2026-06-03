@@ -1,6 +1,6 @@
-import { Suspense, lazy, useEffect, useState } from 'react';
+import React, { Suspense, lazy, useEffect, useState } from 'react';
 
-import { Menu } from 'lucide-react';
+import { FolderCog, Key, Menu, Search, Settings, User, UserCog, Users } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
@@ -88,8 +88,7 @@ const PAGE_TITLES: Record<TabId, string> = {
 interface NavItemConfig {
   label: string;
   tab: TabId;
-  icon: string;
-  selectedIcon: string;
+  icon: React.ComponentType<{ className?: string }>;
   adminOnly: boolean;
   visible: boolean;
   hasSeparator: boolean;
@@ -109,7 +108,6 @@ export const MainScreenComponent = () => {
 
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 450);
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [contentHeight, setContentHeight] = useState(() => window.innerHeight - 140);
 
   const loadData = async () => {
     setIsLoading(true);
@@ -157,7 +155,6 @@ export const MainScreenComponent = () => {
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 450);
-      setContentHeight(window.innerHeight - 140);
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
@@ -187,69 +184,13 @@ export const MainScreenComponent = () => {
     diskUsage && diskUsage.usedSpaceBytes / diskUsage.totalSpaceBytes > 0.95;
 
   const allNavItems: NavItemConfig[] = [
-    {
-      label: 'Search',
-      tab: 'search',
-      icon: '/icons/menu/search-gray.svg',
-      selectedIcon: '/icons/menu/search-white.svg',
-      adminOnly: false,
-      visible: true,
-      hasSeparator: false,
-    },
-    {
-      label: 'Project Settings',
-      tab: 'settings',
-      icon: '/icons/menu/project-settings-gray.svg',
-      selectedIcon: '/icons/menu/project-settings-white.svg',
-      adminOnly: false,
-      visible: !!selectedProject,
-      hasSeparator: false,
-    },
-    {
-      label: 'Members',
-      tab: 'members',
-      icon: '/icons/menu/users-gray.svg',
-      selectedIcon: '/icons/menu/users-white.svg',
-      adminOnly: false,
-      visible: !!selectedProject,
-      hasSeparator: false,
-    },
-    {
-      label: 'API Keys',
-      tab: 'api-keys',
-      icon: '/icons/menu/key-gray.svg',
-      selectedIcon: '/icons/menu/key-white.svg',
-      adminOnly: false,
-      visible: !!selectedProject,
-      hasSeparator: false,
-    },
-    {
-      label: 'Profile',
-      tab: 'profile',
-      icon: '/icons/menu/profile-gray.svg',
-      selectedIcon: '/icons/menu/profile-white.svg',
-      adminOnly: false,
-      visible: true,
-      hasSeparator: false,
-    },
-    {
-      label: 'Settings',
-      tab: 'logbull-settings',
-      icon: '/icons/menu/global-settings-gray.svg',
-      selectedIcon: '/icons/menu/global-settings-white.svg',
-      adminOnly: true,
-      visible: true,
-      hasSeparator: true,
-    },
-    {
-      label: 'Users',
-      tab: 'users',
-      icon: '/icons/menu/user-card-gray.svg',
-      selectedIcon: '/icons/menu/user-card-white.svg',
-      adminOnly: true,
-      visible: true,
-      hasSeparator: false,
-    },
+    { label: 'Search', tab: 'search', icon: Search, adminOnly: false, visible: true, hasSeparator: false },
+    { label: 'Project Settings', tab: 'settings', icon: FolderCog, adminOnly: false, visible: !!selectedProject, hasSeparator: false },
+    { label: 'Members', tab: 'members', icon: Users, adminOnly: false, visible: !!selectedProject, hasSeparator: false },
+    { label: 'API Keys', tab: 'api-keys', icon: Key, adminOnly: false, visible: !!selectedProject, hasSeparator: false },
+    { label: 'Profile', tab: 'profile', icon: User, adminOnly: false, visible: true, hasSeparator: false },
+    { label: 'Settings', tab: 'logbull-settings', icon: Settings, adminOnly: true, visible: true, hasSeparator: true },
+    { label: 'Users', tab: 'users', icon: UserCog, adminOnly: true, visible: true, hasSeparator: false },
   ];
 
   const navItems = allNavItems
@@ -282,47 +223,22 @@ export const MainScreenComponent = () => {
 
     return (
       <>
-        {selectedTab === 'profile' && <ProfileComponent contentHeight={contentHeight} />}
-
-        {selectedTab === 'logbull-settings' && (
-          <SettingsComponent contentHeight={contentHeight} />
-        )}
-
+        {selectedTab === 'profile' && <ProfileComponent />}
+        {selectedTab === 'logbull-settings' && <SettingsComponent />}
         {selectedTab === 'users' && (
-          <UsersComponent
-            contentHeight={contentHeight}
-            globalSettings={globalSettings}
-            user={user}
-          />
+          <UsersComponent globalSettings={globalSettings} user={user} />
         )}
-
         {selectedTab === 'settings' && selectedProject && user && (
-          <ProjectSettingsComponent
-            projectResponse={selectedProject}
-            contentHeight={contentHeight}
-            user={user}
-          />
+          <ProjectSettingsComponent projectResponse={selectedProject} user={user} />
         )}
         {selectedTab === 'api-keys' && selectedProject && user && (
-          <ProjectApiKeysComponent
-            projectResponse={selectedProject}
-            contentHeight={contentHeight}
-            user={user}
-          />
+          <ProjectApiKeysComponent projectResponse={selectedProject} user={user} />
         )}
         {selectedTab === 'members' && selectedProject && user && (
-          <ProjectMembershipComponent
-            projectResponse={selectedProject}
-            contentHeight={contentHeight}
-            user={user}
-          />
+          <ProjectMembershipComponent projectResponse={selectedProject} user={user} />
         )}
         {selectedTab === 'search' && selectedProject && user && (
-          <QueryComponentComponent
-            projectId={selectedProject.id}
-            contentHeight={contentHeight}
-            user={user}
-          />
+          <QueryComponentComponent projectId={selectedProject.id} user={user} />
         )}
       </>
     );
@@ -333,7 +249,6 @@ export const MainScreenComponent = () => {
       <div
         className={`h-screen flex flex-col overflow-hidden bg-background ${isMobile ? '' : 'p-3'}`}
       >
-        {/* ===================== HEADER ===================== */}
         <div
           className={`flex-shrink-0 flex items-center bg-card shadow-sm ${
             isMobile ? 'px-3 py-1' : 'rounded px-3 py-1 mb-3'
@@ -351,26 +266,23 @@ export const MainScreenComponent = () => {
                   <SheetTitle>Navigation</SheetTitle>
                 </SheetHeader>
                 <nav className="mt-4 flex flex-col gap-1">
-                  {navItems.map((item) => (
-                    <button
-                      key={item.tab}
-                      onClick={() => handleNavClick(item.tab)}
-                      className={`flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors ${
-                        selectedTab === item.tab
-                          ? 'bg-primary text-primary-foreground'
-                          : 'hover:bg-accent'
-                      } ${item.hasSeparator ? 'mt-3' : ''}`}
-                    >
-                      <img
-                        src={selectedTab === item.tab ? item.selectedIcon : item.icon}
-                        width={18}
-                        alt={item.label}
-                        loading="lazy"
-                        className={selectedTab === item.tab ? 'dark:invert' : ''}
-                      />
-                      {item.label}
-                    </button>
-                  ))}
+                  {navItems.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <button
+                        key={item.tab}
+                        onClick={() => handleNavClick(item.tab)}
+                        className={`flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors ${
+                          selectedTab === item.tab
+                            ? 'bg-primary text-primary-foreground'
+                            : 'hover:bg-accent'
+                        } ${item.hasSeparator ? 'mt-3' : ''}`}
+                      >
+                        <Icon className="size-4" />
+                        {item.label}
+                      </button>
+                    );
+                  })}
                 </nav>
                 <div className="mt-auto pt-4 text-center text-xs text-muted-foreground">
                   v{APP_VERSION}
@@ -407,7 +319,7 @@ export const MainScreenComponent = () => {
                     {(diskUsage.usedSpaceBytes / 1024 ** 3).toFixed(1)} of{' '}
                     {(diskUsage.totalSpaceBytes / 1024 ** 3).toFixed(1)} GB
                     <br />
-                    ROM used (
+                    storage used (
                     {((diskUsage.usedSpaceBytes / diskUsage.totalSpaceBytes) * 100).toFixed(1)}%)
                   </div>
                 </TooltipTrigger>
@@ -419,68 +331,64 @@ export const MainScreenComponent = () => {
             )}
           </div>
         </div>
-        {/* ===================== END HEADER ===================== */}
 
-        {/* ===================== BODY ===================== */}
         <div className="flex flex-1 overflow-hidden">
           {!isMobile && (
             <div className="flex-shrink-0 flex w-[48px] flex-col items-center rounded bg-card py-1.5 shadow-sm">
-              {navItems.map((item) => (
-                <div key={item.tab} className="flex justify-center">
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div
-                        className={`flex h-[36px] w-[36px] cursor-pointer items-center justify-center rounded ${
-                          selectedTab === item.tab
-                            ? 'bg-primary text-primary-foreground'
-                            : 'hover:bg-accent'
-                        } ${item.hasSeparator ? 'mt-3' : ''}`}
-                        onClick={() => handleNavClick(item.tab)}
-                      >
-                        <img
-                          src={selectedTab === item.tab ? item.selectedIcon : item.icon}
-                          width={18}
-                          alt={item.label}
-                          loading="lazy"
-                          className={selectedTab === item.tab ? 'dark:invert' : ''}
-                        />
-                      </div>
-                    </TooltipTrigger>
-                    <TooltipContent side="right" sideOffset={8}>
-                      {item.label}
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
-              ))}
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <div key={item.tab} className="flex justify-center">
+                    {item.hasSeparator && <div className="mb-2 h-px w-6 bg-border" />}
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div
+                          className={`flex h-[36px] w-[36px] cursor-pointer items-center justify-center rounded ${
+                            selectedTab === item.tab
+                              ? 'bg-primary text-primary-foreground'
+                              : 'hover:bg-accent'
+                          }`}
+                          onClick={() => handleNavClick(item.tab)}
+                        >
+                          <Icon className="size-4" />
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent side="right" sideOffset={8}>
+                        {item.label}
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
+                );
+              })}
               <div className="mt-auto px-2 pb-2 text-center text-xs text-muted-foreground">
                 v{APP_VERSION}
               </div>
             </div>
           )}
 
-          <div className={`flex-1 flex flex-col overflow-hidden ${isMobile ? '' : 'ml-3'}`}>
-            <div className="flex-shrink-0 border-b border-border bg-card px-4 py-2.5">
+          <div className={`flex flex-1 flex-col overflow-hidden ${isMobile ? '' : 'ml-3'}`}>
+            <div className="flex-shrink-0 border-b border-border bg-card px-4 py-2">
               <h1 className="text-sm font-semibold text-foreground">{PAGE_TITLES[selectedTab]}</h1>
             </div>
-
-            {isLoading ? (
-              <div className="flex flex-1 items-center justify-center">
-                <Spinner size="lg" />
-              </div>
-            ) : (
-              <Suspense
-                fallback={
-                  <div className="flex flex-1 items-center justify-center">
-                    <Spinner size="lg" />
-                  </div>
-                }
-              >
-                {renderContent()}
-              </Suspense>
-            )}
+            <div className="flex-1 overflow-hidden">
+              {isLoading ? (
+                <div className="flex h-full items-center justify-center">
+                  <Spinner size="lg" />
+                </div>
+              ) : (
+                <Suspense
+                  fallback={
+                    <div className="flex h-full items-center justify-center">
+                      <Spinner size="lg" />
+                    </div>
+                  }
+                >
+                  {renderContent()}
+                </Suspense>
+              )}
+            </div>
           </div>
         </div>
-        {/* ===================== END BODY ===================== */}
 
         <Suspense fallback={null}>
           {showCreateProjectDialog && user && globalSettings && (

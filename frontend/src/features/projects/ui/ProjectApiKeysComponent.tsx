@@ -27,12 +27,11 @@ import { UserRole } from '../../../entity/users/model/UserRole';
 import { copyToClipboard } from '../../../shared/lib';
 
 interface Props {
-  contentHeight: number;
   projectResponse: ProjectResponse;
   user: UserProfile;
 }
 
-export function ProjectApiKeysComponent({ contentHeight, projectResponse, user }: Props) {
+export function ProjectApiKeysComponent({ projectResponse, user }: Props) {
   const [project, setProject] = useState<Project | undefined>(undefined);
   const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
   const [isLoadingProject, setIsLoadingProject] = useState(true);
@@ -223,12 +222,9 @@ export function ProjectApiKeysComponent({ contentHeight, projectResponse, user }
   const isLoading = isLoadingProject || isLoadingApiKeys;
 
   return (
-    <div className="flex grow pl-3">
-      <div className="w-full">
-        <div
-          className="grow overflow-y-auto rounded bg-card p-6 shadow"
-          style={{ height: contentHeight }}
-        >
+    <div className="flex h-full pl-3">
+      <div className="h-full w-full">
+        <div className="h-full overflow-y-auto rounded bg-card p-6 shadow">
           <div className="max-w-[850px]">
             <div className="mb-6 flex items-center justify-end">
               {canManageKeys && (

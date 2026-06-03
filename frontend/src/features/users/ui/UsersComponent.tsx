@@ -34,7 +34,6 @@ import { BulkInviteComponent } from './BulkInviteComponent';
 import { UserAuditLogsSidebarComponent } from './UserAuditLogsSidebarComponent';
 
 interface Props {
-  contentHeight: number;
   globalSettings?: UsersSettings;
   user?: UserProfile;
 }
@@ -50,7 +49,7 @@ const getRoleColor = (role: UserRole): string => {
   }
 };
 
-export function UsersComponent({ contentHeight, globalSettings, user }: Props) {
+export function UsersComponent({ globalSettings, user }: Props) {
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -229,12 +228,11 @@ export function UsersComponent({ contentHeight, globalSettings, user }: Props) {
   };
 
   return (
-    <div className="flex grow pl-3">
-      <div className="w-full">
+    <div className="flex h-full pl-3">
+      <div className="h-full w-full">
         <div
           ref={scrollContainerRef}
-          className="grow overflow-y-auto rounded bg-card p-6 shadow"
-          style={{ height: contentHeight }}
+          className="h-full overflow-y-auto rounded bg-card p-6 shadow"
         >
           <div className="mb-4 flex items-center justify-end">
             <div className="flex items-center gap-3">

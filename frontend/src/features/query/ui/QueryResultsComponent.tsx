@@ -15,6 +15,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
 
 const STORAGE_KEY = 'tracebull-message-length';
@@ -129,13 +130,13 @@ export const QueryResultsComponent = ({
 
   const renderLogLevel = (level: string) => {
     const colors = {
-      ERROR: 'bg-red-100 text-red-800 border-red-200',
-      WARN: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-      INFO: 'bg-blue-100 text-blue-800 border-blue-200',
+      ERROR: 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800',
+      WARN: 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-800',
+      INFO: 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800',
       DEBUG: 'bg-muted text-foreground border-border',
-      TRACE: 'bg-purple-100 text-purple-800 border-purple-200',
-      FATAL: 'bg-red-200 text-red-900 border-red-300',
-      CRITICAL: 'bg-red-200 text-red-900 border-red-300',
+      TRACE: 'bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-800',
+      FATAL: 'bg-red-200 text-red-900 border-red-300 dark:bg-red-900/50 dark:text-red-200 dark:border-red-700',
+      CRITICAL: 'bg-red-200 text-red-900 border-red-300 dark:bg-red-900/50 dark:text-red-200 dark:border-red-700',
     };
 
     const colorClass = colors[level as keyof typeof colors] || colors.INFO;
@@ -318,13 +319,12 @@ export const QueryResultsComponent = ({
               <label htmlFor="messageLength" className="text-xs font-normal text-muted-foreground">
                 Message length:
               </label>
-
-              <input
+              <Input
                 id="messageLength"
                 type="number"
                 value={messageLength}
                 onChange={(e) => setMessageLength(Math.max(1, parseInt(e.target.value)))}
-                className="w-16 rounded border border-input px-1 py-0.5 text-xs focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
+                className="h-6 w-16 px-1 py-0.5 text-xs"
                 min="1"
                 max="1000"
               />
@@ -365,13 +365,13 @@ export const QueryResultsComponent = ({
           <div className="space-y-1">
             {/* Header Row */}
             <div className="flex gap-2 border-b border-border pb-1 text-xs font-medium text-foreground">
-              <div style={{ width: '150px' }}>Timestamp</div>
-              <div style={{ width: '85px' }}>Level</div>
-              <div className={showFields ? 'flex-1' : 'flex-[2]'}>Message</div>
+              <div className="w-[150px] shrink-0">Timestamp</div>
+              <div className="w-[85px] shrink-0">Level</div>
+              <div className={showFields ? 'flex-1 min-w-0' : 'flex-[2] min-w-0'}>Message</div>
               {showFields && (
                 <>
-                  <div style={{ width: '10px' }} />
-                  <div className="flex-1">Fields</div>
+                  <div className="w-[10px] shrink-0" />
+                  <div className="flex-1 min-w-0">Fields</div>
                 </>
               )}
             </div>
@@ -390,23 +390,23 @@ export const QueryResultsComponent = ({
                   onClick={() => toggleRowExpansion(log.id)}
                 >
                   <div
-                    style={{ width: '150px', lineHeight: 1.1 }}
-                    className="text-xs text-muted-foreground"
+                    className="w-[150px] shrink-0 text-xs text-muted-foreground"
+                    style={{ lineHeight: 1.1 }}
                   >
-                    <div className="!font-mono" style={{ fontSize: '12px' }}>
+                    <div className="!font-mono text-[12px]">
                       {dayjs(log.timestamp).format(timeFormat.format)}
                     </div>
-                    <div className="!font-mono text-muted-foreground" style={{ fontSize: '10px' }}>
+                    <div className="!font-mono text-[10px] text-muted-foreground">
                       {dayjs(log.timestamp).fromNow()}
                     </div>
                   </div>
 
-                  <div className="!font-mono" style={{ width: '85px' }}>
+                  <div className="w-[85px] shrink-0 !font-mono">
                     {renderLogLevel(log.level)}
                   </div>
 
                   <div
-                    className={`${showFields ? 'flex-1' : 'flex-[2]'} !font-mono text-xs break-all text-foreground ${
+                    className={`${showFields ? 'flex-1 min-w-0' : 'flex-[2] min-w-0'} !font-mono text-xs break-all text-foreground ${
                       isExpanded && displayMessage.includes(' ') ? 'whitespace-pre-wrap' : ''
                     }`}
                   >
@@ -418,8 +418,8 @@ export const QueryResultsComponent = ({
 
                   {showFields && (
                     <>
-                      <div style={{ width: '10px' }} />
-                      <div className="flex-1">
+                      <div className="w-[10px] shrink-0" />
+                      <div className="flex-1 min-w-0">
                         {renderCustomFields(log, isExpanded, messageLength)}
                       </div>
                     </>

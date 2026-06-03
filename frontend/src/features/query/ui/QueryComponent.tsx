@@ -26,7 +26,6 @@ import { type TimeRange, TimeRangePickerComponent } from './TimeRangePickerCompo
 
 interface Props {
   projectId: string;
-  contentHeight: number;
   user?: UserProfile;
 }
 
@@ -66,7 +65,6 @@ interface SavedQuery {
 
 export const QueryComponentComponent = ({
   projectId,
-  contentHeight,
   user,
 }: Props): React.JSX.Element => {
   // States
@@ -466,8 +464,7 @@ export const QueryComponentComponent = ({
   return (
     <div
       ref={containerRef}
-      className="ml-3 w-full space-y-3 overflow-y-auto"
-      style={{ height: contentHeight }}
+      className="ml-3 w-full h-full space-y-3 overflow-y-auto"
     >
       <FloatingTopButtonComponent containerRef={containerRef} />
 
@@ -515,9 +512,9 @@ export const QueryComponentComponent = ({
 
           <div className="ml-auto" ref={howToSendLogsButtonRef}>
             <Button
+              variant="outline"
               onClick={handleHowToSendLogsClick}
               disabled={isExecuting}
-              className="bg-primary text-primary-foreground hover:bg-primary/90"
             >
               How to send logs from code?
             </Button>

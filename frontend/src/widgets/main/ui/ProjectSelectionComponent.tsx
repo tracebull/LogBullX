@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { Copy, Check } from 'lucide-react';
+import { Check, ChevronDown, Copy } from 'lucide-react';
 
 import { type ProjectResponse } from '../../../entity/projects';
 import type { UsersSettings } from '../../../entity/users';
@@ -100,12 +100,8 @@ export const ProjectSelectionComponent = ({
             <span className="truncate">
               {selectedProject?.name || 'Select a project'}
             </span>
-            <img
-              src="/icons/menu/arrow-down-gray.svg"
-              alt=""
-              className={`ml-1 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}
-              width={15}
-              height={15}
+            <ChevronDown
+              className={`ml-1 size-4 shrink-0 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}
             />
           </Button>
 
