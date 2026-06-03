@@ -135,10 +135,10 @@ jobs:
           EOF
 
       - name: Clean up any existing test data
-          run: |
-            cd backend
-            sudo rm -rf victorialogs-data pgdata valkey-data logbull-data || true
-            echo "Cleaned up any leftover test data from previous runs"
+        run: |
+          cd backend
+          sudo rm -rf victorialogs-data pgdata valkey-data logbull-data || true
+          echo "Cleaned up any leftover test data from previous runs"
 
       - name: Prepare container directories
         run: |
