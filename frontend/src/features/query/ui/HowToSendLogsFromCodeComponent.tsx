@@ -55,7 +55,7 @@ export const HowToSendLogsFromCodeComponent = ({
 
   return (
     <Dialog open={true} onOpenChange={(open) => { if (!open) onClose(); }}>
-      <DialogContent className="max-w-[1000px]">
+      <DialogContent className="flex max-h-[85vh] max-w-[1000px] flex-col">
         <DialogHeader>
           <DialogTitle>How to send logs from code?</DialogTitle>
         </DialogHeader>
@@ -65,54 +65,30 @@ export const HowToSendLogsFromCodeComponent = ({
             <Spinner />
           </div>
         ) : (
-          <div>
-            <div style={{ marginBottom: 16 }}>
+          <div className="overflow-y-auto pr-1">
+            <div className="mb-4">
               {project.isApiKeyRequired && (
-                <div
-                  style={{
-                    marginBottom: 16,
-                    padding: '8px 12px',
-                    backgroundColor: '#fff3cd',
-                    border: '1px solid #ffeaa7',
-                    borderRadius: '4px',
-                  }}
-                >
-                  <strong style={{ color: '#856404' }}>
-                    📝 API Key Required: This project requires an X-API-Key header. Create an API key
+                <div className="mb-4 rounded border border-status-warning bg-status-warning px-3 py-2">
+                  <strong className="text-status-warning-foreground">
+                    API Key Required: This project requires an X-API-Key header. Create an API key
                     in your project settings.
                   </strong>
                 </div>
               )}
 
               {project.isFilterByDomain && (
-                <div
-                  style={{
-                    marginBottom: 16,
-                    padding: '8px 12px',
-                    backgroundColor: '#d1ecf1',
-                    border: '1px solid #bee5eb',
-                    borderRadius: '4px',
-                  }}
-                >
-                  <strong style={{ color: '#0c5460' }}>
-                    🌐 Domain Filtering: This project filters by domain. Allowed domains:{' '}
+                <div className="mb-4 rounded border border-status-info bg-status-info px-3 py-2">
+                  <strong className="text-status-info-foreground">
+                    Domain Filtering: This project filters by domain. Allowed domains:{' '}
                     {project.allowedDomains.join(', ')}
                   </strong>
                 </div>
               )}
 
               {project.isFilterByIp && (
-                <div
-                  style={{
-                    marginBottom: 16,
-                    padding: '8px 12px',
-                    backgroundColor: '#d1ecf1',
-                    border: '1px solid #bee5eb',
-                    borderRadius: '4px',
-                  }}
-                >
-                  <strong style={{ color: '#0c5460' }}>
-                    🔒 IP Filtering: This project filters by IP address. Allowed IPs:{' '}
+                <div className="mb-4 rounded border border-status-info bg-status-info px-3 py-2">
+                  <strong className="text-status-info-foreground">
+                    IP Filtering: This project filters by IP address. Allowed IPs:{' '}
                     {project.allowedIps.join(', ')}
                   </strong>
                 </div>
@@ -122,7 +98,7 @@ export const HowToSendLogsFromCodeComponent = ({
             <div className="mb-4 flex">
               <div className="mr-5 w-80">
                 <div className="mb-1">
-                  <span className="text-xs font-medium text-muted-foreground">LogBull URL:</span>
+                  <span className="text-xs font-medium text-muted-foreground">TraceBull URL:</span>
                 </div>
                 <div className="flex items-center justify-between rounded border border-border bg-muted px-3 py-1.5">
                   <span className="truncate !font-mono text-xs text-foreground">{baseUrl}</span>

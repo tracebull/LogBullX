@@ -1,4 +1,4 @@
-package api_keys_controllers
+package api_keys_controllers_test
 
 import (
 	"net/http"
