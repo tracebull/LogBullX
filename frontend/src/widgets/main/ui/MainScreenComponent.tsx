@@ -250,7 +250,7 @@ export const MainScreenComponent = () => {
         className={`h-screen flex flex-col overflow-hidden bg-background ${isMobile ? '' : 'p-3'}`}
       >
         <div
-          className={`flex-shrink-0 flex items-center bg-card shadow-sm ${
+          className={`flex-shrink-0 flex items-center bg-card ${
             isMobile ? 'px-3 py-1' : 'rounded px-3 py-1 mb-3'
           }`}
         >
@@ -334,12 +334,12 @@ export const MainScreenComponent = () => {
 
         <div className="flex flex-1 overflow-hidden">
           {!isMobile && (
-            <div className="flex-shrink-0 flex w-[48px] flex-col items-center rounded bg-card py-1.5 shadow-sm">
+            <div className="flex-shrink-0 flex w-[48px] flex-col items-center rounded bg-card py-1.5">
               {navItems.map((item) => {
                 const Icon = item.icon;
                 return (
                   <div key={item.tab} className="flex justify-center">
-                    {item.hasSeparator && <div className="mb-2 h-px w-6 bg-border" />}
+                    {item.hasSeparator && <div className="my-2 h-px w-6 bg-border" />}
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <div
@@ -367,10 +367,10 @@ export const MainScreenComponent = () => {
           )}
 
           <div className={`flex flex-1 flex-col overflow-hidden ${isMobile ? '' : 'ml-3'}`}>
-            <div className="flex-shrink-0 border-b border-border bg-card px-4 py-2">
-              <h1 className="text-sm font-semibold text-foreground">{PAGE_TITLES[selectedTab]}</h1>
+            <div className="flex-shrink-0 px-4 py-2">
+              <h1 className="text-sm font-semibold text-muted-foreground">{PAGE_TITLES[selectedTab]}</h1>
             </div>
-            <div className="flex-1 overflow-hidden">
+            <div className="flex-1 overflow-y-auto">
               {isLoading ? (
                 <div className="flex h-full items-center justify-center">
                   <Spinner size="lg" />

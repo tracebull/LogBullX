@@ -232,7 +232,7 @@ export function UsersComponent({ globalSettings, user }: Props) {
       <div className="h-full w-full">
         <div
           ref={scrollContainerRef}
-          className="h-full overflow-y-auto rounded bg-card p-6 shadow"
+          className="h-full overflow-y-auto p-6"
         >
           <div className="mb-4 flex items-center justify-end">
             <div className="flex items-center gap-3">

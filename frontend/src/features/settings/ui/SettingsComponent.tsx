@@ -114,7 +114,7 @@ export function SettingsComponent() {
       <div className="h-full w-full">
         <div
           ref={scrollContainerRef}
-          className="h-full overflow-y-auto rounded bg-card p-6 shadow"
+          className="h-full overflow-y-auto p-6"
         >
           <div className="mt-6">
             {isLoading ? (

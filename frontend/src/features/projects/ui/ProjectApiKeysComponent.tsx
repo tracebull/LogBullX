@@ -224,7 +224,7 @@ export function ProjectApiKeysComponent({ projectResponse, user }: Props) {
   return (
     <div className="flex h-full pl-3">
       <div className="h-full w-full">
-        <div className="h-full overflow-y-auto rounded bg-card p-6 shadow">
+        <div className="h-full overflow-y-auto p-6">
           <div className="max-w-[850px]">
             <div className="mb-6 flex items-center justify-end">
               {canManageKeys && (

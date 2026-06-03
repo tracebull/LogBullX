@@ -471,7 +471,7 @@ export const QueryComponentComponent = ({
       {/* Query Builder Section */}
       <div
         ref={queryBuilderRef}
-        className="w-full rounded-lg border border-border bg-card shadow-sm"
+        className="w-full rounded-lg bg-muted/50"
       >
         <div className="flex items-center px-6 py-4">
           <TimeRangePickerComponent

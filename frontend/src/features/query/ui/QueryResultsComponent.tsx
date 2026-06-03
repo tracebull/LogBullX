@@ -311,7 +311,7 @@ export const QueryResultsComponent = ({
   }
 
   return (
-    <div ref={containerRef} className="w-full rounded-lg border border-border bg-card shadow-sm">
+    <div ref={containerRef} className="w-full rounded-lg bg-muted/50">
       <div className="border-b border-border px-4 py-2">
         <div className="flex items-center justify-end">
           <div className="flex items-center gap-3">
