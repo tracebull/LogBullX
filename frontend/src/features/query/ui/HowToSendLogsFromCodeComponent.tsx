@@ -56,8 +56,8 @@ export const HowToSendLogsFromCodeComponent = ({
         if (!open) onClose();
       }}
     >
-      <DialogContent className="flex max-h-[85vh] max-w-[1000px] flex-col">
-        <DialogHeader>
+      <DialogContent className="flex max-h-[85vh] max-w-[1000px] flex-col overflow-hidden p-0">
+        <DialogHeader className="shrink-0 border-b border-border px-6 py-4">
           <DialogTitle>How to send logs from code?</DialogTitle>
         </DialogHeader>
 
@@ -66,7 +66,7 @@ export const HowToSendLogsFromCodeComponent = ({
             <Spinner />
           </div>
         ) : (
-          <div className="overflow-y-auto pr-1">
+          <div className="overflow-y-auto px-6 py-4">
             <div className="mb-4">
               {project.isApiKeyRequired && (
                 <div className="border-status-warning bg-status-warning mb-4 rounded border px-3 py-2">
