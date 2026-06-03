@@ -338,8 +338,8 @@ export const MainScreenComponent = () => {
               {navItems.map((item) => {
                 const Icon = item.icon;
                 return (
-                  <div key={item.tab} className="flex justify-center">
-                    {item.hasSeparator && <div className="my-2 h-px w-6 bg-border" />}
+                  <div key={item.tab} className="flex flex-col items-center">
+                    {item.hasSeparator && <div className="mb-2 h-px w-6 bg-border" />}
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <div
