@@ -106,8 +106,7 @@ export function ProjectAuditLogsComponent({
 
   return (
     <div className="max-w-[1200px]">
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-base font-medium text-foreground">Project Audit Logs</h2>
+      <div className="mb-4 flex items-center justify-end">
         <div className="text-sm text-muted-foreground">
           {isLoading ? (
             <Spinner size="sm" />

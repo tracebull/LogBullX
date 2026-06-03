@@ -206,8 +206,6 @@ export function ProfileComponent({ contentHeight }: Props) {
           className="grow overflow-y-auto rounded bg-card p-6 shadow"
           style={{ height: contentHeight }}
         >
-          <h1 className="text-xl font-semibold">Profile</h1>
-
           <div className="mt-5">
             {user ? (
               <>

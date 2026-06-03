@@ -312,8 +312,7 @@ export const QueryResultsComponent = ({
   return (
     <div ref={containerRef} className="w-full rounded-lg border border-border bg-card shadow-sm">
       <div className="border-b border-border px-4 py-2">
-        <div className="flex items-center justify-between">
-          <h3 className="text-base font-medium text-foreground">Query Results</h3>
+        <div className="flex items-center justify-end">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
               <label htmlFor="messageLength" className="text-xs font-normal text-muted-foreground">

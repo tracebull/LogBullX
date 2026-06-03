@@ -297,8 +297,7 @@ export function ProjectMembershipComponent({ contentHeight, projectResponse, use
           style={{ height: contentHeight }}
         >
           <div className="max-w-[850px]">
-            <div className="mb-6 flex items-center justify-between">
-              <h1 className="text-xl font-semibold">Project members</h1>
+            <div className="mb-6 flex items-center justify-end">
               <div className="flex space-x-2">
                 {canTransferOwnership && (
                   <Button

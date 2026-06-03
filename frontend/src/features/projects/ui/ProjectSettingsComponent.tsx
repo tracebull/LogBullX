@@ -379,8 +379,6 @@ export function ProjectSettingsComponent({ projectResponse, user, contentHeight 
           className="grow overflow-y-auto rounded bg-card p-6 shadow"
           style={{ height: contentHeight }}
         >
-          <h1 className="mb-6 text-xl font-semibold">Settings</h1>
-
           {isLoading || !project ? (
             <div className="flex items-center justify-center py-12">
               <Spinner size="lg" />

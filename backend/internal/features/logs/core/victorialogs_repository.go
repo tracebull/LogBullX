@@ -60,18 +60,18 @@ func (r *VictoriaLogsRepository) StoreLogsBatch(entries map[uuid.UUID][]*LogItem
 	var body strings.Builder
 
 	for projectID, logs := range entries {
-		streamJSON, _ := json.Marshal(map[string]string{"project_id": projectID.String()})
+		projectIDStr := projectID.String()
 
 		for _, logItem := range logs {
 			body.WriteString(`{"create":{}}`)
 			body.WriteByte('\n')
 
 			doc := map[string]any{
-				"_msg":    logItem.Message,
-				"_time":   logItem.Timestamp.UTC().Format(time.RFC3339Nano),
-				"_stream": string(streamJSON),
-				"level":   string(logItem.Level),
-				"id":      logItem.ID.String(),
+				"_msg":       logItem.Message,
+				"_time":      logItem.Timestamp.UTC().Format(time.RFC3339Nano),
+				"project_id": projectIDStr,
+				"level":      string(logItem.Level),
+				"id":         logItem.ID.String(),
 			}
 
 			if logItem.ClientIP != "" {
@@ -94,7 +94,7 @@ func (r *VictoriaLogsRepository) StoreLogsBatch(entries map[uuid.UUID][]*LogItem
 		}
 	}
 
-	req, err := http.NewRequest("POST", r.baseURL+"/insert/elasticsearch/_bulk", strings.NewReader(body.String()))
+	req, err := http.NewRequest("POST", r.baseURL+"/insert/elasticsearch/_bulk?_stream_fields=project_id", strings.NewReader(body.String()))
 	if err != nil {
 		return fmt.Errorf("failed to create bulk request: %w", err)
 	}
@@ -132,11 +132,11 @@ func (r *VictoriaLogsRepository) ExecuteQueryForProject(
 	}
 	logsql += fmt.Sprintf(" | sort by (_time %s)", sortOrder)
 
-	if request.Limit > 0 {
-		logsql += fmt.Sprintf(" | limit %d", request.Limit)
-	}
 	if request.Offset > 0 {
 		logsql += fmt.Sprintf(" | offset %d", request.Offset)
+	}
+	if request.Limit > 0 {
+		logsql += fmt.Sprintf(" | limit %d", request.Limit)
 	}
 
 	queryResult, err := r.executeLogSQL(logsql)
@@ -304,14 +304,11 @@ func (r *VictoriaLogsRepository) executeLogSQL(logsql string) ([]map[string]any,
 }
 
 func (r *VictoriaLogsRepository) executeDelete(logsql string) error {
-	form := url.Values{}
-	form.Set("delete_query", logsql)
-
-	req, err := http.NewRequest("POST", r.baseURL+"/delete/run_task", strings.NewReader(form.Encode()))
+	deleteURL := fmt.Sprintf("%s/delete/run_task?filter=%s", r.baseURL, url.QueryEscape(logsql))
+	req, err := http.NewRequest("POST", deleteURL, nil)
 	if err != nil {
 		return fmt.Errorf("failed to create delete request: %w", err)
 	}
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
 	resp, err := r.client.Do(req)
 	if err != nil {

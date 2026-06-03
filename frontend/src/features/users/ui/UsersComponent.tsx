@@ -236,8 +236,7 @@ export function UsersComponent({ contentHeight, globalSettings, user }: Props) {
           className="grow overflow-y-auto rounded bg-card p-6 shadow"
           style={{ height: contentHeight }}
         >
-          <div className="mb-4 flex items-center justify-between">
-            <h1 className="text-xl font-semibold">TraceBull Users</h1>
+          <div className="mb-4 flex items-center justify-end">
             <div className="flex items-center gap-3">
               {(user?.role === UserRole.ADMIN ||
                 globalSettings?.isAllowMemberInvitations !== false) && (

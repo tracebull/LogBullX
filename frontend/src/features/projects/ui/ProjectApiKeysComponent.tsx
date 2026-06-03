@@ -230,8 +230,7 @@ export function ProjectApiKeysComponent({ contentHeight, projectResponse, user }
           style={{ height: contentHeight }}
         >
           <div className="max-w-[850px]">
-            <div className="mb-6 flex items-center justify-between">
-              <h1 className="text-xl font-semibold">API keys</h1>
+            <div className="mb-6 flex items-center justify-end">
               {canManageKeys && (
                 <Button
                   onClick={() => setIsCreateModalOpen(true)}

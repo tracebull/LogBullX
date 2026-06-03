@@ -121,8 +121,6 @@ export function SettingsComponent({ contentHeight }: Props) {
           className="grow overflow-y-auto rounded bg-card p-6 shadow"
           style={{ height: contentHeight }}
         >
-          <h1 className="text-xl font-semibold">TraceBull Settings</h1>
-
           <div className="mt-6">
             {isLoading ? (
               <div>

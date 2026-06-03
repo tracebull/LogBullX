@@ -424,22 +424,22 @@ export const MainScreenComponent = () => {
         {/* ===================== BODY ===================== */}
         <div className="flex flex-1 overflow-hidden">
           {!isMobile && (
-            <div className="flex-shrink-0 flex w-[60px] flex-col rounded bg-card py-2 shadow">
+            <div className="flex-shrink-0 flex w-[48px] flex-col items-center rounded bg-card py-1.5 shadow-sm">
               {navItems.map((item) => (
                 <div key={item.tab} className="flex justify-center">
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div
-                        className={`flex h-[50px] w-[50px] cursor-pointer items-center justify-center rounded ${
+                        className={`flex h-[36px] w-[36px] cursor-pointer items-center justify-center rounded ${
                           selectedTab === item.tab
                             ? 'bg-primary text-primary-foreground'
                             : 'hover:bg-accent'
-                        } ${item.hasSeparator ? 'mt-4' : ''}`}
+                        } ${item.hasSeparator ? 'mt-3' : ''}`}
                         onClick={() => handleNavClick(item.tab)}
                       >
                         <img
                           src={selectedTab === item.tab ? item.selectedIcon : item.icon}
-                          width={20}
+                          width={18}
                           alt={item.label}
                           loading="lazy"
                           className={selectedTab === item.tab ? 'dark:invert' : ''}
@@ -459,8 +459,8 @@ export const MainScreenComponent = () => {
           )}
 
           <div className={`flex-1 flex flex-col overflow-hidden ${isMobile ? '' : 'ml-3'}`}>
-            <div className="flex-shrink-0 rounded-t border-b border-border bg-card px-6 py-3">
-              <h1 className="text-base font-medium text-foreground">{PAGE_TITLES[selectedTab]}</h1>
+            <div className="flex-shrink-0 border-b border-border bg-card px-4 py-2.5">
+              <h1 className="text-sm font-semibold text-foreground">{PAGE_TITLES[selectedTab]}</h1>
             </div>
 
             {isLoading ? (
