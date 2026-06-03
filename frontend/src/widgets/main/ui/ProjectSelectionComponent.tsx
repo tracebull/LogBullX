@@ -89,11 +89,7 @@ export const ProjectSelectionComponent = ({
   }
 
   return (
-    <div className="my-1 select-none" ref={dropdownRef}>
-      <div className="mb-1 text-xs leading-none text-muted-foreground">
-        Selected project
-      </div>
-
+    <div className="select-none" ref={dropdownRef}>
       <div className="flex items-center gap-2">
         <div className="relative w-[250px]">
           <Button

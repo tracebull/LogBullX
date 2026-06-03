@@ -302,7 +302,7 @@ done
 
 # Start VictoriaLogs in background
 echo "Starting VictoriaLogs..."
-gosu victorialogs /usr/local/bin/victoria-logs-prod -storageDataPath=/logbull-data/vlogs -httpListenAddr=127.0.0.1:9428 &
+gosu victorialogs /usr/local/bin/victoria-logs-prod -storageDataPath=/logbull-data/vlogs -httpListenAddr=127.0.0.1:9428 -delete.enable &
 VICTORIALOGS_PID=\$!
 
 # Wait for VictoriaLogs to be ready

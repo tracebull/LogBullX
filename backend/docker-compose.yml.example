@@ -48,6 +48,7 @@ services:
     volumes:
       - ./victorialogs-data:/vlogs
     container_name: dev-victorialogs
+    command: ["-delete.enable"]
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://127.0.0.1:9428/health"]
       interval: 10s

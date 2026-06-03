@@ -8,6 +8,7 @@ import (
 
 	api_keys_dto "logbull/internal/features/api_keys/dto"
 	api_keys_enums "logbull/internal/features/api_keys/enums"
+	api_keys_testing "logbull/internal/features/api_keys/testing"
 	logs_receiving "logbull/internal/features/logs/receiving"
 	projects_models "logbull/internal/features/projects/models"
 	projects_testing "logbull/internal/features/projects/testing"
@@ -24,7 +25,7 @@ import (
 func Test_SubmitLogs_WhenApiKeyRequired_WithValidKey_LogsAccepted(t *testing.T) {
 	users_testing.CleanupPlans()
 	testData := setupApiKeyTest("API Key Required Test", true)
-	apiKey := api_keys.CreateTestApiKey("Test API Key", testData.Project.ID, testData.User.Token, testData.Router)
+	apiKey := api_keys_testing.CreateTestApiKey("Test API Key", testData.Project.ID, testData.User.Token, testData.Router)
 
 	response := submitTestLogs(t, testData.Router, testData.Project.ID, apiKey.Token, testData.UniqueID)
 
@@ -69,7 +70,7 @@ func Test_SubmitLogs_WhenApiKeyRequired_WithInvalidKey_ReturnsUnauthorized(t *te
 func Test_SubmitLogs_WhenApiKeyRequired_WithDisabledKey_ReturnsUnauthorized(t *testing.T) {
 	users_testing.CleanupPlans()
 	testData := setupApiKeyTest("API Key Required Disabled Key Test", true)
-	apiKey := api_keys.CreateTestApiKey("Disabled API Key", testData.Project.ID, testData.User.Token, testData.Router)
+	apiKey := api_keys_testing.CreateTestApiKey("Disabled API Key", testData.Project.ID, testData.User.Token, testData.Router)
 
 	disableApiKey(t, testData.Router, testData.Project.ID, apiKey.ID, testData.User.Token)
 
@@ -99,7 +100,7 @@ func Test_SubmitLogs_WhenApiKeyNotRequired_WithoutKey_LogsAccepted(t *testing.T)
 func Test_SubmitLogs_WhenApiKeyNotRequired_WithValidKey_LogsAccepted(t *testing.T) {
 	users_testing.CleanupPlans()
 	testData := setupApiKeyTest("API Key Not Required With Key Test", false)
-	apiKey := api_keys.CreateTestApiKey("Optional API Key", testData.Project.ID, testData.User.Token, testData.Router)
+	apiKey := api_keys_testing.CreateTestApiKey("Optional API Key", testData.Project.ID, testData.User.Token, testData.Router)
 
 	response := submitTestLogs(t, testData.Router, testData.Project.ID, apiKey.Token, testData.UniqueID)
 
@@ -126,7 +127,7 @@ func Test_SubmitLogs_WhenApiKeyFromDifferentProject_ReturnsUnauthorized(t *testi
 	testData2 := setupApiKeyTest("API Key Project 2", true)
 
 	// Create API key for project 1, try to use it for project 2
-	apiKey := api_keys.CreateTestApiKey(
+	apiKey := api_keys_testing.CreateTestApiKey(
 		"Cross Project Key",
 		testData1.Project.ID,
 		testData1.User.Token,

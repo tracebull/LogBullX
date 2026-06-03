@@ -335,8 +335,8 @@ export const MainScreenComponent = () => {
       >
         {/* ===================== HEADER ===================== */}
         <div
-          className={`flex-shrink-0 flex items-center bg-card shadow ${
-            isMobile ? 'px-3 py-1.5' : 'rounded px-3 py-1.5 mb-3'
+          className={`flex-shrink-0 flex items-center bg-card shadow-sm ${
+            isMobile ? 'px-3 py-1' : 'rounded px-3 py-1 mb-3'
           }`}
         >
           {isMobile && (
@@ -381,7 +381,7 @@ export const MainScreenComponent = () => {
 
           <div className="flex items-center gap-3 hover:opacity-80">
             <a href="/">
-              <img className="h-[28px] w-[28px]" src="/logo.svg" alt="Logo" />
+              <img className="h-[28px] w-[28px] dark:invert" src="/logo.svg" alt="Logo" />
             </a>
           </div>
 

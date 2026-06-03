@@ -305,7 +305,7 @@ func (r *VictoriaLogsRepository) executeLogSQL(logsql string) ([]map[string]any,
 
 func (r *VictoriaLogsRepository) executeDelete(logsql string) error {
 	form := url.Values{}
-	form.Set("query", logsql)
+	form.Set("delete_query", logsql)
 
 	req, err := http.NewRequest("POST", r.baseURL+"/delete/run_task", strings.NewReader(form.Encode()))
 	if err != nil {
