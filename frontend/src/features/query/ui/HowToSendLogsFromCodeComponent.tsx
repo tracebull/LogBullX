@@ -57,7 +57,7 @@ export const HowToSendLogsFromCodeComponent = ({
       }}
     >
       <DialogContent className="flex max-h-[85vh] max-w-[1000px] flex-col overflow-hidden p-0">
-        <DialogHeader className="shrink-0 border-b border-border px-6 py-4">
+        <DialogHeader className="border-border shrink-0 border-b px-6 py-4">
           <DialogTitle>How to send logs from code?</DialogTitle>
         </DialogHeader>
 
