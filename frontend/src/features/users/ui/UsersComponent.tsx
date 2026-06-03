@@ -44,7 +44,7 @@ const getRoleColor = (role: UserRole): string => {
     case UserRole.ADMIN:
       return 'text-blue-500';
     case UserRole.MEMBER:
-      return 'text-emerald-500';
+      return 'text-primary';
     default:
       return 'text-muted-foreground';
   }
@@ -233,11 +233,11 @@ export function UsersComponent({ contentHeight, globalSettings, user }: Props) {
       <div className="w-full">
         <div
           ref={scrollContainerRef}
-          className="grow overflow-y-auto rounded bg-card p-5 shadow"
+          className="grow overflow-y-auto rounded bg-card p-6 shadow"
           style={{ height: contentHeight }}
         >
           <div className="mb-4 flex items-center justify-between">
-            <h1 className="text-2xl font-bold">TraceBull Users</h1>
+            <h1 className="text-xl font-semibold">TraceBull Users</h1>
             <div className="flex items-center gap-3">
               {(user?.role === UserRole.ADMIN ||
                 globalSettings?.isAllowMemberInvitations !== false) && (

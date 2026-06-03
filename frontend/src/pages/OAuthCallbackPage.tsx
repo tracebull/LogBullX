@@ -58,7 +58,7 @@ export function OAuthCallbackPage() {
             <button
               type="button"
               onClick={() => navigate('/')}
-              className="cursor-pointer font-medium text-emerald-600 hover:text-emerald-700"
+              className="cursor-pointer font-medium text-primary hover:text-primary/80"
             >
               Return to sign in
             </button>

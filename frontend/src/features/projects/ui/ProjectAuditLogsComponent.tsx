@@ -107,7 +107,7 @@ export function ProjectAuditLogsComponent({
   return (
     <div className="max-w-[1200px]">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-xl font-bold text-foreground">Project Audit Logs</h2>
+        <h2 className="text-base font-medium text-foreground">Project Audit Logs</h2>
         <div className="text-sm text-muted-foreground">
           {isLoading ? (
             <Spinner size="sm" />
@@ -144,7 +144,7 @@ export function ProjectAuditLogsComponent({
                         System
                       </span>
                     ) : (
-                      <span className="inline-block rounded-full bg-emerald-100 px-1.5 py-0.5 text-xs font-medium text-emerald-800">
+                      <span className="inline-block rounded-full bg-secondary px-1.5 py-0.5 text-xs font-medium text-secondary-foreground">
                         {record.userName
                           ? `${record.userName} (${record.userEmail})`
                           : record.userEmail}

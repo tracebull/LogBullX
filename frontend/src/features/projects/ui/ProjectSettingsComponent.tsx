@@ -376,10 +376,10 @@ export function ProjectSettingsComponent({ projectResponse, user, contentHeight 
       <div className="w-full">
         <div
           ref={scrollContainerRef}
-          className="grow overflow-y-auto rounded bg-card p-5 shadow"
+          className="grow overflow-y-auto rounded bg-card p-6 shadow"
           style={{ height: contentHeight }}
         >
-          <h1 className="mb-6 text-2xl font-bold">Settings</h1>
+          <h1 className="mb-6 text-xl font-semibold">Settings</h1>
 
           {isLoading || !project ? (
             <div className="flex items-center justify-center py-12">
@@ -450,7 +450,7 @@ export function ProjectSettingsComponent({ projectResponse, user, contentHeight 
 
                 {/* Security Policies */}
                 <div className="max-w-2xl border-b border-border pb-6">
-                  <h2 className="mb-4 text-xl font-bold text-foreground">Security policies</h2>
+                  <h2 className="mb-4 text-base font-medium text-foreground">Security policies</h2>
 
                   <div className="space-y-4">
                     <div className="flex items-start justify-between">
@@ -515,7 +515,7 @@ export function ProjectSettingsComponent({ projectResponse, user, contentHeight 
                             {(formProject.allowedDomains || []).map((domain, index) => (
                               <span
                                 key={index}
-                                className="inline-flex items-center gap-1 rounded-md bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800"
+                                className="inline-flex items-center gap-1 rounded-md bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground"
                               >
                                 {domain}
                                 {canEdit && (
@@ -610,7 +610,7 @@ export function ProjectSettingsComponent({ projectResponse, user, contentHeight 
                             {(formProject.allowedIps || []).map((ip, index) => (
                               <span
                                 key={index}
-                                className="inline-flex items-center gap-1 rounded-md bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800"
+                                className="inline-flex items-center gap-1 rounded-md bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground"
                               >
                                 {ip}
                                 {canEdit && (
@@ -704,7 +704,7 @@ export function ProjectSettingsComponent({ projectResponse, user, contentHeight 
 
                 {/* Rate Limiting & Quotas */}
                 <div className="max-w-2xl border-b border-border pb-6">
-                  <h2 className="text-xl leading-1.5 font-bold text-foreground">
+                  <h2 className="text-base leading-1.5 font-medium text-foreground">
                     Rate limiting & quotas
                   </h2>
 
@@ -849,7 +849,7 @@ export function ProjectSettingsComponent({ projectResponse, user, contentHeight 
 
                 {/* Project Deletion */}
                 <div className="max-w-2xl border-b border-border pb-6">
-                  <h2 className="mb-4 text-xl font-bold text-foreground">Danger Zone</h2>
+                  <h2 className="mb-4 text-base font-medium text-foreground">Danger Zone</h2>
 
                   <div className="rounded-lg border border-red-200 bg-red-50 p-4">
                     <div className="flex items-start justify-between">
@@ -908,7 +908,7 @@ export function ProjectSettingsComponent({ projectResponse, user, contentHeight 
 
                 {/* Project statistics */}
                 <div className="max-w-[300px]">
-                  <h2 className="mb-4 text-xl font-bold text-foreground">Project statistics</h2>
+                  <h2 className="mb-4 text-base font-medium text-foreground">Project statistics</h2>
                   {isLoadingStats ? (
                     <div className="flex items-center py-2">
                       <Spinner size="sm" />

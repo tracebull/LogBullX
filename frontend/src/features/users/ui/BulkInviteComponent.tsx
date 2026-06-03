@@ -80,7 +80,7 @@ export function BulkInviteComponent({ open, onClose, onInviteComplete }: Props) 
                 <div className="mb-1 text-sm font-semibold text-primary">
                   Invited ({results.invited.length})
                 </div>
-                <div className="max-h-40 overflow-y-auto rounded bg-emerald-50 p-2 text-sm">
+                <div className="max-h-40 overflow-y-auto rounded bg-muted p-2 text-sm">
                   {results.invited.map((r) => (
                     <div key={r.email}>{r.email}</div>
                   ))}
@@ -109,7 +109,7 @@ export function BulkInviteComponent({ open, onClose, onInviteComplete }: Props) 
             <TabsContent value="text">
               <div>
                 <textarea
-                  className="w-full rounded border p-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  className="w-full rounded border p-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
                   style={{ borderColor: '#d9d9d9', minHeight: 200, resize: 'vertical' }}
                   placeholder={"Enter emails, one per line or comma-separated:\nuser1@example.com\nuser2@example.com"}
                   value={textValue}

@@ -70,8 +70,8 @@ export const ProjectSelectionComponent = ({
   if (projects.length === 0) {
     if (!canCreateProjects) {
       return (
-        <div className="my-1 w-[250px] select-none">
-          <div className="mb-1 text-xs text-muted-foreground" style={{ lineHeight: 0.7 }}>
+        <div className="my-1 select-none">
+          <div className="mb-1 text-xs leading-none text-muted-foreground">
             No projects
           </div>
         </div>
@@ -90,29 +90,28 @@ export const ProjectSelectionComponent = ({
 
   return (
     <div className="my-1 select-none" ref={dropdownRef}>
-      <div className="mb-1 text-xs text-muted-foreground" style={{ lineHeight: 0.7 }}>
+      <div className="mb-1 text-xs leading-none text-muted-foreground">
         Selected project
       </div>
 
       <div className="flex items-center gap-2">
         <div className="relative w-[250px]">
-          <div
-            className="cursor-pointer rounded bg-muted p-1 px-2 hover:bg-accent"
+          <Button
+            variant="ghost"
+            className="w-[250px] justify-between bg-muted hover:bg-accent"
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
           >
-            <div className="flex items-center justify-between text-sm">
-              <div className="max-w-[250px] truncate">
-                {selectedProject?.name || 'Select a project'}
-              </div>
-              <img
-                src="/icons/menu/arrow-down-gray.svg"
-                alt="arrow-down"
-                className={`ml-1 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}
-                width={15}
-                height={15}
-              />
-            </div>
-          </div>
+            <span className="truncate">
+              {selectedProject?.name || 'Select a project'}
+            </span>
+            <img
+              src="/icons/menu/arrow-down-gray.svg"
+              alt=""
+              className={`ml-1 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}
+              width={15}
+              height={15}
+            />
+          </Button>
 
           {isDropdownOpen && (
             <div className="absolute top-full left-0 z-50 mt-1 min-w-full rounded-md border border-border bg-card shadow-lg">
@@ -161,15 +160,15 @@ export const ProjectSelectionComponent = ({
         </div>
 
         {selectedProject?.id && (
-          <div className="flex h-[34px] items-center rounded-md border border-border">
+          <div className="flex h-9 items-center rounded-md border border-border">
             <input
               readOnly
               value={selectedProject.id}
-              className="h-full w-[220px] truncate bg-muted/50 px-2 font-mono text-xs text-muted-foreground focus:outline-none"
+              className="h-full flex-1 min-w-0 truncate bg-transparent px-2 font-mono text-xs text-muted-foreground focus:outline-none"
             />
             <button
               onClick={copyProjectId}
-              className="flex h-full items-center justify-center border-l border-border px-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+              className="flex h-full shrink-0 items-center justify-center border-l border-border px-2.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
               title="Copy project ID"
             >
               {copied ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}

@@ -1,8 +1,16 @@
 import { Suspense, lazy, useEffect, useState } from 'react';
 
+import { Menu } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Spinner } from '@/components/ui/spinner';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { APP_VERSION } from '../../../constants';
 import { type DiskUsage, diskApi } from '../../../entity/disk';
 import { type ProjectResponse, projectApi } from '../../../entity/projects';
@@ -14,9 +22,7 @@ import {
   userApi,
 } from '../../../entity/users';
 import { ThemeToggle } from '../../../features/users/ui/ThemeToggle';
-import { useScreenHeight } from '../../../shared/hooks';
 import { toastMessage } from '../../../shared/lib/toastMessage';
-import { MobilePlaceholderComponent } from './MobilePlaceholderComponent';
 import { ProjectSelectionComponent } from './ProjectSelectionComponent';
 
 const CreateProjectDialogComponent = lazy(() =>
@@ -60,13 +66,37 @@ const UsersComponent = lazy(() =>
   })),
 );
 
-export const MainScreenComponent = () => {
-  const screenHeight = useScreenHeight();
-  const contentHeight = screenHeight - 95;
+type TabId =
+  | 'profile'
+  | 'logbull-settings'
+  | 'users'
+  | 'search'
+  | 'settings'
+  | 'api-keys'
+  | 'members';
 
-  const [selectedTab, setSelectedTab] = useState<
-    'profile' | 'logbull-settings' | 'users' | 'search' | 'settings' | 'api-keys' | 'members'
-  >('search');
+const PAGE_TITLES: Record<TabId, string> = {
+  search: 'Search',
+  settings: 'Project Settings',
+  members: 'Members',
+  'api-keys': 'API Keys',
+  profile: 'Profile',
+  'logbull-settings': 'Settings',
+  users: 'Users',
+};
+
+interface NavItemConfig {
+  label: string;
+  tab: TabId;
+  icon: string;
+  selectedIcon: string;
+  adminOnly: boolean;
+  visible: boolean;
+  hasSeparator: boolean;
+}
+
+export const MainScreenComponent = () => {
+  const [selectedTab, setSelectedTab] = useState<TabId>('search');
   const [diskUsage, setDiskUsage] = useState<DiskUsage | undefined>(undefined);
   const [user, setUser] = useState<UserProfile | undefined>(undefined);
   const [globalSettings, setGlobalSettings] = useState<UsersSettings | undefined>(undefined);
@@ -76,6 +106,10 @@ export const MainScreenComponent = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [showCreateProjectDialog, setShowCreateProjectDialog] = useState(false);
+
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 450);
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [contentHeight, setContentHeight] = useState(() => window.innerHeight - 140);
 
   const loadData = async () => {
     setIsLoading(true);
@@ -103,7 +137,6 @@ export const MainScreenComponent = () => {
     loadData();
   }, []);
 
-  // Set selected project if none selected and projects available
   useEffect(() => {
     if (!selectedProject && projects.length > 0) {
       const previouslySelectedProjectId = localStorage.getItem('selected_project_id');
@@ -115,19 +148,26 @@ export const MainScreenComponent = () => {
     }
   }, [projects, selectedProject]);
 
-  // Save selected project to localStorage
   useEffect(() => {
     if (selectedProject) {
       localStorage.setItem('selected_project_id', selectedProject.id);
     }
   }, [selectedProject]);
 
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 450);
+      setContentHeight(window.innerHeight - 140);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const handleCreateProject = () => {
     setShowCreateProjectDialog(true);
   };
 
   const handleProjectCreated = async (newProject: ProjectResponse) => {
-    // Reload projects and select the created one
     try {
       const projectsResponse = await projectApi.getProjects();
       setProjects(projectsResponse.projects);
@@ -138,24 +178,210 @@ export const MainScreenComponent = () => {
     }
   };
 
+  const handleNavClick = (tab: TabId) => {
+    setSelectedTab(tab);
+    setSheetOpen(false);
+  };
+
   const isUsedMoreThan95Percent =
     diskUsage && diskUsage.usedSpaceBytes / diskUsage.totalSpaceBytes > 0.95;
 
-  return (
-    <>
-      <div className="[@media(min-width:450px)]:hidden">
-        <MobilePlaceholderComponent />
-      </div>
+  const allNavItems: NavItemConfig[] = [
+    {
+      label: 'Search',
+      tab: 'search',
+      icon: '/icons/menu/search-gray.svg',
+      selectedIcon: '/icons/menu/search-white.svg',
+      adminOnly: false,
+      visible: true,
+      hasSeparator: false,
+    },
+    {
+      label: 'Project Settings',
+      tab: 'settings',
+      icon: '/icons/menu/project-settings-gray.svg',
+      selectedIcon: '/icons/menu/project-settings-white.svg',
+      adminOnly: false,
+      visible: !!selectedProject,
+      hasSeparator: false,
+    },
+    {
+      label: 'Members',
+      tab: 'members',
+      icon: '/icons/menu/users-gray.svg',
+      selectedIcon: '/icons/menu/users-white.svg',
+      adminOnly: false,
+      visible: !!selectedProject,
+      hasSeparator: false,
+    },
+    {
+      label: 'API Keys',
+      tab: 'api-keys',
+      icon: '/icons/menu/key-gray.svg',
+      selectedIcon: '/icons/menu/key-white.svg',
+      adminOnly: false,
+      visible: !!selectedProject,
+      hasSeparator: false,
+    },
+    {
+      label: 'Profile',
+      tab: 'profile',
+      icon: '/icons/menu/profile-gray.svg',
+      selectedIcon: '/icons/menu/profile-white.svg',
+      adminOnly: false,
+      visible: true,
+      hasSeparator: false,
+    },
+    {
+      label: 'Settings',
+      tab: 'logbull-settings',
+      icon: '/icons/menu/global-settings-gray.svg',
+      selectedIcon: '/icons/menu/global-settings-white.svg',
+      adminOnly: true,
+      visible: true,
+      hasSeparator: true,
+    },
+    {
+      label: 'Users',
+      tab: 'users',
+      icon: '/icons/menu/user-card-gray.svg',
+      selectedIcon: '/icons/menu/user-card-white.svg',
+      adminOnly: true,
+      visible: true,
+      hasSeparator: false,
+    },
+  ];
 
+  const navItems = allNavItems
+    .filter((item) => !item.adminOnly || user?.role === UserRole.ADMIN)
+    .filter((item) => item.visible);
+
+  const renderContent = () => {
+    if (
+      projects.length === 0 &&
+      (selectedTab === 'search' ||
+        selectedTab === 'settings' ||
+        selectedTab === 'api-keys' ||
+        selectedTab === 'members')
+    ) {
+      return (
+        <div className="flex h-full items-center justify-center">
+          {(user?.role === UserRole.ADMIN ||
+            globalSettings?.isMemberAllowedToCreateProjects !== false) && (
+            <Button
+              size="lg"
+              onClick={handleCreateProject}
+              className="bg-primary text-primary-foreground hover:bg-primary/90"
+            >
+              Create project
+            </Button>
+          )}
+        </div>
+      );
+    }
+
+    return (
+      <>
+        {selectedTab === 'profile' && <ProfileComponent contentHeight={contentHeight} />}
+
+        {selectedTab === 'logbull-settings' && (
+          <SettingsComponent contentHeight={contentHeight} />
+        )}
+
+        {selectedTab === 'users' && (
+          <UsersComponent
+            contentHeight={contentHeight}
+            globalSettings={globalSettings}
+            user={user}
+          />
+        )}
+
+        {selectedTab === 'settings' && selectedProject && user && (
+          <ProjectSettingsComponent
+            projectResponse={selectedProject}
+            contentHeight={contentHeight}
+            user={user}
+          />
+        )}
+        {selectedTab === 'api-keys' && selectedProject && user && (
+          <ProjectApiKeysComponent
+            projectResponse={selectedProject}
+            contentHeight={contentHeight}
+            user={user}
+          />
+        )}
+        {selectedTab === 'members' && selectedProject && user && (
+          <ProjectMembershipComponent
+            projectResponse={selectedProject}
+            contentHeight={contentHeight}
+            user={user}
+          />
+        )}
+        {selectedTab === 'search' && selectedProject && user && (
+          <QueryComponentComponent
+            projectId={selectedProject.id}
+            contentHeight={contentHeight}
+            user={user}
+          />
+        )}
+      </>
+    );
+  };
+
+  return (
+    <TooltipProvider delayDuration={200}>
       <div
-        style={{ height: screenHeight }}
-        className="hidden bg-background p-3 [@media(min-width:450px)]:block"
+        className={`h-screen flex flex-col overflow-hidden bg-background ${isMobile ? '' : 'p-3'}`}
       >
-        {/* ===================== NAVBAR ===================== */}
-        <div className="mb-3 flex h-[60px] items-center rounded bg-card p-3 shadow">
+        {/* ===================== HEADER ===================== */}
+        <div
+          className={`flex-shrink-0 flex items-center bg-card shadow ${
+            isMobile ? 'px-3 py-2' : 'rounded p-3 mb-3'
+          }`}
+        >
+          {isMobile && (
+            <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="mr-2 flex-shrink-0">
+                  <Menu className="size-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="flex flex-col">
+                <SheetHeader>
+                  <SheetTitle>Navigation</SheetTitle>
+                </SheetHeader>
+                <nav className="mt-4 flex flex-col gap-1">
+                  {navItems.map((item) => (
+                    <button
+                      key={item.tab}
+                      onClick={() => handleNavClick(item.tab)}
+                      className={`flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors ${
+                        selectedTab === item.tab
+                          ? 'bg-primary text-primary-foreground'
+                          : 'hover:bg-accent'
+                      } ${item.hasSeparator ? 'mt-3' : ''}`}
+                    >
+                      <img
+                        src={selectedTab === item.tab ? item.selectedIcon : item.icon}
+                        width={18}
+                        alt={item.label}
+                        loading="lazy"
+                        className={selectedTab === item.tab ? 'dark:invert' : ''}
+                      />
+                      {item.label}
+                    </button>
+                  ))}
+                </nav>
+                <div className="mt-auto pt-4 text-center text-xs text-muted-foreground">
+                  v{APP_VERSION}
+                </div>
+              </SheetContent>
+            </Sheet>
+          )}
+
           <div className="flex items-center gap-3 hover:opacity-80">
             <a href="/">
-              <img className="h-[35px] w-[35px]" src="/logo.svg" />
+              <img className="h-[35px] w-[35px]" src="/logo.svg" alt="Logo" />
             </a>
           </div>
 
@@ -177,9 +403,7 @@ export const MainScreenComponent = () => {
             {isUsedMoreThan95Percent && diskUsage && (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <div
-                    className={`cursor-pointer text-center text-xs ${isUsedMoreThan95Percent ? 'text-destructive' : 'text-muted-foreground'}`}
-                  >
+                  <div className="cursor-pointer text-center text-xs text-destructive">
                     {(diskUsage.usedSpaceBytes / 1024 ** 3).toFixed(1)} of{' '}
                     {(diskUsage.totalSpaceBytes / 1024 ** 3).toFixed(1)} GB
                     <br />
@@ -195,196 +419,69 @@ export const MainScreenComponent = () => {
             )}
           </div>
         </div>
-        {/* ===================== END NAVBAR ===================== */}
+        {/* ===================== END HEADER ===================== */}
 
-        {isLoading ? (
-          <div className="flex items-center justify-center py-2" style={{ height: contentHeight }}>
-            <Spinner size="lg" />
-          </div>
-        ) : (
-          <div className="relative flex">
-            <div
-              className="max-w-[60px] min-w-[60px] rounded bg-card py-2 shadow"
-              style={{ height: contentHeight }}
-            >
-              {[
-                {
-                  text: 'Search',
-                  name: 'search',
-                  icon: '/icons/menu/search-gray.svg',
-                  selectedIcon: '/icons/menu/search-white.svg',
-                  onClick: () => setSelectedTab('search'),
-                  isAdminOnly: false,
-                  marginTop: '0px',
-                  isVisible: true,
-                },
-                {
-                  text: 'Settings',
-                  name: 'settings',
-                  icon: '/icons/menu/project-settings-gray.svg',
-                  selectedIcon: '/icons/menu/project-settings-white.svg',
-                  onClick: () => setSelectedTab('settings'),
-                  isAdminOnly: false,
-                  marginTop: '0px',
-                  isVisible: !!selectedProject,
-                },
-                {
-                  text: 'Members',
-                  name: 'members',
-                  icon: '/icons/menu/users-gray.svg',
-                  selectedIcon: '/icons/menu/users-white.svg',
-                  onClick: () => setSelectedTab('members'),
-                  isAdminOnly: false,
-                  marginTop: '0px',
-                  isVisible: !!selectedProject,
-                },
-                {
-                  text: 'API Keys',
-                  name: 'api-keys',
-                  icon: '/icons/menu/key-gray.svg',
-                  selectedIcon: '/icons/menu/key-white.svg',
-                  onClick: () => setSelectedTab('api-keys'),
-                  isAdminOnly: false,
-                  marginTop: '0px',
-                  isVisible: !!selectedProject,
-                },
-                {
-                  text: 'Profile',
-                  name: 'profile',
-                  icon: '/icons/menu/profile-gray.svg',
-                  selectedIcon: '/icons/menu/profile-white.svg',
-                  onClick: () => setSelectedTab('profile'),
-                  isAdminOnly: false,
-                  marginTop: '0px',
-                  isVisible: true,
-                },
-                {
-                  text: 'TraceBull settings',
-                  name: 'logbull-settings',
-                  icon: '/icons/menu/global-settings-gray.svg',
-                  selectedIcon: '/icons/menu/global-settings-white.svg',
-                  onClick: () => setSelectedTab('logbull-settings'),
-                  isAdminOnly: true,
-                  marginTop: '25px',
-                  isVisible: true,
-                },
-                {
-                  text: 'Users',
-                  name: 'users',
-                  icon: '/icons/menu/user-card-gray.svg',
-                  selectedIcon: '/icons/menu/user-card-white.svg',
-                  onClick: () => setSelectedTab('users'),
-                  isAdminOnly: true,
-                  marginTop: '0px',
-                  isVisible: true,
-                },
-              ]
-                .filter((tab) => !tab.isAdminOnly || user?.role === UserRole.ADMIN)
-                .filter((tab) => tab.isVisible)
-                .map((tab) => (
-                  <div key={tab.text} className="flex justify-center">
-                    <div
-                      className={`flex h-[50px] w-[50px] cursor-pointer items-center justify-center rounded ${selectedTab === tab.name ? 'bg-primary text-primary-foreground' : 'hover:bg-accent'}`}
-                      onClick={tab.onClick}
-                      style={{ marginTop: tab.marginTop }}
-                    >
-                      <div className="mb-1">
-                        <div className="flex justify-center">
-                          <img
-                            src={selectedTab === tab.name ? tab.selectedIcon : tab.icon}
-                            width={20}
-                            alt={tab.text}
-                            loading="lazy"
-                            className={selectedTab === tab.name ? 'dark:invert' : ''}
-                          />
-                        </div>
+        {/* ===================== BODY ===================== */}
+        <div className="flex flex-1 overflow-hidden">
+          {!isMobile && (
+            <div className="flex-shrink-0 flex w-[60px] flex-col rounded bg-card py-2 shadow">
+              {navItems.map((item) => (
+                <div key={item.tab} className="flex justify-center">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div
+                        className={`flex h-[50px] w-[50px] cursor-pointer items-center justify-center rounded ${
+                          selectedTab === item.tab
+                            ? 'bg-primary text-primary-foreground'
+                            : 'hover:bg-accent'
+                        } ${item.hasSeparator ? 'mt-4' : ''}`}
+                        onClick={() => handleNavClick(item.tab)}
+                      >
+                        <img
+                          src={selectedTab === item.tab ? item.selectedIcon : item.icon}
+                          width={20}
+                          alt={item.label}
+                          loading="lazy"
+                          className={selectedTab === item.tab ? 'dark:invert' : ''}
+                        />
                       </div>
-                    </div>
+                    </TooltipTrigger>
+                    <TooltipContent side="right" sideOffset={8}>
+                      {item.label}
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+              ))}
+              <div className="mt-auto px-2 pb-2 text-center text-xs text-muted-foreground">
+                v{APP_VERSION}
+              </div>
+            </div>
+          )}
+
+          <div className={`flex-1 flex flex-col overflow-hidden ${isMobile ? '' : 'ml-3'}`}>
+            <div className="flex-shrink-0 rounded-t border-b border-border bg-card px-6 py-3">
+              <h1 className="text-base font-medium text-foreground">{PAGE_TITLES[selectedTab]}</h1>
+            </div>
+
+            {isLoading ? (
+              <div className="flex flex-1 items-center justify-center">
+                <Spinner size="lg" />
+              </div>
+            ) : (
+              <Suspense
+                fallback={
+                  <div className="flex flex-1 items-center justify-center">
+                    <Spinner size="lg" />
                   </div>
-                ))}
-            </div>
-
-            <Suspense
-              fallback={
-                <div
-                  className="flex grow items-center justify-center rounded"
-                  style={{ height: contentHeight }}
-                >
-                  <Spinner size="lg" />
-                </div>
-              }
-            >
-              {selectedTab === 'profile' && <ProfileComponent contentHeight={contentHeight} />}
-
-              {selectedTab === 'logbull-settings' && (
-                <SettingsComponent contentHeight={contentHeight} />
-              )}
-
-              {selectedTab === 'users' && (
-                <UsersComponent contentHeight={contentHeight} globalSettings={globalSettings} user={user} />
-              )}
-
-              {projects.length === 0 &&
-              (selectedTab === 'search' ||
-                selectedTab === 'settings' ||
-                selectedTab === 'api-keys' ||
-                selectedTab === 'members') ? (
-                <div
-                  className="flex grow items-center justify-center rounded pl-5"
-                  style={{ height: contentHeight }}
-                >
-                  {(user?.role === UserRole.ADMIN ||
-                    globalSettings?.isMemberAllowedToCreateProjects !== false) && (
-                    <Button
-                      size="lg"
-                      onClick={handleCreateProject}
-                      className="bg-primary text-primary-foreground hover:bg-primary/90"
-                    >
-                      Create project
-                    </Button>
-                  )}
-                </div>
-              ) : (
-                <>
-                  {selectedTab === 'settings' && selectedProject && user && (
-                    <ProjectSettingsComponent
-                      projectResponse={selectedProject}
-                      contentHeight={contentHeight}
-                      user={user}
-                    />
-                  )}
-                  {selectedTab === 'api-keys' && selectedProject && user && (
-                    <ProjectApiKeysComponent
-                      projectResponse={selectedProject}
-                      contentHeight={contentHeight}
-                      user={user}
-                    />
-                  )}
-                  {selectedTab === 'members' && selectedProject && user && (
-                    <ProjectMembershipComponent
-                      projectResponse={selectedProject}
-                      contentHeight={contentHeight}
-                      user={user}
-                    />
-                  )}
-                  {selectedTab === 'search' && selectedProject && user && (
-                    <QueryComponentComponent
-                      projectId={selectedProject.id}
-                      contentHeight={contentHeight}
-                      user={user}
-                    />
-                  )}
-                </>
-              )}
-            </Suspense>
-
-            <div className="absolute bottom-1 left-2 mb-[0px] text-sm text-muted-foreground">
-              v{APP_VERSION}
-            </div>
+                }
+              >
+                {renderContent()}
+              </Suspense>
+            )}
           </div>
-        )}
+        </div>
+        {/* ===================== END BODY ===================== */}
 
-        {/* Create Project Dialog */}
         <Suspense fallback={null}>
           {showCreateProjectDialog && user && globalSettings && (
             <CreateProjectDialogComponent
@@ -396,6 +493,6 @@ export const MainScreenComponent = () => {
           )}
         </Suspense>
       </div>
-    </>
+    </TooltipProvider>
   );
 };

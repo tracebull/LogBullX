@@ -293,12 +293,12 @@ export function ProjectMembershipComponent({ contentHeight, projectResponse, use
     <div className="flex grow pl-3">
       <div className="w-full">
         <div
-          className="grow overflow-y-auto rounded bg-card p-5 shadow"
+          className="grow overflow-y-auto rounded bg-card p-6 shadow"
           style={{ height: contentHeight }}
         >
           <div className="max-w-[850px]">
             <div className="mb-6 flex items-center justify-between">
-              <h1 className="text-2xl font-bold">Project members</h1>
+              <h1 className="text-xl font-semibold">Project members</h1>
               <div className="flex space-x-2">
                 {canTransferOwnership && (
                   <Button

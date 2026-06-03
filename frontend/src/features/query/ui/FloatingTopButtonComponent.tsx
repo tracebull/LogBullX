@@ -14,7 +14,7 @@ interface Props {
  * Features:
  * - Throttled scroll detection for optimal performance
  * - Smooth scroll-to-top animation
- * - Emerald theme styling consistent with app design
+ * - Theme-aware styling consistent with app design
  * - Appears when scrolled past threshold (default 200px)
  * - Fixed positioning with high z-index
  */
@@ -108,7 +108,7 @@ export const FloatingTopButtonComponent = ({
       <Button
         size="icon"
         onClick={scrollToTop}
-        className="size-10 rounded-full border-emerald-600 bg-emerald-600 shadow-lg hover:border-emerald-700 hover:bg-emerald-700"
+        className="size-10 rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary/90"
       >
         <ArrowUp className="size-4" />
       </Button>

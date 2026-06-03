@@ -1181,7 +1181,7 @@ export function CodeUsageComponent({
             onClick={() => handleLanguageChange(lang)}
             className={`cursor-pointer rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
               selectedLanguage === lang
-                ? 'bg-emerald-600 text-white'
+                ? 'bg-primary text-primary-foreground'
                 : 'bg-muted text-muted-foreground hover:bg-accent'
             }`}
           >
@@ -1198,7 +1198,7 @@ export function CodeUsageComponent({
             onClick={() => handleIntegrationChange(index)}
             className={`cursor-pointer rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
               selectedIntegration === index
-                ? 'bg-emerald-100 text-emerald-700 ring-2 ring-emerald-600'
+                ? 'bg-secondary text-secondary-foreground ring-2 ring-primary'
                 : 'bg-muted text-muted-foreground hover:bg-accent'
             }`}
           >

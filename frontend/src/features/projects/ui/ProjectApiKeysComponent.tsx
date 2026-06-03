@@ -226,12 +226,12 @@ export function ProjectApiKeysComponent({ contentHeight, projectResponse, user }
     <div className="flex grow pl-3">
       <div className="w-full">
         <div
-          className="grow overflow-y-auto rounded bg-card p-5 shadow"
+          className="grow overflow-y-auto rounded bg-card p-6 shadow"
           style={{ height: contentHeight }}
         >
           <div className="max-w-[850px]">
             <div className="mb-6 flex items-center justify-between">
-              <h1 className="text-2xl font-bold">API keys</h1>
+              <h1 className="text-xl font-semibold">API keys</h1>
               {canManageKeys && (
                 <Button
                   onClick={() => setIsCreateModalOpen(true)}
@@ -505,9 +505,9 @@ export function ProjectApiKeysComponent({ contentHeight, projectResponse, user }
 
                     <div className="mb-4">
                       <div className="mb-2 font-medium text-foreground">Full API token:</div>
-                      <div className="rounded-lg border-2 border-emerald-200 bg-emerald-50 p-4">
+                      <div className="rounded-lg border-2 border-border bg-muted p-4">
                         <div className="flex items-center justify-between">
-                          <code className="!font-mono text-sm break-all text-emerald-800 select-all">
+                          <code className="!font-mono text-sm break-all text-foreground select-all">
                             {createdApiKey.token}
                           </code>
                           <Button

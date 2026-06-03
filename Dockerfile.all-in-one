@@ -68,9 +68,9 @@ ENV APP_VERSION=$APP_VERSION
 # Set production mode for Docker containers
 ENV ENV_MODE=production
 
-# Install PostgreSQL server, OpenSearch, Valkey, and Java
+# Install PostgreSQL server, Valkey, and dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    wget ca-certificates gnupg lsb-release sudo gosu curl openssl openjdk-17-jre-headless build-essential && \
+    wget ca-certificates gnupg lsb-release sudo gosu curl openssl build-essential && \
     wget -qO- https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor > /etc/apt/trusted.gpg.d/pgdg.gpg && \
     echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" \
     > /etc/apt/sources.list.d/pgdg.list && \
@@ -79,15 +79,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     postgresql-17 postgresql-client-17 && \
     rm -rf /var/lib/apt/lists/*
 
-# Install OpenSearch
-RUN wget https://artifacts.opensearch.org/releases/bundle/opensearch/2.12.0/opensearch-2.12.0-linux-x64.tar.gz && \
-    tar -xzf opensearch-2.12.0-linux-x64.tar.gz && \
-    mv opensearch-2.12.0 /opt/opensearch && \
-    rm opensearch-2.12.0-linux-x64.tar.gz && \
-    groupadd -g 1000 opensearch && \
-    useradd -u 1000 -g opensearch -d /opt/opensearch -s /bin/bash opensearch && \
-    mkdir -p /logbull-data/opensearch-data /logbull-data/opensearch-logs && \
-    chown -R opensearch:opensearch /opt/opensearch /logbull-data/opensearch-data /logbull-data/opensearch-logs
+# Install VictoriaLogs
+RUN wget https://github.com/VictoriaMetrics/VictoriaMetrics/releases/download/v1.101.0/victoria-logs-linux-amd64-v1.101.0.tar.gz && \
+    tar -xzf victoria-logs-linux-amd64-v1.101.0.tar.gz && \
+    mv victoria-logs-prod /usr/local/bin/victoria-logs-prod && \
+    rm victoria-logs-linux-amd64-v1.101.0.tar.gz && \
+    groupadd -g 1000 victorialogs && \
+    useradd -u 1000 -g victorialogs -d /logbull-data/vlogs -s /bin/bash victorialogs && \
+    mkdir -p /logbull-data/vlogs && \
+    chown -R victorialogs:victorialogs /logbull-data/vlogs
 
 # Install Valkey
 RUN wget https://github.com/valkey-io/valkey/archive/refs/tags/8.0.1.tar.gz -O valkey-8.0.1.tar.gz && \
@@ -130,48 +130,7 @@ RUN echo '# Valkey Configuration for LogBull' > /opt/valkey/conf/valkey.conf && 
     echo '# No password required as requested' >> /opt/valkey/conf/valkey.conf && \
     chown valkey:valkey /opt/valkey/conf/valkey.conf
 
-# Configure OpenSearch for high-performance log storage
-RUN echo '# Cluster configuration' > /opt/opensearch/config/opensearch.yml && \
-    echo 'cluster.name: logbull-cluster' >> /opt/opensearch/config/opensearch.yml && \
-    echo 'node.name: logbull-node' >> /opt/opensearch/config/opensearch.yml && \
-    echo 'discovery.type: single-node' >> /opt/opensearch/config/opensearch.yml && \
-    echo '' >> /opt/opensearch/config/opensearch.yml && \
-    echo '# Path configuration' >> /opt/opensearch/config/opensearch.yml && \
-    echo 'path.data: /logbull-data/opensearch-data' >> /opt/opensearch/config/opensearch.yml && \
-    echo 'path.logs: /logbull-data/opensearch-logs' >> /opt/opensearch/config/opensearch.yml && \
-    echo '' >> /opt/opensearch/config/opensearch.yml && \
-    echo '# Network configuration' >> /opt/opensearch/config/opensearch.yml && \
-    echo 'network.host: 127.0.0.1' >> /opt/opensearch/config/opensearch.yml && \
-    echo 'http.port: 9200' >> /opt/opensearch/config/opensearch.yml && \
-    echo 'transport.port: 9300' >> /opt/opensearch/config/opensearch.yml && \
-    echo '' >> /opt/opensearch/config/opensearch.yml && \
-    echo '# Security configuration' >> /opt/opensearch/config/opensearch.yml && \
-    echo 'plugins.security.disabled: true' >> /opt/opensearch/config/opensearch.yml && \
-    echo '' >> /opt/opensearch/config/opensearch.yml && \
-    echo '# Memory and performance configuration' >> /opt/opensearch/config/opensearch.yml && \
-    echo 'bootstrap.memory_lock: false' >> /opt/opensearch/config/opensearch.yml && \
-    echo 'indices.memory.index_buffer_size: 30%' >> /opt/opensearch/config/opensearch.yml && \
-    echo 'indices.memory.min_index_buffer_size: 96mb' >> /opt/opensearch/config/opensearch.yml && \
-    echo '' >> /opt/opensearch/config/opensearch.yml && \
-    echo '# Index configuration for log storage' >> /opt/opensearch/config/opensearch.yml && \
-    echo 'action.auto_create_index: true' >> /opt/opensearch/config/opensearch.yml && \
-    echo 'indices.query.bool.max_clause_count: 10000' >> /opt/opensearch/config/opensearch.yml && \
-    echo 'indices.fielddata.cache.size: 40%' >> /opt/opensearch/config/opensearch.yml && \
-    echo '' >> /opt/opensearch/config/opensearch.yml && \
-    echo '# Thread pool configuration' >> /opt/opensearch/config/opensearch.yml && \
-    echo 'thread_pool.write.queue_size: 1000' >> /opt/opensearch/config/opensearch.yml && \
-    echo 'thread_pool.search.queue_size: 1000' >> /opt/opensearch/config/opensearch.yml && \
-    echo '' >> /opt/opensearch/config/opensearch.yml && \
-    echo '# Circuit breaker settings' >> /opt/opensearch/config/opensearch.yml && \
-    echo 'indices.breaker.total.limit: 80%' >> /opt/opensearch/config/opensearch.yml && \
-    echo 'indices.breaker.fielddata.limit: 50%' >> /opt/opensearch/config/opensearch.yml && \
-    echo 'indices.breaker.request.limit: 40%' >> /opt/opensearch/config/opensearch.yml && \
-    echo '' >> /opt/opensearch/config/opensearch.yml && \
-    echo '# Additional performance optimizations for log storage' >> /opt/opensearch/config/opensearch.yml && \
-    echo 'cluster.routing.allocation.disk.threshold_enabled: true' >> /opt/opensearch/config/opensearch.yml && \
-    echo 'cluster.routing.allocation.disk.watermark.low: 85%' >> /opt/opensearch/config/opensearch.yml && \
-    echo 'cluster.routing.allocation.disk.watermark.high: 90%' >> /opt/opensearch/config/opensearch.yml && \
-    echo 'cluster.routing.allocation.disk.watermark.flood_stage: 95%' >> /opt/opensearch/config/opensearch.yml
+
 
 WORKDIR /app
 
@@ -229,9 +188,9 @@ JSEOF
 
 # Ensure proper ownership of data directories
 echo "Setting up data directory permissions..."
-mkdir -p /logbull-data/pgdata /logbull-data/opensearch-data /logbull-data/opensearch-logs /logbull-data/valkey-data
+mkdir -p /logbull-data/pgdata /logbull-data/vlogs /logbull-data/valkey-data
 chown -R postgres:postgres /logbull-data/pgdata
-chown -R opensearch:opensearch /logbull-data/opensearch-data /logbull-data/opensearch-logs
+chown -R victorialogs:victorialogs /logbull-data/vlogs
 chown -R valkey:valkey /logbull-data/valkey-data
 mkdir -p /logbull-data/backups /logbull-data/temp
 chown logbull:logbull /logbull-data/backups /logbull-data/temp
@@ -270,6 +229,8 @@ done
 # Calculate and configure PostgreSQL resources (25% RAM, 100-300 connections)
 echo "Configuring PostgreSQL resources..."
 CPU_COUNT=\$(nproc)
+TOTAL_MEMORY_KB=\$(grep MemTotal /proc/meminfo | awk '{print \$2}')
+TOTAL_MEMORY_MB=\$((TOTAL_MEMORY_KB / 1024))
 PG_MEMORY_MB=\$((TOTAL_MEMORY_MB / 4))  # 25% of total memory
 
 # PostgreSQL memory limits: minimum 256MB, maximum 25% of total RAM
@@ -313,10 +274,12 @@ WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'logbull')
 \\q
 SQL
 
-# Update environment variables with the dynamic password
+# Update environment variables with the dynamic configurations and VictoriaLogs connection
 export DATABASE_DSN="host=localhost user=postgres password=\${POSTGRES_PASSWORD} dbname=logbull port=5437 sslmode=disable"
 export DATABASE_URL="postgres://postgres:\${POSTGRES_PASSWORD}@localhost:5437/logbull?sslmode=disable"
 export GOOSE_DBSTRING="postgres://postgres:\${POSTGRES_PASSWORD}@localhost:5437/logbull?sslmode=disable"
+export VICTORIALOGS_URL="http://127.0.0.1"
+export VICTORIALOGS_PORT="9428"
 
 # Start Valkey in background
 echo "Starting Valkey..."
@@ -337,52 +300,30 @@ for i in {1..30}; do
     sleep 1
 done
 
-# Calculate optimal memory allocation for OpenSearch (50% of available RAM)
-echo "Calculating optimal memory allocation for OpenSearch..."
-TOTAL_MEMORY_KB=\$(grep MemTotal /proc/meminfo | awk '{print \$2}')
-TOTAL_MEMORY_MB=\$((TOTAL_MEMORY_KB / 1024))
-OPENSEARCH_HEAP_MB=\$((TOTAL_MEMORY_MB / 2))
+# Start VictoriaLogs in background
+echo "Starting VictoriaLogs..."
+gosu victorialogs /usr/local/bin/victoria-logs-prod -storageDataPath=/logbull-data/vlogs -httpListenAddr=127.0.0.1:9428 &
+VICTORIALOGS_PID=\$!
 
-# Ensure minimum 512MB and maximum 31GB (OpenSearch recommendation)
-if [ \$OPENSEARCH_HEAP_MB -lt 512 ]; then
-    OPENSEARCH_HEAP_MB=512
-elif [ \$OPENSEARCH_HEAP_MB -gt 31744 ]; then
-    OPENSEARCH_HEAP_MB=31744
-fi
+# Wait for VictoriaLogs to be ready
+echo "Waiting for VictoriaLogs to be ready..."
+for i in {1..30}; do
+    if curl -s "http://127.0.0.1:9428/health" >/dev/null 2>&1; then
+        echo "VictoriaLogs is ready!"
+        break
+    fi
+    if [ \$i -eq 30 ]; then
+        echo "VictoriaLogs failed to start"
+        exit 1
+    fi
+    sleep 1
+done
 
 echo "=== Resource Allocation Summary ==="
 echo "Total system memory: \${TOTAL_MEMORY_MB}MB, CPUs: \${CPU_COUNT}"
-echo "OpenSearch heap: \${OPENSEARCH_HEAP_MB}MB (50% of RAM, max 31GB)"
 echo "PostgreSQL memory: \${PG_MEMORY_MB}MB (25% of RAM)"
-echo "App + Valkey memory: \$((TOTAL_MEMORY_MB - OPENSEARCH_HEAP_MB - PG_MEMORY_MB))MB (remaining 25%)"
+echo "App + Valkey + VictoriaLogs memory: \$((TOTAL_MEMORY_MB - PG_MEMORY_MB))MB (remaining 75%)"
 echo "==================================="
-
-# Configure JVM options dynamically
-export OPENSEARCH_JAVA_OPTS="-Xms\${OPENSEARCH_HEAP_MB}m -Xmx\${OPENSEARCH_HEAP_MB}m -XX:+UseG1GC -XX:G1HeapRegionSize=16m -XX:+UseLargePages -XX:+UnlockExperimentalVMOptions -XX:+UseTransparentHugePages -XX:+AlwaysPreTouch -Xss1m -Djava.awt.headless=true -Dfile.encoding=UTF-8 -Djna.nosys=true -XX:-OmitStackTraceInFastThrow -Dio.netty.noUnsafe=true -Dio.netty.noKeySetOptimization=true -Dio.netty.recycler.maxCapacityPerThread=0 -Dlog4j.shutdownHookEnabled=false -Dlog4j2.disable.jmx=true -Djava.io.tmpdir=/logbull-data/opensearch-data/tmp"
-
-# Create temp directory for OpenSearch
-mkdir -p /logbull-data/opensearch-data/tmp
-chown opensearch:opensearch /logbull-data/opensearch-data/tmp
-
-# Start OpenSearch in background
-echo "Starting OpenSearch..."
-gosu opensearch /opt/opensearch/bin/opensearch &
-OPENSEARCH_PID=\$!
-
-# Wait for OpenSearch to be ready
-echo "Waiting for OpenSearch to be ready..."
-for i in {1..120}; do
-    if curl -s "http://127.0.0.1:9200/_cluster/health" >/dev/null 2>&1; then
-        echo "OpenSearch is ready!"
-        break
-    fi
-    if [ \$i -eq 120 ]; then
-        echo "OpenSearch failed to start"
-        exit 1
-    fi
-    echo "Waiting for OpenSearch... (\$i/120)"
-    sleep 2
-done
 
 # Start the main application
 echo "Starting Log Bull application..."
@@ -397,7 +338,7 @@ EXPOSE 4005
 HEALTHCHECK --interval=5s --timeout=5s --start-period=60s --retries=30 \
     CMD curl -f http://localhost:4005/api/v1/system/health || exit 1
 
-# Volume for PostgreSQL and OpenSearch data
+# Volume for PostgreSQL, Valkey, and VictoriaLogs data
 VOLUME ["/logbull-data"]
 
 ENTRYPOINT ["/app/start.sh"]

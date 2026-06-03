@@ -239,8 +239,8 @@ export const QueryBuilderComponent = ({
           key={`logical-${path.join('-')}`}
           className={`relative w-full max-w-[820px] ${indentClass} pr-4`}
         >
-          <div className="rounded-lg border border-emerald-200 bg-card shadow-sm">
-            <div className="border-b border-emerald-200 px-4 py-3">
+          <div className="rounded-lg border border-border bg-card shadow-sm">
+            <div className="border-b border-border px-4 py-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Select

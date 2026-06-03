@@ -226,7 +226,7 @@ export const QueryResultsComponent = ({
               >
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <div className="cursor-pointer rounded px-1 hover:bg-emerald-200">
+                    <div className="cursor-pointer rounded px-1 hover:bg-accent">
                       <span className="!font-mono font-medium text-muted-foreground">{key}:</span>{' '}
                       <span
                         className={`!font-mono text-muted-foreground ${

@@ -118,10 +118,10 @@ export function SettingsComponent({ contentHeight }: Props) {
       <div className="w-full">
         <div
           ref={scrollContainerRef}
-          className="grow overflow-y-auto rounded bg-card p-5 shadow"
+          className="grow overflow-y-auto rounded bg-card p-6 shadow"
           style={{ height: contentHeight }}
         >
-          <h1 className="text-2xl font-bold">TraceBull Settings</h1>
+          <h1 className="text-xl font-semibold">TraceBull Settings</h1>
 
           <div className="mt-6">
             {isLoading ? (
@@ -233,7 +233,7 @@ export function SettingsComponent({ contentHeight }: Props) {
 
           {/* Health-check Information */}
           <div className="my-8 max-w-2xl">
-            <h2 className="mb-3 text-xl font-bold">Health-check</h2>
+            <h2 className="mb-3 text-base font-medium">Health-check</h2>
 
             <div className="group relative">
               <div className="flex items-center rounded-md border border-input bg-muted px-3 py-2 !font-mono text-sm text-foreground">
@@ -271,7 +271,7 @@ export function SettingsComponent({ contentHeight }: Props) {
 
           {/* System statistics */}
           <div className="my-8 max-w-[300px]">
-            <h2 className="mb-4 text-xl font-bold text-foreground">System statistics</h2>
+            <h2 className="mb-4 text-base font-medium text-foreground">System statistics</h2>
             {isLoadingStats ? (
               <div className="flex items-center py-2">
                 <Spinner />

@@ -274,13 +274,13 @@ export const ConditionEditorComponent = ({
                 <Badge
                   key={index}
                   variant="secondary"
-                  className="border-emerald-200 bg-emerald-50 text-emerald-800 gap-1 pr-1"
+                   className="border-border bg-muted text-foreground gap-1 pr-1"
                 >
                   {value}
                   <button
                     type="button"
                     onClick={() => handleArrayValueRemove(index)}
-                    className="ml-1 rounded-full hover:bg-emerald-200 p-0.5"
+                    className="ml-1 rounded-full hover:bg-accent p-0.5"
                   >
                     <X className="size-3" />
                   </button>
@@ -459,7 +459,7 @@ export const ConditionEditorComponent = ({
                 {filteredFieldOptions.map((option) => (
                   <div
                     key={option.value}
-                    className="flex cursor-pointer items-center justify-between px-3 py-1.5 text-xs hover:bg-emerald-50"
+                    className="flex cursor-pointer items-center justify-between px-3 py-1.5 text-xs hover:bg-accent"
                     onMouseDown={(e) => {
                       e.preventDefault();
                       setFieldSearchText('');

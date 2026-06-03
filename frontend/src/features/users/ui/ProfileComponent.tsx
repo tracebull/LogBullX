@@ -203,16 +203,16 @@ export function ProfileComponent({ contentHeight }: Props) {
     <div className="flex grow pl-3">
       <div className="w-full">
         <div
-          className="grow overflow-y-auto rounded bg-card p-5 shadow"
+          className="grow overflow-y-auto rounded bg-card p-6 shadow"
           style={{ height: contentHeight }}
         >
-          <h1 className="text-2xl font-bold">Profile</h1>
+          <h1 className="text-xl font-semibold">Profile</h1>
 
           <div className="mt-5">
             {user ? (
               <>
                 <div className="mb-6">
-                  <h3 className="mb-4 text-lg font-semibold">Profile Information</h3>
+                  <h3 className="mb-4 text-base font-medium">Profile Information</h3>
                   <div className="max-w-md">
                     <div className="mb-2 text-xs font-semibold">User ID</div>
                     <div className="mb-4 text-sm text-muted-foreground">{user.id}</div>
@@ -248,7 +248,7 @@ export function ProfileComponent({ contentHeight }: Props) {
 
                     <div className="mt-2 mb-1 text-xs font-semibold">Role</div>
                     <div className="mb-4">
-                      <span className="inline-flex items-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-800">
+                      <span className="inline-flex items-center rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium text-secondary-foreground">
                         {getRoleDisplayText(user.role)}
                       </span>
                     </div>
@@ -278,7 +278,7 @@ export function ProfileComponent({ contentHeight }: Props) {
                 </div>
 
                 <div className="max-w-xs pt-6">
-                  <h3 className="mb-4 text-lg font-semibold">Change Password</h3>
+                  <h3 className="mb-4 text-base font-medium">Change Password</h3>
 
                   <div className="max-w-sm">
                     <div className="my-1 text-xs font-semibold">New Password</div>

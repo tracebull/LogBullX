@@ -6,8 +6,8 @@ Self-hosted log collection and viewing system. Fork of LogBull. Single Docker co
 
 ## Tech Stack
 
-- **Backend**: Go 1.24, Gin, GORM, PostgreSQL 17, OpenSearch 2.12, Valkey 8.0 (Redis fork)
-- **Frontend**: React 19, TypeScript, Ant Design 5, Tailwind CSS 4, Vite, React Router 7
+- **Backend**: Go 1.24, Gin, GORM, PostgreSQL 17, VictoriaLogs, Valkey 8.0 (Redis fork)
+- **Frontend**: React 19, TypeScript, shadcn/ui, Tailwind CSS 4, Vite, React Router 7
 - **Infra**: Multi-stage Dockerfile (all-in-one), GitHub Actions CI/CD
 
 ## Local Environment
@@ -91,7 +91,7 @@ make migration-down
 Requires `.env` file (see `.env.development.example`). Key vars:
 
 - `DATABASE_DSN`, `ENV_MODE`, `BACKEND_ROOT_PATH`
-- `VALKEY_HOST`, `VALKEY_PORT`, `OPENSEARCH_URL`, `OPENSEARCH_API_PORT`
+- `VALKEY_HOST`, `VALKEY_PORT`, `VICTORIALOGS_URL`, `VICTORIALOGS_PORT`
 - `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` (optional OAuth)
 - `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` (optional OAuth)
 
@@ -108,7 +108,7 @@ Requires `.env` file (see `.env.development.example`). Key vars:
 
 - **API layer**: `apiHelper` with retry (10 tries, 3s fixed interval), auth via `accessTokenHelper` (localStorage)
 - **Auth flow**: JWT in localStorage, `userApi.addAuthListener()` for reactivity
-- **UI framework**: Ant Design components, Tailwind for layout/spacing
+- **UI framework**: shadcn/ui components, Tailwind for layout/spacing
 - **Color theme**: Emerald-600 (#009966) primary
 - **Routing**: Simple — `/` (auth or main screen), `/auth/callback` (OAuth)
 
@@ -124,7 +124,7 @@ npm run format       # Prettier
 ## Database Schema
 
 - **PostgreSQL**: Users, projects, memberships, API keys, audit logs, user plans, settings
-- **OpenSearch**: Log items (per-project indices)
+- **VictoriaLogs**: Log items (structured log streams)
 - **Valkey**: Caching, rate limiting
 
 ## Conventions
