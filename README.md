@@ -7,8 +7,8 @@
 
   Self-hosted · Modern UI · Multi-project · Role-based access
 
-  [![CI](https://github.com/tracebull/tracebull/actions/workflows/ci-release.yml/badge.svg)](https://github.com/tracebull/tracebull/actions/workflows/ci-release.yml)
-  [![Docker Image](https://ghcr-badge.egpl.dev/tracebull/tracebull/latest_tag?trim=major&label=ghcr.io)](https://github.com/tracebull/tracebull/pkgs/container/tracebull)
+  [![CI](https://github.com/tracebull/TraceBull/actions/workflows/ci-release.yml/badge.svg)](https://github.com/tracebull/TraceBull/actions/workflows/ci-release.yml)
+  [![Docker Image](https://ghcr-badge.egpl.dev/tracebull/tracebull/latest_tag?trim=major&label=ghcr.io)](https://github.com/tracebull/TraceBull/pkgs/container/tracebull)
   [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
   [![Self Hosted](https://img.shields.io/badge/self--hosted-yes-brightgreen)](#)
 </div>
@@ -54,8 +54,8 @@ On first load you'll be prompted to set the admin password.
 ### Option 2 — Build from source
 
 ```bash
-git clone https://github.com/tracebull/tracebull.git
-cd tracebull
+git clone https://github.com/tracebull/TraceBull.git
+cd TraceBull
 
 cp .env.example .env          # customise if needed
 
