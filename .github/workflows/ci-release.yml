@@ -154,7 +154,8 @@ jobs:
       - name: Start test containers
         run: |
           cd backend
-          docker compose --profile db --profile cache --profile search up -d
+          cp docker-compose.yml.example docker-compose.yml
+          docker compose up -d
 
       - name: Check container status and logs
         run: |
@@ -212,7 +213,7 @@ jobs:
         run: |
           cd backend
           echo "Stopping containers..."
-          docker compose --profile db --profile cache --profile search down -v
+          docker compose down -v 2>/dev/null || true
           echo "Cleaning up backend data directories..."
           sudo rm -rf victorialogs-data pgdata valkey-data || true
           cd ..
