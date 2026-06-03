@@ -84,7 +84,7 @@ export function AdminPasswordComponent({
     <div className="w-full max-w-[300px]">
       <div className="mb-5 text-center text-2xl font-bold">Sign up admin</div>
 
-      <div className="mx-auto mb-4 max-w-[250px] text-center text-sm text-muted-foreground">
+      <div className="text-muted-foreground mx-auto mb-4 max-w-[250px] text-center text-sm">
         Then you will be able to sign in with login &quot;admin&quot; and password you set
       </div>
 
@@ -103,7 +103,7 @@ export function AdminPasswordComponent({
         <button
           type="button"
           onClick={() => setPasswordVisible(!passwordVisible)}
-          className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+          className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2"
         >
           {passwordVisible ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
         </button>
@@ -124,7 +124,7 @@ export function AdminPasswordComponent({
         <button
           type="button"
           onClick={() => setConfirmPasswordVisible(!confirmPasswordVisible)}
-          className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+          className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2"
         >
           {confirmPasswordVisible ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
         </button>
@@ -150,7 +150,7 @@ export function AdminPasswordComponent({
       </Button>
 
       {adminPasswordError && (
-        <div className="mt-3 flex justify-center text-center text-sm text-destructive">
+        <div className="text-destructive mt-3 flex justify-center text-center text-sm">
           {adminPasswordError}
         </div>
       )}

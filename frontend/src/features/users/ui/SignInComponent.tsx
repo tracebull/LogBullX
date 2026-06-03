@@ -75,10 +75,10 @@ export function SignInComponent({ onSwitchToSignUp }: SignInComponentProps): JSX
       {IS_CLOUD && (
         <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-border"></div>
+            <div className="border-border w-full border-t"></div>
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="bg-background px-2 text-muted-foreground">or continue</span>
+            <span className="bg-background text-muted-foreground px-2">or continue</span>
           </div>
         </div>
       )}
@@ -110,7 +110,7 @@ export function SignInComponent({ onSwitchToSignUp }: SignInComponentProps): JSX
         <button
           type="button"
           onClick={() => setPasswordVisible(!passwordVisible)}
-          className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+          className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2"
         >
           {passwordVisible ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
         </button>
@@ -136,18 +136,18 @@ export function SignInComponent({ onSwitchToSignUp }: SignInComponentProps): JSX
       </Button>
 
       {signInError && (
-        <div className="mt-3 flex justify-center text-center text-sm text-destructive">
+        <div className="text-destructive mt-3 flex justify-center text-center text-sm">
           {signInError}
         </div>
       )}
 
       {onSwitchToSignUp && (
-        <div className="mt-4 text-center text-sm text-muted-foreground">
+        <div className="text-muted-foreground mt-4 text-center text-sm">
           Don&apos;t have an account?{' '}
           <button
             type="button"
             onClick={onSwitchToSignUp}
-            className="cursor-pointer font-medium text-primary hover:text-primary/80"
+            className="text-primary hover:text-primary/80 cursor-pointer font-medium"
           >
             Sign up
           </button>

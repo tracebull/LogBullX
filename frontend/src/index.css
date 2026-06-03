@@ -1,5 +1,5 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -128,15 +128,22 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.871 0 0);
   --status-success: oklch(0.25 0.06 155);
-  --status-success-foreground: oklch(0.90 0.05 155);
+  --status-success-foreground: oklch(0.9 0.05 155);
   --status-warning: oklch(0.25 0.06 85);
-  --status-warning-foreground: oklch(0.90 0.05 85);
+  --status-warning-foreground: oklch(0.9 0.05 85);
   --status-info: oklch(0.25 0.06 240);
-  --status-info-foreground: oklch(0.90 0.05 240);
+  --status-info-foreground: oklch(0.9 0.05 240);
 }
 
 :root {
-  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  font-family:
+    'Inter',
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    sans-serif;
   line-height: 1.5;
   font-weight: 400;
   font-synthesis: none;
@@ -145,8 +152,30 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-div, p, span, a, button, input, textarea, select, option, label, h1, h2, h3, h4, h5, h6 {
-  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+div,
+p,
+span,
+a,
+button,
+input,
+textarea,
+select,
+option,
+label,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family:
+    'Inter',
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    sans-serif;
 }
 
 @layer base {
@@ -158,15 +187,35 @@ div, p, span, a, button, input, textarea, select, option, label, h1, h2, h3, h4,
   }
 }
 
-*::-webkit-scrollbar { width: 3px; padding: 5px; }
-*::-webkit-scrollbar-track { background: oklch(0.92 0 0); }
-*::-webkit-scrollbar-thumb { background: oklch(0.7 0 0); border-radius: 360px; }
-*::-webkit-scrollbar-thumb:hover { background: oklch(0.5 0 0); cursor: pointer; }
+*::-webkit-scrollbar {
+  width: 3px;
+  padding: 5px;
+}
+*::-webkit-scrollbar-track {
+  background: oklch(0.92 0 0);
+}
+*::-webkit-scrollbar-thumb {
+  background: oklch(0.7 0 0);
+  border-radius: 360px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.5 0 0);
+  cursor: pointer;
+}
 
-.dark *::-webkit-scrollbar-track { background: oklch(0.2 0 0); }
-.dark *::-webkit-scrollbar-thumb { background: oklch(0.4 0 0); border-radius: 360px; }
-.dark *::-webkit-scrollbar-thumb:hover { background: oklch(0.55 0 0); cursor: pointer; }
+.dark *::-webkit-scrollbar-track {
+  background: oklch(0.2 0 0);
+}
+.dark *::-webkit-scrollbar-thumb {
+  background: oklch(0.4 0 0);
+  border-radius: 360px;
+}
+.dark *::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.55 0 0);
+  cursor: pointer;
+}
 
-code, code * {
+code,
+code * {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
 }

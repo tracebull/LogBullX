@@ -1,12 +1,6 @@
 import { ChevronDown, Plus, Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
 
-import type {
-  ConditionNode,
-  LogicalOperator,
-  QueryNode,
-  QueryableField,
-} from '../../../entity/query';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -21,6 +15,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+
+import type {
+  ConditionNode,
+  LogicalOperator,
+  QueryNode,
+  QueryableField,
+} from '../../../entity/query';
 import { ConditionEditorComponent } from './ConditionEditorComponent';
 
 interface Props {
@@ -213,7 +214,7 @@ export const QueryBuilderComponent = ({
           key={`condition-${path.join('-')}`}
           className={`relative max-w-[800px] ${indentClass}`}
         >
-          <div className="flex items-start space-x-2 rounded-lg border border-border bg-muted p-3">
+          <div className="border-border bg-muted flex items-start space-x-2 rounded-lg border p-3">
             <div className="flex-1">
               <ConditionEditorComponent
                 fields={fields}
@@ -229,7 +230,7 @@ export const QueryBuilderComponent = ({
               <Button
                 variant="ghost"
                 size="icon"
-                className="flex-shrink-0 size-8 text-destructive hover:text-destructive"
+                className="text-destructive hover:text-destructive size-8 flex-shrink-0"
                 onClick={() => removeNode(path)}
               >
                 <Trash2 className="size-4" />
@@ -246,8 +247,8 @@ export const QueryBuilderComponent = ({
           key={`logical-${path.join('-')}`}
           className={`relative w-full max-w-[820px] ${indentClass} pr-4`}
         >
-          <div className="rounded-lg bg-muted/50">
-            <div className="border-b border-border px-4 py-3">
+          <div className="bg-muted/50 rounded-lg">
+            <div className="border-border border-b px-4 py-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Select
@@ -269,7 +270,7 @@ export const QueryBuilderComponent = ({
                       <SelectItem value="not">NOT</SelectItem>
                     </SelectContent>
                   </Select>
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-muted-foreground text-xs">
                     ({node.logic.children.length} condition
                     {node.logic.children.length !== 1 ? 's' : ''})
                   </span>
@@ -279,7 +280,7 @@ export const QueryBuilderComponent = ({
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="size-8 text-destructive hover:text-destructive"
+                    className="text-destructive hover:text-destructive size-8"
                     onClick={() => removeNode(path)}
                   >
                     <Trash2 className="size-4" />
@@ -332,9 +333,9 @@ export const QueryBuilderComponent = ({
       {query ? (
         renderQueryNode(query)
       ) : (
-        <div className="rounded-lg border-2 border-dashed border-input py-8 text-center">
-          <p className="mb-4 text-muted-foreground">No query built yet</p>
-          <p className="mb-6 text-sm text-muted-foreground">
+        <div className="border-input rounded-lg border-2 border-dashed py-8 text-center">
+          <p className="text-muted-foreground mb-4">No query built yet</p>
+          <p className="text-muted-foreground mb-6 text-sm">
             Start by adding a condition or logical group, or execute without a query to see all logs
           </p>
         </div>
@@ -357,13 +358,28 @@ export const QueryBuilderComponent = ({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start">
-              <DropdownMenuItem onClick={() => { handleAddLogicalGroup('and'); setIsGroupMenuOpen(false); }}>
+              <DropdownMenuItem
+                onClick={() => {
+                  handleAddLogicalGroup('and');
+                  setIsGroupMenuOpen(false);
+                }}
+              >
                 AND Group
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => { handleAddLogicalGroup('or'); setIsGroupMenuOpen(false); }}>
+              <DropdownMenuItem
+                onClick={() => {
+                  handleAddLogicalGroup('or');
+                  setIsGroupMenuOpen(false);
+                }}
+              >
                 OR Group
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => { handleAddLogicalGroup('not'); setIsGroupMenuOpen(false); }}>
+              <DropdownMenuItem
+                onClick={() => {
+                  handleAddLogicalGroup('not');
+                  setIsGroupMenuOpen(false);
+                }}
+              >
                 NOT Group
               </DropdownMenuItem>
             </DropdownMenuContent>

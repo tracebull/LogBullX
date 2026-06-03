@@ -1198,7 +1198,7 @@ export function CodeUsageComponent({
             onClick={() => handleIntegrationChange(index)}
             className={`cursor-pointer rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
               selectedIntegration === index
-                ? 'bg-secondary text-secondary-foreground ring-2 ring-primary'
+                ? 'bg-secondary text-secondary-foreground ring-primary ring-2'
                 : 'bg-muted text-muted-foreground hover:bg-accent'
             }`}
           >
@@ -1228,8 +1228,8 @@ export function CodeUsageComponent({
 
       {/* Installation section */}
       {getInstallationCommand() && (
-        <div className="mb-4 overflow-hidden rounded-lg bg-muted p-4">
-          <div className="mb-2 text-sm font-semibold text-foreground">Installation</div>
+        <div className="bg-muted mb-4 overflow-hidden rounded-lg p-4">
+          <div className="text-foreground mb-2 text-sm font-semibold">Installation</div>
           <div className="relative overflow-auto rounded-lg bg-[#2d2d2d] shadow-lg">
             {/* Copy button */}
             <button
@@ -1289,8 +1289,8 @@ export function CodeUsageComponent({
 
       {/* Configuration section (only if configuration exists) */}
       {hasConfiguration && (
-        <div className="mb-4 overflow-hidden rounded-lg bg-muted p-4">
-          <div className="mb-2 text-sm font-semibold text-foreground">Configuration</div>
+        <div className="bg-muted mb-4 overflow-hidden rounded-lg p-4">
+          <div className="text-foreground mb-2 text-sm font-semibold">Configuration</div>
           <div className="relative overflow-auto rounded-lg bg-[#2d2d2d] shadow-lg">
             {/* Copy button */}
             <button
@@ -1344,8 +1344,8 @@ export function CodeUsageComponent({
       )}
 
       {/* Usage section */}
-      <div className="mb-4 overflow-hidden rounded-lg bg-muted p-4">
-        <div className="mb-2 text-sm font-semibold text-foreground">Usage</div>
+      <div className="bg-muted mb-4 overflow-hidden rounded-lg p-4">
+        <div className="text-foreground mb-2 text-sm font-semibold">Usage</div>
         <div className="relative overflow-auto rounded-lg bg-[#2d2d2d] shadow-lg">
           {/* Copy button */}
           <button

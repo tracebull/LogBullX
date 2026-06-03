@@ -1,5 +1,5 @@
-import { accessTokenHelper } from './accessTokenHelper';
 import RequestOptions from './RequestOptions';
+import { accessTokenHelper } from './accessTokenHelper';
 
 const MAX_RETRIES = 10;
 const RETRY_INTERVAL_MS = 3_000;

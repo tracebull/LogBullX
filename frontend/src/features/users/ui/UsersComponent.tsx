@@ -1,9 +1,16 @@
+import { toastMessage } from '@/shared/lib/toastMessage';
 import dayjs from 'dayjs';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   Sheet,
   SheetContent,
@@ -21,14 +28,13 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { toastMessage } from '@/shared/lib/toastMessage';
 
 import { userManagementApi } from '../../../entity/users/api/userManagementApi';
 import type { ChangeUserRoleRequest } from '../../../entity/users/model/ChangeUserRoleRequest';
 import type { ListUsersRequest } from '../../../entity/users/model/ListUsersRequest';
 import type { UserProfile } from '../../../entity/users/model/UserProfile';
-import type { UsersSettings } from '../../../entity/users/model/UsersSettings';
 import { UserRole } from '../../../entity/users/model/UserRole';
+import type { UsersSettings } from '../../../entity/users/model/UsersSettings';
 import { getUserShortTimeFormat } from '../../../shared/time';
 import { BulkInviteComponent } from './BulkInviteComponent';
 import { UserAuditLogsSidebarComponent } from './UserAuditLogsSidebarComponent';
@@ -230,19 +236,14 @@ export function UsersComponent({ globalSettings, user }: Props) {
   return (
     <div className="flex h-full pl-3">
       <div className="h-full w-full">
-        <div
-          ref={scrollContainerRef}
-          className="h-full overflow-y-auto p-6"
-        >
+        <div ref={scrollContainerRef} className="h-full overflow-y-auto p-6">
           <div className="mb-4 flex items-center justify-end">
             <div className="flex items-center gap-3">
               {(user?.role === UserRole.ADMIN ||
                 globalSettings?.isAllowMemberInvitations !== false) && (
-                <Button onClick={() => setIsBulkInviteOpen(true)}>
-                  Bulk Invite
-                </Button>
+                <Button onClick={() => setIsBulkInviteOpen(true)}>Bulk Invite</Button>
               )}
-              <div className="text-sm text-muted-foreground">
+              <div className="text-muted-foreground text-sm">
                 {isLoading ? 'Loading...' : `${users.length} of ${total} users`}
               </div>
             </div>
@@ -284,9 +285,7 @@ export function UsersComponent({ globalSettings, user }: Props) {
                       <TableCell>
                         <Select
                           value={record.role}
-                          onValueChange={(value) =>
-                            handleRoleChange(record.id, value as UserRole)
-                          }
+                          onValueChange={(value) => handleRoleChange(record.id, value as UserRole)}
                           disabled={changingRoleUsers.has(record.id)}
                         >
                           <SelectTrigger className="h-7 w-24 text-xs">
@@ -305,27 +304,23 @@ export function UsersComponent({ globalSettings, user }: Props) {
                       <TableCell>
                         <Switch
                           checked={record.isActive}
-                          onCheckedChange={() =>
-                            handleActivationToggle(record.id, record.isActive)
-                          }
+                          onCheckedChange={() => handleActivationToggle(record.id, record.isActive)}
                           disabled={processingUsers.has(record.id)}
                           size="sm"
                         />
                       </TableCell>
                       <TableCell>
-                        <div className="text-sm text-muted-foreground">
-                          <div>{dayjs(record.createdAt).format(getUserShortTimeFormat().format)}</div>
-                          <div className="text-xs text-muted-foreground/60">
+                        <div className="text-muted-foreground text-sm">
+                          <div>
+                            {dayjs(record.createdAt).format(getUserShortTimeFormat().format)}
+                          </div>
+                          <div className="text-muted-foreground/60 text-xs">
                             {dayjs(record.createdAt).fromNow()}
                           </div>
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleRowClick(record)}
-                        >
+                        <Button variant="outline" size="sm" onClick={() => handleRowClick(record)}>
                           View audit logs
                         </Button>
                       </TableCell>
@@ -341,7 +336,7 @@ export function UsersComponent({ globalSettings, user }: Props) {
               )}
 
               {!hasMore && users.length > 0 && (
-                <div className="py-4 text-center text-sm text-muted-foreground">
+                <div className="text-muted-foreground py-4 text-center text-sm">
                   All users loaded ({total} total)
                 </div>
               )}
@@ -352,7 +347,7 @@ export function UsersComponent({ globalSettings, user }: Props) {
 
       {/* Audit logs drawer */}
       <Sheet open={isDrawerOpen} onOpenChange={(open) => !open && handleDrawerClose()}>
-        <SheetContent side="right" className="w-full sm:max-w-[900px] overflow-y-auto">
+        <SheetContent side="right" className="w-full overflow-y-auto sm:max-w-[900px]">
           <SheetHeader>
             <SheetTitle>User Audit Logs</SheetTitle>
             <SheetDescription>{selectedUser?.email}</SheetDescription>

@@ -1,8 +1,7 @@
-import { Plus, X } from 'lucide-react';
 import dayjs from 'dayjs';
+import { Plus, X } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 
-import type { ConditionNode, QueryOperator, QueryableField } from '../../../entity/query';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import {
@@ -13,6 +12,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
+
+import type { ConditionNode, QueryOperator, QueryableField } from '../../../entity/query';
 
 interface Props {
   fields: QueryableField[];
@@ -257,12 +258,12 @@ export const ConditionEditorComponent = ({
                   handleArrayValueAdd();
                 }
               }}
-              className="flex-1 h-7 text-xs"
+              className="h-7 flex-1 text-xs"
             />
             <button
               type="button"
               onClick={handleArrayValueAdd}
-              className="rounded bg-primary px-2 py-1 text-sm text-primary-foreground hover:bg-primary/90"
+              className="bg-primary text-primary-foreground hover:bg-primary/90 rounded px-2 py-1 text-sm"
             >
               <Plus className="size-3" />
             </button>
@@ -274,13 +275,13 @@ export const ConditionEditorComponent = ({
                 <Badge
                   key={index}
                   variant="secondary"
-                   className="border-border bg-muted text-foreground gap-1 pr-1"
+                  className="border-border bg-muted text-foreground gap-1 pr-1"
                 >
                   {value}
                   <button
                     type="button"
                     onClick={() => handleArrayValueRemove(index)}
-                    className="ml-1 rounded-full hover:bg-accent p-0.5"
+                    className="hover:bg-accent ml-1 rounded-full p-0.5"
                   >
                     <X className="size-3" />
                   </button>
@@ -317,7 +318,7 @@ export const ConditionEditorComponent = ({
             handleValueChange(val ? dayjs(val).toISOString() : '');
           }}
           placeholder="Select date and time"
-          className="w-full h-7 text-xs"
+          className="h-7 w-full text-xs"
         />
       );
     }
@@ -431,7 +432,7 @@ export const ConditionEditorComponent = ({
       <div className="grid grid-cols-12 items-center gap-2">
         {/* Field Selection */}
         <div className="col-span-4">
-          <label className="mb-1 block text-xs font-medium text-muted-foreground">Field</label>
+          <label className="text-muted-foreground mb-1 block text-xs font-medium">Field</label>
           <div className="relative">
             <Input
               ref={fieldInputRef}
@@ -444,7 +445,7 @@ export const ConditionEditorComponent = ({
               }}
               onFocus={() => setShowFieldDropdown(true)}
               placeholder="Type or select field name"
-              className="w-full h-7 text-xs pr-7"
+              className="h-7 w-full pr-7 text-xs"
             />
             {isLocalSearching && (
               <div className="absolute top-1/2 right-2 -translate-y-1/2">
@@ -454,12 +455,12 @@ export const ConditionEditorComponent = ({
             {showFieldDropdown && filteredFieldOptions.length > 0 && (
               <div
                 ref={dropdownRef}
-                className="absolute z-50 mt-1 max-h-48 w-full overflow-y-auto rounded-md border border-border bg-card shadow-lg"
+                className="border-border bg-card absolute z-50 mt-1 max-h-48 w-full overflow-y-auto rounded-md border shadow-lg"
               >
                 {filteredFieldOptions.map((option) => (
                   <div
                     key={option.value}
-                    className="flex cursor-pointer items-center justify-between px-3 py-1.5 text-xs hover:bg-accent"
+                    className="hover:bg-accent flex cursor-pointer items-center justify-between px-3 py-1.5 text-xs"
                     onMouseDown={(e) => {
                       e.preventDefault();
                       setFieldSearchText('');
@@ -478,12 +479,12 @@ export const ConditionEditorComponent = ({
 
         {/* Operator Selection */}
         <div className="col-span-3">
-          <label className="mb-1 block text-xs font-medium text-muted-foreground">Operator</label>
+          <label className="text-muted-foreground mb-1 block text-xs font-medium">Operator</label>
           <Select
             value={currentOperator}
             onValueChange={(val) => handleOperatorChange(val as QueryOperator)}
           >
-            <SelectTrigger className="h-7 text-xs w-full">
+            <SelectTrigger className="h-7 w-full text-xs">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -500,19 +501,19 @@ export const ConditionEditorComponent = ({
         <div className="col-span-5">
           {operatorNeedsValue(currentOperator) && (
             <>
-              <label className="mb-1 block text-xs font-medium text-muted-foreground">Value</label>
+              <label className="text-muted-foreground mb-1 block text-xs font-medium">Value</label>
               {renderValueInput()}
             </>
           )}
 
           {!operatorNeedsValue(currentOperator) && (
-            <div className="pt-4 text-xs text-muted-foreground">No value needed</div>
+            <div className="text-muted-foreground pt-4 text-xs">No value needed</div>
           )}
         </div>
       </div>
 
       {/* Field info */}
-      <div className="flex items-center justify-between text-xs text-muted-foreground">
+      <div className="text-muted-foreground flex items-center justify-between text-xs">
         <div>
           <span className="font-medium">{currentField?.type}</span> field{' '}
           {currentField?.type === 'string' ? '(case-sensitive)' : ''}

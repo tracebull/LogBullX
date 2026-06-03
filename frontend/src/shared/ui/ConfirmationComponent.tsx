@@ -1,12 +1,7 @@
 import type { JSX } from 'react';
 
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 interface Props {
   onConfirm(): void;
@@ -30,7 +25,12 @@ export function ConfirmationComponent({
   hideCancelButton = false,
 }: Props): JSX.Element {
   return (
-    <Dialog open onOpenChange={(open) => { if (!open) onDecline(); }}>
+    <Dialog
+      open
+      onOpenChange={(open) => {
+        if (!open) onDecline();
+      }}
+    >
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Confirmation</DialogTitle>

@@ -1,5 +1,5 @@
-import { Clock } from 'lucide-react';
 import dayjs from 'dayjs';
+import { Clock } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
 import { Input } from '@/components/ui/input';
@@ -218,7 +218,7 @@ export const TimeRangePickerComponent = ({
   return (
     <div className="space-y-3">
       <div>
-        <label className="mb-1 block text-sm font-medium text-foreground">Time Range</label>
+        <label className="text-foreground mb-1 block text-sm font-medium">Time Range</label>
         <Select value={selectedPreset} onValueChange={handlePresetChange}>
           <SelectTrigger className="w-48">
             <Clock className="mr-2 size-4 opacity-50" />
@@ -238,7 +238,7 @@ export const TimeRangePickerComponent = ({
 
       {selectedPreset === 'custom' && (
         <div>
-          <label className="mb-1 block text-sm font-medium text-foreground">
+          <label className="text-foreground mb-1 block text-sm font-medium">
             Select Custom Time Range
           </label>
           <div className="flex items-center gap-2">

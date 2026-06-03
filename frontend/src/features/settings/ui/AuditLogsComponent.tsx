@@ -1,11 +1,6 @@
 import dayjs from 'dayjs';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { auditLogApi } from '../../../entity/audit-logs/api/auditLogApi';
-import type { AuditLog } from '../../../entity/audit-logs/model/AuditLog';
-import type { GetAuditLogsRequest } from '../../../entity/audit-logs/model/GetAuditLogsRequest';
-import { toastMessage } from '../../../shared/lib/toastMessage';
-import { getUserShortTimeFormat } from '../../../shared/time';
 import { Spinner } from '@/components/ui/spinner';
 import {
   Table,
@@ -15,6 +10,12 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+
+import { auditLogApi } from '../../../entity/audit-logs/api/auditLogApi';
+import type { AuditLog } from '../../../entity/audit-logs/model/AuditLog';
+import type { GetAuditLogsRequest } from '../../../entity/audit-logs/model/GetAuditLogsRequest';
+import { toastMessage } from '../../../shared/lib/toastMessage';
+import { getUserShortTimeFormat } from '../../../shared/time';
 
 interface Props {
   scrollContainerRef?: React.RefObject<HTMLDivElement | null>;
@@ -104,7 +105,7 @@ export function AuditLogsComponent({ scrollContainerRef: externalScrollRef }: Pr
   const renderUser = (record: AuditLog) => {
     if (!record.userEmail && !record.userName) {
       return (
-        <span className="inline-block rounded-full bg-muted px-1.5 py-0.5 text-xs font-medium text-muted-foreground">
+        <span className="bg-muted text-muted-foreground inline-block rounded-full px-1.5 py-0.5 text-xs font-medium">
           System
         </span>
       );
@@ -115,7 +116,7 @@ export function AuditLogsComponent({ scrollContainerRef: externalScrollRef }: Pr
       : record.userEmail;
 
     return (
-      <span className="inline-block rounded-full bg-secondary px-1.5 py-0.5 text-xs font-medium text-secondary-foreground">
+      <span className="bg-secondary text-secondary-foreground inline-block rounded-full px-1.5 py-0.5 text-xs font-medium">
         {displayText}
       </span>
     );
@@ -124,12 +125,8 @@ export function AuditLogsComponent({ scrollContainerRef: externalScrollRef }: Pr
   return (
     <div className="max-w-[1200px]">
       <div className="mb-4 flex items-center justify-end">
-        <div className="text-sm text-muted-foreground">
-          {isLoading ? (
-            <Spinner size="sm" />
-          ) : (
-            `${auditLogs.length} of ${total} logs`
-          )}
+        <div className="text-muted-foreground text-sm">
+          {isLoading ? <Spinner size="sm" /> : `${auditLogs.length} of ${total} logs`}
         </div>
       </div>
 
@@ -156,7 +153,7 @@ export function AuditLogsComponent({ scrollContainerRef: externalScrollRef }: Pr
                   <TableRow key={record.id}>
                     <TableCell>{renderUser(record)}</TableCell>
                     <TableCell>
-                      <span className="text-xs text-foreground">{record.message}</span>
+                      <span className="text-foreground text-xs">{record.message}</span>
                     </TableCell>
                     <TableCell>
                       <span
@@ -170,7 +167,7 @@ export function AuditLogsComponent({ scrollContainerRef: externalScrollRef }: Pr
                       </span>
                     </TableCell>
                     <TableCell>
-                       <span className="text-xs text-foreground">
+                      <span className="text-foreground text-xs">
                         {`${date.format(tf.format)} (${date.fromNow()})`}
                       </span>
                     </TableCell>
@@ -183,12 +180,12 @@ export function AuditLogsComponent({ scrollContainerRef: externalScrollRef }: Pr
           {isLoadingMore && (
             <div className="flex justify-center py-4">
               <Spinner />
-              <span className="ml-2 text-sm text-muted-foreground">Loading more logs...</span>
+              <span className="text-muted-foreground ml-2 text-sm">Loading more logs...</span>
             </div>
           )}
 
           {!hasMore && auditLogs.length > 0 && (
-            <div className="py-4 text-center text-sm text-muted-foreground">
+            <div className="text-muted-foreground py-4 text-center text-sm">
               All logs loaded ({total} total)
             </div>
           )}

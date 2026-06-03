@@ -1,5 +1,6 @@
-import { useTheme } from '../../shared/hooks/useTheme';
 import { Toaster as Sonner, type ToasterProps } from 'sonner';
+
+import { useTheme } from '../../shared/hooks/useTheme';
 
 export function Toaster(props: ToasterProps) {
   const { theme } = useTheme();

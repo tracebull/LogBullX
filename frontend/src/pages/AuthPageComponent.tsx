@@ -2,6 +2,7 @@ import { Suspense, lazy, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router';
 
 import { Spinner } from '../components/ui/spinner';
+
 import { settingsApi, userApi } from '../entity/users';
 import { AuthNavbarComponent } from '../features/users';
 import { toastMessage } from '../shared/lib/toastMessage';
@@ -27,9 +28,7 @@ export function AuthPageComponent() {
   const isInviteMode = searchParams.get('mode') === 'invite';
 
   const [isAdminHasPassword, setIsAdminHasPassword] = useState(false);
-  const [authMode, setAuthMode] = useState<'signIn' | 'signUp'>(
-    isInviteMode ? 'signUp' : 'signIn',
-  );
+  const [authMode, setAuthMode] = useState<'signIn' | 'signUp'>(isInviteMode ? 'signUp' : 'signIn');
   const [isRegistrationEnabled, setIsRegistrationEnabled] = useState(true);
   const [isLoading, setLoading] = useState(true);
 

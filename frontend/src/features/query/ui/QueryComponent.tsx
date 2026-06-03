@@ -1,6 +1,11 @@
 import { Play } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { Spinner } from '@/components/ui/spinner';
+import { Switch } from '@/components/ui/switch';
+
 import type { Project } from '../../../entity/projects';
 import { projectApi } from '../../../entity/projects';
 import {
@@ -13,10 +18,6 @@ import {
 } from '../../../entity/query';
 import type { UserProfile } from '../../../entity/users/model/UserProfile';
 import { toastMessage } from '../../../shared/lib/toastMessage';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import { Spinner } from '@/components/ui/spinner';
-import { Switch } from '@/components/ui/switch';
 import { FloatingTopButtonComponent } from './FloatingTopButtonComponent';
 import { HowToSendLogsFromCodeComponent } from './HowToSendLogsFromCodeComponent';
 import { OnboardingTooltipComponent } from './OnboardingTooltipComponent';
@@ -63,10 +64,7 @@ interface SavedQuery {
   sortOrder: 'asc' | 'desc';
 }
 
-export const QueryComponentComponent = ({
-  projectId,
-  user,
-}: Props): React.JSX.Element => {
+export const QueryComponentComponent = ({ projectId, user }: Props): React.JSX.Element => {
   // States
   const [isShowHowToSendLogsFromCode, setIsShowHowToSendLogsFromCode] = useState(false);
   const [queryableFields, setQueryableFields] = useState<QueryableField[]>([]);
@@ -462,17 +460,11 @@ export const QueryComponentComponent = ({
   }, [isInitialLoad, user]);
 
   return (
-    <div
-      ref={containerRef}
-      className="ml-3 w-full h-full space-y-3 overflow-y-auto"
-    >
+    <div ref={containerRef} className="ml-3 h-full w-full space-y-3 overflow-y-auto">
       <FloatingTopButtonComponent containerRef={containerRef} />
 
       {/* Query Builder Section */}
-      <div
-        ref={queryBuilderRef}
-        className="w-full rounded-lg bg-muted/50"
-      >
+      <div ref={queryBuilderRef} className="bg-muted/50 w-full rounded-lg">
         <div className="flex items-center px-6 py-4">
           <TimeRangePickerComponent
             onChange={() => {
@@ -487,7 +479,9 @@ export const QueryComponentComponent = ({
           />
 
           <div className="ml-5">
-            <label className="mb-1 block text-sm font-medium text-muted-foreground">Sort Order</label>
+            <label className="text-muted-foreground mb-1 block text-sm font-medium">
+              Sort Order
+            </label>
             <div className="flex items-center gap-2">
               <span
                 className={`text-sm ${sortOrder === 'desc' ? 'text-foreground' : 'text-muted-foreground'}`}
@@ -511,11 +505,7 @@ export const QueryComponentComponent = ({
           </div>
 
           <div className="ml-auto" ref={howToSendLogsButtonRef}>
-            <Button
-              variant="outline"
-              onClick={handleHowToSendLogsClick}
-              disabled={isExecuting}
-            >
+            <Button variant="outline" onClick={handleHowToSendLogsClick} disabled={isExecuting}>
               How to send logs from code?
             </Button>
           </div>

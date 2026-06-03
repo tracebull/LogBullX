@@ -1,17 +1,47 @@
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Spinner } from '@/components/ui/spinner';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { toastMessage } from '@/shared/lib/toastMessage';
 import { getUserShortTimeFormat } from '@/shared/time';
-import { ArrowLeftRight, Loader2, Plus, Trash2, User, UserPlus } from 'lucide-react';
 import dayjs from 'dayjs';
+import { ArrowLeftRight, Loader2, Plus, Trash2, User, UserPlus } from 'lucide-react';
 import { useEffect, useState } from 'react';
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Spinner } from '@/components/ui/spinner';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 import type {
   AddMemberRequest,
@@ -258,7 +288,9 @@ export function ProjectMembershipComponent({ projectResponse, user }: Props) {
     }
   };
 
-  const getRoleBadgeVariant = (role: ProjectRole): 'default' | 'destructive' | 'secondary' | 'outline' => {
+  const getRoleBadgeVariant = (
+    role: ProjectRole,
+  ): 'default' | 'destructive' | 'secondary' | 'outline' => {
     switch (role) {
       case ProjectRole.OWNER:
         return 'destructive';
@@ -306,10 +338,7 @@ export function ProjectMembershipComponent({ projectResponse, user }: Props) {
                   </Button>
                 )}
                 {canManageMembers && (
-                  <Button
-                    onClick={() => setIsAddMemberModalOpen(true)}
-                    disabled={isLoadingMembers}
-                  >
+                  <Button onClick={() => setIsAddMemberModalOpen(true)} disabled={isLoadingMembers}>
                     <Plus className="mr-2 size-4" />
                     Add member
                   </Button>
@@ -323,14 +352,14 @@ export function ProjectMembershipComponent({ projectResponse, user }: Props) {
               </div>
             ) : (
               <div>
-                <div className="mb-4 text-sm text-muted-foreground">
+                <div className="text-muted-foreground mb-4 text-sm">
                   {members.length === 0
                     ? 'No members found'
                     : `${members.length} member${members.length !== 1 ? 's' : ''}`}
                 </div>
 
                 {members.length === 0 ? (
-                  <div className="py-8 text-center text-muted-foreground">
+                  <div className="text-muted-foreground py-8 text-center">
                     <div className="mb-2">No members found</div>
                     {canManageMembers && (
                       <div className="text-sm">Click &quot;Add member&quot; to get started</div>
@@ -348,24 +377,31 @@ export function ProjectMembershipComponent({ projectResponse, user }: Props) {
                     </TableHeader>
                     <TableBody>
                       {members.map((record) => {
-                        const isCurrentUser = record.userId === user.id || record.email === user.email;
+                        const isCurrentUser =
+                          record.userId === user.id || record.email === user.email;
 
                         return (
                           <TableRow key={record.id}>
                             <TableCell>
                               <div className="flex items-center">
-                                <User className="mr-2 size-4 text-muted-foreground" />
+                                <User className="text-muted-foreground mr-2 size-4" />
                                 <div>
                                   <div className="font-medium">{record.name}</div>
-                                  <div className="text-xs text-muted-foreground">{record.email}</div>
+                                  <div className="text-muted-foreground text-xs">
+                                    {record.email}
+                                  </div>
                                 </div>
                               </div>
                             </TableCell>
                             <TableCell>
-                              {canManageMembers && record.role !== ProjectRole.OWNER && !isCurrentUser ? (
+                              {canManageMembers &&
+                              record.role !== ProjectRole.OWNER &&
+                              !isCurrentUser ? (
                                 <Select
                                   value={record.role}
-                                  onValueChange={(newRole) => handleChangeRole(record.userId, newRole as ProjectRole)}
+                                  onValueChange={(newRole) =>
+                                    handleChangeRole(record.userId, newRole as ProjectRole)
+                                  }
                                   disabled={changingRoleFor === record.userId && isChangingRole}
                                 >
                                   <SelectTrigger className="h-8 w-[100px]">
@@ -387,13 +423,19 @@ export function ProjectMembershipComponent({ projectResponse, user }: Props) {
                               )}
                             </TableCell>
                             <TableCell>
-                              <div className="text-sm text-muted-foreground">
-                                <div>{dayjs(record.createdAt).format(getUserShortTimeFormat().format)}</div>
-                                <div className="text-xs text-muted-foreground">{dayjs(record.createdAt).fromNow()}</div>
+                              <div className="text-muted-foreground text-sm">
+                                <div>
+                                  {dayjs(record.createdAt).format(getUserShortTimeFormat().format)}
+                                </div>
+                                <div className="text-muted-foreground text-xs">
+                                  {dayjs(record.createdAt).fromNow()}
+                                </div>
                               </div>
                             </TableCell>
                             <TableCell>
-                              {canManageMembers && record.role !== ProjectRole.OWNER && !isCurrentUser ? (
+                              {canManageMembers &&
+                              record.role !== ProjectRole.OWNER &&
+                              !isCurrentUser ? (
                                 <div className="flex items-center space-x-2">
                                   <AlertDialog>
                                     <Tooltip>
@@ -407,7 +449,7 @@ export function ProjectMembershipComponent({ projectResponse, user }: Props) {
                                             {removingMembers.has(record.userId) ? (
                                               <Loader2 className="size-4 animate-spin" />
                                             ) : (
-                                              <Trash2 className="size-4 text-destructive" />
+                                              <Trash2 className="text-destructive size-4" />
                                             )}
                                           </Button>
                                         </AlertDialogTrigger>
@@ -418,12 +460,18 @@ export function ProjectMembershipComponent({ projectResponse, user }: Props) {
                                       <AlertDialogHeader>
                                         <AlertDialogTitle>Remove member</AlertDialogTitle>
                                         <AlertDialogDescription>
-                                          Are you sure you want to remove &quot;{record.email}&quot; from this project?
+                                          Are you sure you want to remove &quot;{record.email}&quot;
+                                          from this project?
                                         </AlertDialogDescription>
                                       </AlertDialogHeader>
                                       <AlertDialogFooter>
                                         <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                        <AlertDialogAction variant="destructive" onClick={() => handleRemoveMember(record.userId, record.email)}>
+                                        <AlertDialogAction
+                                          variant="destructive"
+                                          onClick={() =>
+                                            handleRemoveMember(record.userId, record.email)
+                                          }
+                                        >
                                           Remove
                                         </AlertDialogAction>
                                       </AlertDialogFooter>
@@ -450,22 +498,25 @@ export function ProjectMembershipComponent({ projectResponse, user }: Props) {
               </div>
             )}
 
-            <Dialog open={isAddMemberModalOpen} onOpenChange={(open) => {
-              if (!open) {
-                setIsAddMemberModalOpen(false);
-                setAddMemberForm({ email: '', role: ProjectRole.MEMBER });
-                setAddMemberEmailError(false);
-                setSearchInputValue('');
-                setUserSearchResults([]);
-              }
-            }}>
+            <Dialog
+              open={isAddMemberModalOpen}
+              onOpenChange={(open) => {
+                if (!open) {
+                  setIsAddMemberModalOpen(false);
+                  setAddMemberForm({ email: '', role: ProjectRole.MEMBER });
+                  setAddMemberEmailError(false);
+                  setSearchInputValue('');
+                  setUserSearchResults([]);
+                }
+              }}
+            >
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Add member</DialogTitle>
                 </DialogHeader>
                 <div className="py-4">
                   <div className="mb-4">
-                    <div className="mb-2 font-medium text-foreground">Email address</div>
+                    <div className="text-foreground mb-2 font-medium">Email address</div>
                     {user.role === UserRole.ADMIN ? (
                       <div className="relative">
                         <Input
@@ -485,7 +536,7 @@ export function ProjectMembershipComponent({ projectResponse, user }: Props) {
                           className={addMemberEmailError ? 'border-destructive' : undefined}
                         />
                         {userSearchResults.length > 0 && (
-                          <div className="absolute top-full z-50 mt-1 w-full rounded-md border bg-card shadow-lg">
+                          <div className="bg-card absolute top-full z-50 mt-1 w-full rounded-md border shadow-lg">
                             {isSearchingUsers ? (
                               <div className="flex justify-center py-2">
                                 <Spinner size="sm" />
@@ -495,7 +546,7 @@ export function ProjectMembershipComponent({ projectResponse, user }: Props) {
                                 <button
                                   key={searchUser.id}
                                   type="button"
-                                  className="flex w-full items-center px-3 py-2 text-left text-sm hover:bg-accent"
+                                  className="hover:bg-accent flex w-full items-center px-3 py-2 text-left text-sm"
                                   onClick={() => {
                                     setAddMemberForm({
                                       ...addMemberForm,
@@ -525,17 +576,19 @@ export function ProjectMembershipComponent({ projectResponse, user }: Props) {
                         className={addMemberEmailError ? 'border-destructive' : undefined}
                       />
                     )}
-                    <div className="mt-1 text-xs text-muted-foreground">
+                    <div className="text-muted-foreground mt-1 text-xs">
                       If the user exists, they will be added directly. Otherwise, an invitation will
                       be sent.
                     </div>
                   </div>
 
                   <div className="mb-4">
-                    <div className="mb-2 font-medium text-foreground">Role</div>
+                    <div className="text-foreground mb-2 font-medium">Role</div>
                     <Select
                       value={addMemberForm.role}
-                      onValueChange={(role) => setAddMemberForm({ ...addMemberForm, role: role as ProjectRole })}
+                      onValueChange={(role) =>
+                        setAddMemberForm({ ...addMemberForm, role: role as ProjectRole })
+                      }
                     >
                       <SelectTrigger className="w-full">
                         <SelectValue />
@@ -548,10 +601,7 @@ export function ProjectMembershipComponent({ projectResponse, user }: Props) {
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button
-                    onClick={handleAddMember}
-                    disabled={isAddingMember}
-                  >
+                  <Button onClick={handleAddMember} disabled={isAddingMember}>
                     {isAddingMember ? (
                       <>
                         <Spinner size="sm" className="mr-2" />
@@ -565,24 +615,27 @@ export function ProjectMembershipComponent({ projectResponse, user }: Props) {
               </DialogContent>
             </Dialog>
 
-            <Dialog open={isInviteDialogOpen} onOpenChange={(open) => {
-              if (!open) setIsInviteDialogOpen(false);
-            }}>
+            <Dialog
+              open={isInviteDialogOpen}
+              onOpenChange={(open) => {
+                if (!open) setIsInviteDialogOpen(false);
+              }}
+            >
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>User invited</DialogTitle>
                 </DialogHeader>
                 <div className="py-4">
                   <div className="flex items-center">
-                    <UserPlus className="mr-3 size-6 text-primary" />
+                    <UserPlus className="text-primary mr-3 size-6" />
                     <div>
-                      <div className="font-medium text-foreground">
+                      <div className="text-foreground font-medium">
                         Invitation sent to {invitedEmail}
                       </div>
-                      <div className="mt-1 text-sm text-muted-foreground">
+                      <div className="text-muted-foreground mt-1 text-sm">
                         The user is not present in the system yet, but has been invited to the
-                        project. After the user signs up via specified email, they will automatically
-                        become a member of the project.
+                        project. After the user signs up via specified email, they will
+                        automatically become a member of the project.
                       </div>
                     </div>
                   </div>
@@ -593,13 +646,16 @@ export function ProjectMembershipComponent({ projectResponse, user }: Props) {
               </DialogContent>
             </Dialog>
 
-            <Dialog open={isTransferOwnershipModalOpen} onOpenChange={(open) => {
-              if (!open) {
-                setIsTransferOwnershipModalOpen(false);
-                setTransferForm({ selectedMemberId: '' });
-                setTransferMemberError(false);
-              }
-            }}>
+            <Dialog
+              open={isTransferOwnershipModalOpen}
+              onOpenChange={(open) => {
+                if (!open) {
+                  setIsTransferOwnershipModalOpen(false);
+                  setTransferForm({ selectedMemberId: '' });
+                  setTransferMemberError(false);
+                }
+              }}
+            >
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Transfer project ownership</DialogTitle>
@@ -607,21 +663,21 @@ export function ProjectMembershipComponent({ projectResponse, user }: Props) {
                 <div className="py-4">
                   <div className="mb-4 rounded-md bg-yellow-50 p-3">
                     <div className="text-sm text-yellow-800">
-                      <strong>Warning:</strong> This action cannot be undone. You will lose ownership
-                      of this project and the new owner will have full control.
+                      <strong>Warning:</strong> This action cannot be undone. You will lose
+                      ownership of this project and the new owner will have full control.
                     </div>
                   </div>
 
                   {eligibleMembers.length === 0 ? (
-                    <div className="rounded-md bg-muted p-4 text-center">
-                      <div className="text-sm text-muted-foreground">
+                    <div className="bg-muted rounded-md p-4 text-center">
+                      <div className="text-muted-foreground text-sm">
                         No members available to transfer ownership to. You need to have at least one
                         other member in the project to transfer ownership.
                       </div>
                     </div>
                   ) : (
                     <div className="mb-4">
-                      <div className="mb-2 font-medium text-foreground">Select new owner</div>
+                      <div className="text-foreground mb-2 font-medium">Select new owner</div>
                       <Select
                         value={transferForm.selectedMemberId || undefined}
                         onValueChange={(memberId) => {
@@ -629,35 +685,42 @@ export function ProjectMembershipComponent({ projectResponse, user }: Props) {
                           setTransferForm({ selectedMemberId: memberId });
                         }}
                       >
-                        <SelectTrigger className={`w-full ${transferMemberError ? 'border-destructive' : ''}`}>
+                        <SelectTrigger
+                          className={`w-full ${transferMemberError ? 'border-destructive' : ''}`}
+                        >
                           <SelectValue placeholder="Select a member to transfer ownership to" />
                         </SelectTrigger>
                         <SelectContent>
                           {eligibleMembers.map((member) => (
                             <SelectItem key={member.userId} value={member.userId}>
                               <div className="flex items-center">
-                                <User className="mr-2 size-3.5 text-muted-foreground" />
+                                <User className="text-muted-foreground mr-2 size-3.5" />
                                 <div>
                                   <div className="font-medium">{member.name}</div>
-                                  <div className="text-xs text-muted-foreground">{member.email}</div>
+                                  <div className="text-muted-foreground text-xs">
+                                    {member.email}
+                                  </div>
                                 </div>
                               </div>
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
-                      <div className="mt-1 text-xs text-muted-foreground">
+                      <div className="text-muted-foreground mt-1 text-xs">
                         The selected member will become the project owner
                       </div>
                     </div>
                   )}
                 </div>
                 <DialogFooter>
-                  <Button variant="outline" onClick={() => {
-                    setIsTransferOwnershipModalOpen(false);
-                    setTransferForm({ selectedMemberId: '' });
-                    setTransferMemberError(false);
-                  }}>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setIsTransferOwnershipModalOpen(false);
+                      setTransferForm({ selectedMemberId: '' });
+                      setTransferMemberError(false);
+                    }}
+                  >
                     Cancel
                   </Button>
                   <Button

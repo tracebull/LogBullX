@@ -1,9 +1,16 @@
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Spinner } from '@/components/ui/spinner';
 import { toastMessage } from '@/shared/lib/toastMessage';
 import { useState } from 'react';
+
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Spinner } from '@/components/ui/spinner';
 
 import type { ProjectResponse } from '../../../entity/projects';
 import { projectApi } from '../../../entity/projects';
@@ -54,14 +61,19 @@ export const CreateProjectDialogComponent = ({
 
   if (!isAllowedToCreateProjects) {
     return (
-      <Dialog open onOpenChange={(open) => { if (!open) onClose(); }}>
+      <Dialog
+        open
+        onOpenChange={(open) => {
+          if (!open) onClose();
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Permission denied</DialogTitle>
           </DialogHeader>
           <p>
-            You don&apos;t have permission to create projects. Please ask the administrator to create
-            the project for you.
+            You don&apos;t have permission to create projects. Please ask the administrator to
+            create the project for you.
           </p>
           <DialogFooter>
             <Button onClick={onClose}>OK</Button>
@@ -72,13 +84,18 @@ export const CreateProjectDialogComponent = ({
   }
 
   return (
-    <Dialog open onOpenChange={(open) => { if (!open) onClose(); }}>
+    <Dialog
+      open
+      onOpenChange={(open) => {
+        if (!open) onClose();
+      }}
+    >
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create project</DialogTitle>
         </DialogHeader>
         <div className="mb-4">
-          <label className="mb-2 block text-sm font-medium text-foreground">Project name</label>
+          <label className="text-foreground mb-2 block text-sm font-medium">Project name</label>
           <Input
             value={projectName}
             onChange={(e) => setProjectName(e.target.value)}
@@ -94,10 +111,7 @@ export const CreateProjectDialogComponent = ({
           <Button variant="outline" onClick={onClose} disabled={isCreating}>
             Cancel
           </Button>
-          <Button
-            onClick={handleCreateProject}
-            disabled={isCreating || !projectName.trim()}
-          >
+          <Button onClick={handleCreateProject} disabled={isCreating || !projectName.trim()}>
             {isCreating ? (
               <>
                 <Spinner size="sm" className="mr-2" />

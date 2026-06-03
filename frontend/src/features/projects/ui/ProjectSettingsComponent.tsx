@@ -1,12 +1,22 @@
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Spinner } from '@/components/ui/spinner';
-import { Switch } from '@/components/ui/switch';
 import { toastMessage } from '@/shared/lib/toastMessage';
 import dayjs from 'dayjs';
 import { X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Spinner } from '@/components/ui/spinner';
+import { Switch } from '@/components/ui/switch';
 
 import { projectApi } from '../../../entity/projects/api/projectApi';
 import type { Project } from '../../../entity/projects/model/Project';
@@ -373,10 +383,7 @@ export function ProjectSettingsComponent({ projectResponse, user }: Props) {
   return (
     <div className="flex h-full pl-3">
       <div className="h-full w-full">
-        <div
-          ref={scrollContainerRef}
-          className="h-full overflow-y-auto p-6"
-        >
+        <div ref={scrollContainerRef} className="h-full overflow-y-auto p-6">
           {isLoading || !project ? (
             <div className="flex items-center justify-center py-12">
               <Spinner size="lg" />
@@ -393,9 +400,9 @@ export function ProjectSettingsComponent({ projectResponse, user }: Props) {
               )}
 
               <div className="space-y-6 text-sm">
-                <div className="max-w-2xl border-b border-border pb-6">
+                <div className="border-border max-w-2xl border-b pb-6">
                   <div className="max-w-md">
-                    <div className="mb-1 font-medium text-foreground">Project name</div>
+                    <div className="text-foreground mb-1 font-medium">Project name</div>
                     <Input
                       value={formProject.name || ''}
                       onChange={(e) => {
@@ -412,10 +419,7 @@ export function ProjectSettingsComponent({ projectResponse, user }: Props) {
                   {/* Basic Info Save Button */}
                   {basicInfoChanges && canEdit && (
                     <div className="mt-4 flex space-x-2">
-                      <Button
-                        onClick={saveBasicInfo}
-                        disabled={isSaving}
-                      >
+                      <Button onClick={saveBasicInfo} disabled={isSaving}>
                         {isSaving ? (
                           <>
                             <Spinner size="sm" className="mr-2" />
@@ -445,21 +449,23 @@ export function ProjectSettingsComponent({ projectResponse, user }: Props) {
                 </div>
 
                 {/* Security Policies */}
-                <div className="max-w-2xl border-b border-border pb-6">
-                  <h2 className="mb-4 text-base font-medium text-foreground">Security policies</h2>
+                <div className="border-border max-w-2xl border-b pb-6">
+                  <h2 className="text-foreground mb-4 text-base font-medium">Security policies</h2>
 
                   <div className="space-y-4">
                     <div className="flex items-start justify-between">
                       <div className="flex-1 pr-20">
-                        <div className="font-medium text-foreground">Require API key</div>
-                        <div className="mt-1 text-muted-foreground">
+                        <div className="text-foreground font-medium">Require API key</div>
+                        <div className="text-muted-foreground mt-1">
                           When enabled, all log ingestion requests must include a valid API key
                         </div>
                       </div>
                       <div className="ml-4">
                         <Switch
                           checked={formProject.isApiKeyRequired ?? false}
-                          onCheckedChange={(checked) => handleFieldChange('isApiKeyRequired', checked)}
+                          onCheckedChange={(checked) =>
+                            handleFieldChange('isApiKeyRequired', checked)
+                          }
                           disabled={!canEdit}
                         />
                       </div>
@@ -468,8 +474,8 @@ export function ProjectSettingsComponent({ projectResponse, user }: Props) {
                     <div className="space-y-3">
                       <div className="flex items-start justify-between">
                         <div className="flex-1 pr-20">
-                          <div className="font-medium text-foreground">Filter by domain</div>
-                          <div className="mt-1 text-muted-foreground">
+                          <div className="text-foreground font-medium">Filter by domain</div>
+                          <div className="text-muted-foreground mt-1">
                             When enabled, only requests from allowed domains will be accepted
                           </div>
                         </div>
@@ -504,21 +510,23 @@ export function ProjectSettingsComponent({ projectResponse, user }: Props) {
 
                       {formProject.isFilterByDomain && (
                         <div className="ml-0">
-                          <div className="mb-2 text-sm font-medium text-foreground">
+                          <div className="text-foreground mb-2 text-sm font-medium">
                             Allowed domains
                           </div>
-                          <div className={`flex flex-wrap gap-1.5 rounded-md border p-2 ${domainErrors.some((error) => error) ? 'border-destructive' : 'border-input'}`}>
+                          <div
+                            className={`flex flex-wrap gap-1.5 rounded-md border p-2 ${domainErrors.some((error) => error) ? 'border-destructive' : 'border-input'}`}
+                          >
                             {(formProject.allowedDomains || []).map((domain, index) => (
                               <span
                                 key={index}
-                                className="inline-flex items-center gap-1 rounded-md bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground"
+                                className="bg-secondary text-secondary-foreground inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-medium"
                               >
                                 {domain}
                                 {canEdit && (
                                   <button
                                     type="button"
                                     onClick={() => removeDomainTag(index)}
-                                    className="ml-0.5 text-primary hover:text-primary/80"
+                                    className="text-primary hover:text-primary/80 ml-0.5"
                                   >
                                     <X className="size-3" />
                                   </button>
@@ -537,7 +545,7 @@ export function ProjectSettingsComponent({ projectResponse, user }: Props) {
                                   }
                                 }}
                                 placeholder="Type and press Enter"
-                                className="min-w-[120px] flex-1 border-none bg-transparent text-xs outline-none placeholder:text-muted-foreground"
+                                className="placeholder:text-muted-foreground min-w-[120px] flex-1 border-none bg-transparent text-xs outline-none"
                               />
                             )}
                           </div>
@@ -552,7 +560,7 @@ export function ProjectSettingsComponent({ projectResponse, user }: Props) {
                               )}
                             </div>
                           )}
-                          <div className="mt-1 text-xs text-muted-foreground">
+                          <div className="text-muted-foreground mt-1 text-xs">
                             Press Enter or comma to add multiple domains. Only requests from these
                             domains will be accepted.
                           </div>
@@ -563,8 +571,8 @@ export function ProjectSettingsComponent({ projectResponse, user }: Props) {
                     <div className="space-y-3">
                       <div className="flex items-start justify-between">
                         <div className="flex-1 pr-20">
-                          <div className="font-medium text-foreground">Filter by IP address</div>
-                          <div className="mt-1 text-muted-foreground">
+                          <div className="text-foreground font-medium">Filter by IP address</div>
+                          <div className="text-muted-foreground mt-1">
                             When enabled, only requests from allowed IP addresses will be accepted
                           </div>
                         </div>
@@ -599,21 +607,23 @@ export function ProjectSettingsComponent({ projectResponse, user }: Props) {
 
                       {formProject.isFilterByIp && (
                         <div className="ml-0">
-                          <div className="mb-2 text-sm font-medium text-foreground">
+                          <div className="text-foreground mb-2 text-sm font-medium">
                             Allowed IP addresses
                           </div>
-                          <div className={`flex flex-wrap gap-1.5 rounded-md border p-2 ${ipErrors.some((error) => error) ? 'border-destructive' : 'border-input'}`}>
+                          <div
+                            className={`flex flex-wrap gap-1.5 rounded-md border p-2 ${ipErrors.some((error) => error) ? 'border-destructive' : 'border-input'}`}
+                          >
                             {(formProject.allowedIps || []).map((ip, index) => (
                               <span
                                 key={index}
-                                className="inline-flex items-center gap-1 rounded-md bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground"
+                                className="bg-secondary text-secondary-foreground inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-medium"
                               >
                                 {ip}
                                 {canEdit && (
                                   <button
                                     type="button"
                                     onClick={() => removeIpTag(index)}
-                                    className="ml-0.5 text-primary hover:text-primary/80"
+                                    className="text-primary hover:text-primary/80 ml-0.5"
                                   >
                                     <X className="size-3" />
                                   </button>
@@ -632,7 +642,7 @@ export function ProjectSettingsComponent({ projectResponse, user }: Props) {
                                   }
                                 }}
                                 placeholder="Type and press Enter"
-                                className="min-w-[120px] flex-1 border-none bg-transparent text-xs outline-none placeholder:text-muted-foreground"
+                                className="placeholder:text-muted-foreground min-w-[120px] flex-1 border-none bg-transparent text-xs outline-none"
                               />
                             )}
                           </div>
@@ -647,7 +657,7 @@ export function ProjectSettingsComponent({ projectResponse, user }: Props) {
                               )}
                             </div>
                           )}
-                          <div className="mt-1 text-xs text-muted-foreground">
+                          <div className="text-muted-foreground mt-1 text-xs">
                             Press Enter or comma to add multiple IP addresses. Supports both IPv4
                             and IPv6 formats.
                           </div>
@@ -659,10 +669,7 @@ export function ProjectSettingsComponent({ projectResponse, user }: Props) {
                   {/* Security Policies Save Button */}
                   {securityPolicyChanges && canEdit && (
                     <div className="mt-4 flex space-x-2">
-                      <Button
-                        onClick={saveSecurityPolicies}
-                        disabled={isSaving}
-                      >
+                      <Button onClick={saveSecurityPolicies} disabled={isSaving}>
                         {isSaving ? (
                           <>
                             <Spinner size="sm" className="mr-2" />
@@ -699,18 +706,18 @@ export function ProjectSettingsComponent({ projectResponse, user }: Props) {
                 </div>
 
                 {/* Rate Limiting & Quotas */}
-                <div className="max-w-2xl border-b border-border pb-6">
-                  <h2 className="text-base leading-1.5 font-medium text-foreground">
+                <div className="border-border max-w-2xl border-b pb-6">
+                  <h2 className="text-foreground text-base leading-1.5 font-medium">
                     Rate limiting & quotas
                   </h2>
 
-                  <div className="mt-3 text-sm text-muted-foreground">
+                  <div className="text-muted-foreground mt-3 text-sm">
                     Read more about settings you can{' '}
                     <a
                       href="https://logbull.com/settings"
                       target="_blank"
                       rel="noreferrer"
-                      className="font-bold !text-primary"
+                      className="!text-primary font-bold"
                     >
                       here
                     </a>
@@ -724,80 +731,93 @@ export function ProjectSettingsComponent({ projectResponse, user }: Props) {
 
                   <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div>
-                      <div className="mb-1 font-medium text-foreground">Logs per second limit</div>
+                      <div className="text-foreground mb-1 font-medium">Logs per second limit</div>
                       <Input
                         type="text"
                         inputMode="numeric"
                         value={formatNumber(formProject.logsPerSecondLimit)}
-                        onChange={(e) => handleFieldChange('logsPerSecondLimit', parseFormattedNumber(e.target.value))}
+                        onChange={(e) =>
+                          handleFieldChange(
+                            'logsPerSecondLimit',
+                            parseFormattedNumber(e.target.value),
+                          )
+                        }
                         disabled={
                           !canEdit || (project.plan && project.plan.logsPerSecondLimit != 0)
                         }
                         className="w-[150px]"
                       />
-                      <div className="mt-1 text-xs text-muted-foreground">
+                      <div className="text-muted-foreground mt-1 text-xs">
                         Maximum logs that can be ingested per second
                       </div>
                     </div>
 
                     <div>
-                      <div className="mb-1 font-medium text-foreground">Maximum log size (KB)</div>
+                      <div className="text-foreground mb-1 font-medium">Maximum log size (KB)</div>
                       <Input
                         type="text"
                         inputMode="numeric"
                         value={formatNumber(formProject.maxLogSizeKb)}
-                        onChange={(e) => handleFieldChange('maxLogSizeKb', parseFormattedNumber(e.target.value))}
+                        onChange={(e) =>
+                          handleFieldChange('maxLogSizeKb', parseFormattedNumber(e.target.value))
+                        }
                         disabled={!canEdit || (project.plan && project.plan.maxLogSizeKb != 0)}
                         className="w-[150px]"
                       />
-                      <div className="mt-1 text-xs text-muted-foreground">
+                      <div className="text-muted-foreground mt-1 text-xs">
                         Maximum size allowed for a single log entry
                       </div>
                     </div>
 
                     <div>
-                      <div className="mb-1 font-medium text-foreground">Maximum logs amount</div>
+                      <div className="text-foreground mb-1 font-medium">Maximum logs amount</div>
                       <Input
                         type="text"
                         inputMode="numeric"
                         value={formatNumber(formProject.maxLogsAmount)}
-                        onChange={(e) => handleFieldChange('maxLogsAmount', parseFormattedNumber(e.target.value))}
+                        onChange={(e) =>
+                          handleFieldChange('maxLogsAmount', parseFormattedNumber(e.target.value))
+                        }
                         disabled={!canEdit || (project.plan && project.plan.maxLogsAmount != 0)}
                         className="w-[150px]"
                       />
-                      <div className="mt-1 text-xs text-muted-foreground">
+                      <div className="text-muted-foreground mt-1 text-xs">
                         Maximum total number of logs that can be stored
                       </div>
                     </div>
 
                     <div>
-                      <div className="mb-1 font-medium text-foreground">
+                      <div className="text-foreground mb-1 font-medium">
                         Maximum storage size (MB)
                       </div>
                       <Input
                         type="text"
                         inputMode="numeric"
                         value={formatNumber(formProject.maxLogsSizeMb)}
-                        onChange={(e) => handleFieldChange('maxLogsSizeMb', parseFormattedNumber(e.target.value))}
+                        onChange={(e) =>
+                          handleFieldChange('maxLogsSizeMb', parseFormattedNumber(e.target.value))
+                        }
                         disabled={!canEdit || (project.plan && project.plan.maxLogsSizeMb != 0)}
                         className="w-[150px]"
                       />
-                      <div className="mt-1 text-xs text-muted-foreground">
+                      <div className="text-muted-foreground mt-1 text-xs">
                         Maximum total storage size for all logs
                       </div>
                     </div>
 
                     <div>
-                      <div className="mb-1 font-medium text-foreground">Log retention (days)</div>
+                      <div className="text-foreground mb-1 font-medium">Log retention (days)</div>
                       <Input
                         type="text"
                         inputMode="numeric"
                         value={formatNumber(formProject.maxLogsLifeDays)}
-                        onChange={(e) => handleFieldChange('maxLogsLifeDays', parseFormattedNumber(e.target.value))}
+                        onChange={(e) =>
+                          handleFieldChange('maxLogsLifeDays', parseFormattedNumber(e.target.value))
+                        }
                         disabled={!canEdit || (project.plan && project.plan.maxLogsLifeDays != 0)}
                         className="w-[150px]"
                       />
-                      <div className="mt-1 text-xs text-muted-foreground">
+                      <div className="text-muted-foreground mt-1 text-xs">
                         How long logs should be kept before automatic deletion
                       </div>
                     </div>
@@ -806,10 +826,7 @@ export function ProjectSettingsComponent({ projectResponse, user }: Props) {
                   {/* Rate Limiting & Quotas Save Button */}
                   {quotasChanges && canEdit && (
                     <div className="mt-4 flex space-x-2">
-                      <Button
-                        onClick={saveQuotas}
-                        disabled={isSaving}
-                      >
+                      <Button onClick={saveQuotas} disabled={isSaving}>
                         {isSaving ? (
                           <>
                             <Spinner size="sm" className="mr-2" />
@@ -844,8 +861,8 @@ export function ProjectSettingsComponent({ projectResponse, user }: Props) {
                 </div>
 
                 {/* Project Deletion */}
-                <div className="max-w-2xl border-b border-border pb-6">
-                  <h2 className="mb-4 text-base font-medium text-foreground">Danger Zone</h2>
+                <div className="border-border max-w-2xl border-b pb-6">
+                  <h2 className="text-foreground mb-4 text-base font-medium">Danger Zone</h2>
 
                   <div className="rounded-lg border border-red-200 bg-red-50 p-4">
                     <div className="flex items-start justify-between">
@@ -883,11 +900,12 @@ export function ProjectSettingsComponent({ projectResponse, user }: Props) {
                         <AlertDialogDescription asChild>
                           <div>
                             <p>
-                              Are you sure you want to delete the project <strong>{project.name}</strong>?
+                              Are you sure you want to delete the project{' '}
+                              <strong>{project.name}</strong>?
                             </p>
                             <p className="mt-2 text-red-600">
-                              <strong>This action cannot be undone.</strong> All logs and associated data will be
-                              permanently removed.
+                              <strong>This action cannot be undone.</strong> All logs and associated
+                              data will be permanently removed.
                             </p>
                           </div>
                         </AlertDialogDescription>
@@ -904,11 +922,13 @@ export function ProjectSettingsComponent({ projectResponse, user }: Props) {
 
                 {/* Project statistics */}
                 <div className="max-w-[300px]">
-                  <h2 className="mb-4 text-base font-medium text-foreground">Project statistics</h2>
+                  <h2 className="text-foreground mb-4 text-base font-medium">Project statistics</h2>
                   {isLoadingStats ? (
                     <div className="flex items-center py-2">
                       <Spinner size="sm" />
-                      <span className="ml-2 text-sm text-muted-foreground">Loading statistics...</span>
+                      <span className="text-muted-foreground ml-2 text-sm">
+                        Loading statistics...
+                      </span>
                     </div>
                   ) : projectStats ? (
                     <div className="space-y-2 text-sm">
@@ -933,7 +953,7 @@ export function ProjectSettingsComponent({ projectResponse, user }: Props) {
                       </div>
                     </div>
                   ) : (
-                    <div className="text-sm text-muted-foreground">No statistics available</div>
+                    <div className="text-muted-foreground text-sm">No statistics available</div>
                   )}
                 </div>
 

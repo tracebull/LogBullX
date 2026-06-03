@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 
 import { Spinner } from '../components/ui/spinner';
+
 import { getOAuthRedirectUri } from '../constants';
 import { userApi } from '../entity/users';
 
@@ -53,12 +54,12 @@ export function OAuthCallbackPage() {
           <div className="mb-4 text-center text-xl font-semibold text-red-600">
             Authentication Failed
           </div>
-          <div className="text-center text-sm text-muted-foreground">{error}</div>
+          <div className="text-muted-foreground text-center text-sm">{error}</div>
           <div className="mt-6 text-center">
             <button
               type="button"
               onClick={() => navigate('/')}
-              className="cursor-pointer font-medium text-primary hover:text-primary/80"
+              className="text-primary hover:text-primary/80 cursor-pointer font-medium"
             >
               Return to sign in
             </button>
@@ -67,7 +68,7 @@ export function OAuthCallbackPage() {
       ) : (
         <div className="flex flex-col items-center">
           <Spinner size="lg" />
-          <div className="mt-4 text-muted-foreground">Completing authentication...</div>
+          <div className="text-muted-foreground mt-4">Completing authentication...</div>
         </div>
       )}
     </div>

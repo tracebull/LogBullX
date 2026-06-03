@@ -1,8 +1,8 @@
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Check, ChevronDown, Copy } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { Check, ChevronDown, Copy } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 import { type ProjectResponse } from '../../../entity/projects';
 import type { UsersSettings } from '../../../entity/users';
@@ -71,9 +71,7 @@ export const ProjectSelectionComponent = ({
     if (!canCreateProjects) {
       return (
         <div className="my-1 select-none">
-          <div className="mb-1 text-xs leading-none text-muted-foreground">
-            No projects
-          </div>
+          <div className="text-muted-foreground mb-1 text-xs leading-none">No projects</div>
         </div>
       );
     }
@@ -94,20 +92,18 @@ export const ProjectSelectionComponent = ({
         <div className="relative w-[250px]">
           <Button
             variant="ghost"
-            className="w-[250px] justify-between bg-muted hover:bg-accent"
+            className="bg-muted hover:bg-accent w-[250px] justify-between"
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
           >
-            <span className="truncate">
-              {selectedProject?.name || 'Select a project'}
-            </span>
+            <span className="truncate">{selectedProject?.name || 'Select a project'}</span>
             <ChevronDown
               className={`ml-1 size-4 shrink-0 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}
             />
           </Button>
 
           {isDropdownOpen && (
-            <div className="absolute top-full left-0 z-50 mt-1 min-w-full rounded-md border border-border bg-card shadow-lg">
-              <div className="border-b border-border p-2">
+            <div className="border-border bg-card absolute top-full left-0 z-50 mt-1 min-w-full rounded-md border shadow-lg">
+              <div className="border-border border-b p-2">
                 <Input
                   placeholder="Search projects..."
                   value={searchValue}
@@ -121,7 +117,7 @@ export const ProjectSelectionComponent = ({
                 {filteredProjects.map((project) => (
                   <div
                     key={project.id}
-                    className="max-w-[250px] cursor-pointer truncate px-3 py-2 text-sm hover:bg-accent"
+                    className="hover:bg-accent max-w-[250px] cursor-pointer truncate px-3 py-2 text-sm"
                     onClick={() => openProject(project)}
                   >
                     {project.name}
@@ -129,14 +125,14 @@ export const ProjectSelectionComponent = ({
                 ))}
 
                 {filteredProjects.length === 0 && searchValue && (
-                  <div className="px-3 py-2 text-sm text-muted-foreground">No projects found</div>
+                  <div className="text-muted-foreground px-3 py-2 text-sm">No projects found</div>
                 )}
               </div>
 
               {canCreateProjects && (
-                <div className="border-t border-border">
+                <div className="border-border border-t">
                   <div
-                    className="cursor-pointer px-3 py-2 text-sm text-primary hover:bg-accent hover:text-primary/80"
+                    className="text-primary hover:bg-accent hover:text-primary/80 cursor-pointer px-3 py-2 text-sm"
                     onClick={() => {
                       onCreateProject();
                       setIsDropdownOpen(false);
@@ -152,15 +148,15 @@ export const ProjectSelectionComponent = ({
         </div>
 
         {selectedProject?.id && (
-          <div className="flex h-9 items-center rounded-md border border-border">
+          <div className="border-border flex h-9 items-center rounded-md border">
             <input
               readOnly
               value={selectedProject.id}
-              className="h-full flex-1 min-w-0 truncate bg-transparent px-2 font-mono text-xs text-muted-foreground focus:outline-none"
+              className="text-muted-foreground h-full min-w-0 flex-1 truncate bg-transparent px-2 font-mono text-xs focus:outline-none"
             />
             <button
               onClick={copyProjectId}
-              className="flex h-full shrink-0 items-center justify-center border-l border-border px-2.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+              className="border-border text-muted-foreground hover:bg-accent hover:text-foreground flex h-full shrink-0 items-center justify-center border-l px-2.5 transition-colors"
               title="Copy project ID"
             >
               {copied ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}

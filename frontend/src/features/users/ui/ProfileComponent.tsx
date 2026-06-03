@@ -1,10 +1,10 @@
+import { toastMessage } from '@/shared/lib/toastMessage';
 import { Eye, EyeOff } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
-import { toastMessage } from '@/shared/lib/toastMessage';
 
 import { userApi } from '../../../entity/users/api/userApi';
 import type { ChangePasswordRequest } from '../../../entity/users/model/ChangePasswordRequest';
@@ -206,7 +206,7 @@ export function ProfileComponent() {
                   <h3 className="mb-4 text-base font-medium">Profile Information</h3>
                   <div className="max-w-md">
                     <div className="mb-2 text-xs font-semibold">User ID</div>
-                    <div className="mb-4 text-sm text-muted-foreground">{user.id}</div>
+                    <div className="text-muted-foreground mb-4 text-sm">{user.id}</div>
 
                     <div className="mb-1 text-xs font-semibold">Name</div>
                     <Input
@@ -232,23 +232,20 @@ export function ProfileComponent() {
                       disabled={user.email === 'admin'}
                     />
                     {user.email === 'admin' && (
-                      <div className="mb-4 text-xs text-muted-foreground">
+                      <div className="text-muted-foreground mb-4 text-xs">
                         Admin email cannot be changed
                       </div>
                     )}
 
                     <div className="mt-2 mb-1 text-xs font-semibold">Role</div>
                     <div className="mb-4">
-                      <span className="inline-flex items-center rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium text-secondary-foreground">
+                      <span className="bg-secondary text-secondary-foreground inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium">
                         {getRoleDisplayText(user.role)}
                       </span>
                     </div>
 
                     {(editName !== user.name || editEmail !== user.email) && (
-                      <Button
-                        onClick={handleProfileUpdate}
-                        disabled={isUpdatingProfile}
-                      >
+                      <Button onClick={handleProfileUpdate} disabled={isUpdatingProfile}>
                         {isUpdatingProfile ? (
                           <>
                             <Spinner size="sm" className="mr-2" />
@@ -286,7 +283,7 @@ export function ProfileComponent() {
                       />
                       <button
                         type="button"
-                        className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                        className="text-muted-foreground hover:text-foreground absolute top-1/2 right-2 -translate-y-1/2"
                         onClick={() => setNewPasswordVisible(!newPasswordVisible)}
                       >
                         {newPasswordVisible ? (
@@ -311,7 +308,7 @@ export function ProfileComponent() {
                       />
                       <button
                         type="button"
-                        className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                        className="text-muted-foreground hover:text-foreground absolute top-1/2 right-2 -translate-y-1/2"
                         onClick={() => setConfirmPasswordVisible(!confirmPasswordVisible)}
                       >
                         {confirmPasswordVisible ? (
@@ -325,10 +322,7 @@ export function ProfileComponent() {
                     <div className="mt-3" />
 
                     {(newPassword || confirmPassword) && (
-                      <Button
-                        onClick={handlePasswordChange}
-                        disabled={isChangingPassword}
-                      >
+                      <Button onClick={handlePasswordChange} disabled={isChangingPassword}>
                         {isChangingPassword ? (
                           <>
                             <Spinner size="sm" className="mr-2" />

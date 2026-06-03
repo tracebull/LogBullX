@@ -1,15 +1,16 @@
 import dayjs from 'dayjs';
 import { useEffect, useRef, useState } from 'react';
 
+import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
+import { Switch } from '@/components/ui/switch';
+
 import { IS_CLOUD, getApplicationServer } from '../../../constants';
 import { queryApi } from '../../../entity/query/api/queryApi';
 import type { LogsStats } from '../../../entity/query/model/ProjectLogStats';
 import { settingsApi } from '../../../entity/users/api/settingsApi';
 import type { UsersSettings } from '../../../entity/users/model/UsersSettings';
 import { toastMessage } from '../../../shared/lib/toastMessage';
-import { Button } from '@/components/ui/button';
-import { Spinner } from '@/components/ui/spinner';
-import { Switch } from '@/components/ui/switch';
 import { AuditLogsComponent } from './AuditLogsComponent';
 import { PlansSettingsComponent } from './PlansSettingsComponent';
 
@@ -112,10 +113,7 @@ export function SettingsComponent() {
   return (
     <div className="flex h-full pl-3">
       <div className="h-full w-full">
-        <div
-          ref={scrollContainerRef}
-          className="h-full overflow-y-auto p-6"
-        >
+        <div ref={scrollContainerRef} className="h-full overflow-y-auto p-6">
           <div className="mt-6">
             {isLoading ? (
               <div>
@@ -125,10 +123,12 @@ export function SettingsComponent() {
               <div className="max-w-lg text-sm">
                 <div className="space-y-6">
                   {/* External Registrations Setting */}
-                  <div className="flex items-start justify-between border-b border-border pb-4">
+                  <div className="border-border flex items-start justify-between border-b pb-4">
                     <div className="flex-1 pr-20">
-                      <div className="font-medium text-foreground">Allow external registrations</div>
-                      <div className="mt-1 text-muted-foreground">
+                      <div className="text-foreground font-medium">
+                        Allow external registrations
+                      </div>
+                      <div className="text-muted-foreground mt-1">
                         When enabled, new users can register accounts in TraceBull. If disabled, new
                         users can only register via invitation
                       </div>
@@ -147,11 +147,11 @@ export function SettingsComponent() {
 
                   {/* Member Invitations Setting */}
                   {!formSettings.isAllowExternalRegistrations && (
-                    <div className="flex items-start justify-between border-b border-border pb-4">
+                    <div className="border-border flex items-start justify-between border-b pb-4">
                       <div className="flex-1 pr-20">
-                        <div className="font-medium text-foreground">Allow member invitations</div>
+                        <div className="text-foreground font-medium">Allow member invitations</div>
 
-                        <div className="mt-1 text-muted-foreground">
+                        <div className="text-muted-foreground mt-1">
                           When enabled, existing members can invite new users to join TraceBull. If
                           not - only admins can invite users.
                         </div>
@@ -170,11 +170,11 @@ export function SettingsComponent() {
                   )}
 
                   {/* Member Project Creation Setting */}
-                  <div className="flex items-start justify-between border-b border-border pb-4">
+                  <div className="border-border flex items-start justify-between border-b pb-4">
                     <div className="flex-1 pr-20">
-                      <div className="font-medium text-foreground">Members can create projects</div>
+                      <div className="text-foreground font-medium">Members can create projects</div>
 
-                      <div className="mt-1 text-muted-foreground">
+                      <div className="text-muted-foreground mt-1">
                         When enabled, members (non-admin users) can create new projects. If not -
                         only admins can create projects.
                       </div>
@@ -212,14 +212,9 @@ export function SettingsComponent() {
             )}
           </div>
 
-          <div className="mt-3 text-sm text-muted-foreground">
+          <div className="text-muted-foreground mt-3 text-sm">
             Read more about settings you can{' '}
-            <a
-              href="#"
-              target="_blank"
-              rel="noreferrer"
-              className="!text-primary"
-            >
+            <a href="#" target="_blank" rel="noreferrer" className="!text-primary">
               here
             </a>
           </div>
@@ -229,9 +224,9 @@ export function SettingsComponent() {
             <h2 className="mb-3 text-base font-medium">Health-check</h2>
 
             <div className="group relative">
-              <div className="flex items-center rounded-md border border-input bg-muted px-3 py-2 !font-mono text-sm text-foreground">
+              <div className="border-input bg-muted text-foreground flex items-center rounded-md border px-3 py-2 !font-mono text-sm">
                 <code
-                  className="flex-1 cursor-pointer transition-colors select-all hover:text-primary"
+                  className="hover:text-primary flex-1 cursor-pointer transition-colors select-all"
                   onClick={() => {
                     window.open(
                       `${getApplicationServer()}/api/v1/downdetect/is-available`,
@@ -256,7 +251,7 @@ export function SettingsComponent() {
                   📋
                 </Button>
               </div>
-              <div className="mt-1 text-xs text-muted-foreground">
+              <div className="text-muted-foreground mt-1 text-xs">
                 Use this endpoint to monitor your TraceBull system&apos;s availability
               </div>
             </div>
@@ -264,11 +259,11 @@ export function SettingsComponent() {
 
           {/* System statistics */}
           <div className="my-8 max-w-[300px]">
-            <h2 className="mb-4 text-base font-medium text-foreground">System statistics</h2>
+            <h2 className="text-foreground mb-4 text-base font-medium">System statistics</h2>
             {isLoadingStats ? (
               <div className="flex items-center py-2">
                 <Spinner />
-                <span className="ml-2 text-sm text-muted-foreground">Loading statistics...</span>
+                <span className="text-muted-foreground ml-2 text-sm">Loading statistics...</span>
               </div>
             ) : systemStats ? (
               <div className="space-y-2 text-sm">
@@ -289,7 +284,7 @@ export function SettingsComponent() {
                 </div>
               </div>
             ) : (
-              <div className="text-sm text-muted-foreground">No statistics available</div>
+              <div className="text-muted-foreground text-sm">No statistics available</div>
             )}
           </div>
 

@@ -13,9 +13,9 @@ The dev server proxies API requests to the backend at `localhost:4005`. Start th
 
 ## Commands
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start Vite dev server with HMR |
-| `npm run build` | TypeScript check + production build → `dist/` |
-| `npm run lint` | ESLint |
-| `npm run format` | Prettier (formats in-place) |
+| Command          | Description                                   |
+| ---------------- | --------------------------------------------- |
+| `npm run dev`    | Start Vite dev server with HMR                |
+| `npm run build`  | TypeScript check + production build → `dist/` |
+| `npm run lint`   | ESLint                                        |
+| `npm run format` | Prettier (formats in-place)                   |

@@ -108,7 +108,7 @@ export const FloatingTopButtonComponent = ({
       <Button
         size="icon"
         onClick={scrollToTop}
-        className="size-10 rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary/90"
+        className="bg-primary text-primary-foreground hover:bg-primary/90 size-10 rounded-full shadow-lg"
       >
         <ArrowUp className="size-4" />
       </Button>

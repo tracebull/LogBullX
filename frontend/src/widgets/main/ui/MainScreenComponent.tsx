@@ -1,16 +1,11 @@
-import React, { Suspense, lazy, useEffect, useState } from 'react';
-
 import { FolderCog, Key, Menu, Search, Settings, User, UserCog, Users } from 'lucide-react';
+import React, { Suspense, lazy, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Spinner } from '@/components/ui/spinner';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+
 import { APP_VERSION } from '../../../constants';
 import { type DiskUsage, diskApi } from '../../../entity/disk';
 import { type ProjectResponse, projectApi } from '../../../entity/projects';
@@ -184,13 +179,62 @@ export const MainScreenComponent = () => {
     diskUsage && diskUsage.usedSpaceBytes / diskUsage.totalSpaceBytes > 0.95;
 
   const allNavItems: NavItemConfig[] = [
-    { label: 'Search', tab: 'search', icon: Search, adminOnly: false, visible: true, hasSeparator: false },
-    { label: 'Project Settings', tab: 'settings', icon: FolderCog, adminOnly: false, visible: !!selectedProject, hasSeparator: false },
-    { label: 'Members', tab: 'members', icon: Users, adminOnly: false, visible: !!selectedProject, hasSeparator: false },
-    { label: 'API Keys', tab: 'api-keys', icon: Key, adminOnly: false, visible: !!selectedProject, hasSeparator: false },
-    { label: 'Profile', tab: 'profile', icon: User, adminOnly: false, visible: true, hasSeparator: false },
-    { label: 'Settings', tab: 'logbull-settings', icon: Settings, adminOnly: true, visible: true, hasSeparator: true },
-    { label: 'Users', tab: 'users', icon: UserCog, adminOnly: true, visible: true, hasSeparator: false },
+    {
+      label: 'Search',
+      tab: 'search',
+      icon: Search,
+      adminOnly: false,
+      visible: true,
+      hasSeparator: false,
+    },
+    {
+      label: 'Project Settings',
+      tab: 'settings',
+      icon: FolderCog,
+      adminOnly: false,
+      visible: !!selectedProject,
+      hasSeparator: false,
+    },
+    {
+      label: 'Members',
+      tab: 'members',
+      icon: Users,
+      adminOnly: false,
+      visible: !!selectedProject,
+      hasSeparator: false,
+    },
+    {
+      label: 'API Keys',
+      tab: 'api-keys',
+      icon: Key,
+      adminOnly: false,
+      visible: !!selectedProject,
+      hasSeparator: false,
+    },
+    {
+      label: 'Profile',
+      tab: 'profile',
+      icon: User,
+      adminOnly: false,
+      visible: true,
+      hasSeparator: false,
+    },
+    {
+      label: 'Settings',
+      tab: 'logbull-settings',
+      icon: Settings,
+      adminOnly: true,
+      visible: true,
+      hasSeparator: true,
+    },
+    {
+      label: 'Users',
+      tab: 'users',
+      icon: UserCog,
+      adminOnly: true,
+      visible: true,
+      hasSeparator: false,
+    },
   ];
 
   const navItems = allNavItems
@@ -225,9 +269,7 @@ export const MainScreenComponent = () => {
       <>
         {selectedTab === 'profile' && <ProfileComponent />}
         {selectedTab === 'logbull-settings' && <SettingsComponent />}
-        {selectedTab === 'users' && (
-          <UsersComponent globalSettings={globalSettings} user={user} />
-        )}
+        {selectedTab === 'users' && <UsersComponent globalSettings={globalSettings} user={user} />}
         {selectedTab === 'settings' && selectedProject && user && (
           <ProjectSettingsComponent projectResponse={selectedProject} user={user} />
         )}
@@ -247,11 +289,11 @@ export const MainScreenComponent = () => {
   return (
     <TooltipProvider delayDuration={200}>
       <div
-        className={`h-screen flex flex-col overflow-hidden bg-background ${isMobile ? '' : 'p-3'}`}
+        className={`bg-background flex h-screen flex-col overflow-hidden ${isMobile ? '' : 'p-3'}`}
       >
         <div
-          className={`flex-shrink-0 flex items-center bg-card ${
-            isMobile ? 'px-3 py-1' : 'rounded px-3 py-1 mb-3'
+          className={`bg-card flex flex-shrink-0 items-center ${
+            isMobile ? 'px-3 py-1' : 'mb-3 rounded px-3 py-1'
           }`}
         >
           {isMobile && (
@@ -284,7 +326,7 @@ export const MainScreenComponent = () => {
                     );
                   })}
                 </nav>
-                <div className="mt-auto pt-4 text-center text-xs text-muted-foreground">
+                <div className="text-muted-foreground mt-auto pt-4 text-center text-xs">
                   v{APP_VERSION}
                 </div>
               </SheetContent>
@@ -315,7 +357,7 @@ export const MainScreenComponent = () => {
             {isUsedMoreThan95Percent && diskUsage && (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <div className="cursor-pointer text-center text-xs text-destructive">
+                  <div className="text-destructive cursor-pointer text-center text-xs">
                     {(diskUsage.usedSpaceBytes / 1024 ** 3).toFixed(1)} of{' '}
                     {(diskUsage.totalSpaceBytes / 1024 ** 3).toFixed(1)} GB
                     <br />
@@ -334,12 +376,12 @@ export const MainScreenComponent = () => {
 
         <div className="flex flex-1 overflow-hidden">
           {!isMobile && (
-            <div className="flex-shrink-0 flex w-[48px] flex-col items-center rounded bg-card py-1.5">
+            <div className="bg-card flex w-[48px] flex-shrink-0 flex-col items-center rounded py-1.5">
               {navItems.map((item) => {
                 const Icon = item.icon;
                 return (
                   <div key={item.tab} className="flex flex-col items-center">
-                    {item.hasSeparator && <div className="mb-2 h-px w-6 bg-border" />}
+                    {item.hasSeparator && <div className="bg-border mb-2 h-px w-6" />}
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <div
@@ -360,7 +402,7 @@ export const MainScreenComponent = () => {
                   </div>
                 );
               })}
-              <div className="mt-auto px-2 pb-2 text-center text-xs text-muted-foreground">
+              <div className="text-muted-foreground mt-auto px-2 pb-2 text-center text-xs">
                 v{APP_VERSION}
               </div>
             </div>
@@ -368,7 +410,9 @@ export const MainScreenComponent = () => {
 
           <div className={`flex flex-1 flex-col overflow-hidden ${isMobile ? '' : 'ml-3'}`}>
             <div className="flex-shrink-0 px-4 py-2">
-              <h1 className="text-sm font-semibold text-muted-foreground">{PAGE_TITLES[selectedTab]}</h1>
+              <h1 className="text-muted-foreground text-sm font-semibold">
+                {PAGE_TITLES[selectedTab]}
+              </h1>
             </div>
             <div className="flex-1 overflow-y-auto">
               {isLoading ? (

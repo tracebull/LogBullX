@@ -1,9 +1,17 @@
-import { Spinner } from '@/components/ui/spinner';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toastMessage } from '@/shared/lib/toastMessage';
 import { getUserShortTimeFormat } from '@/shared/time';
 import dayjs from 'dayjs';
 import { useCallback, useEffect, useRef, useState } from 'react';
+
+import { Spinner } from '@/components/ui/spinner';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 
 import type { AuditLog } from '../../../entity/audit-logs/model/AuditLog';
 import { projectApi } from '../../../entity/projects/api/projectApi';
@@ -107,12 +115,8 @@ export function ProjectAuditLogsComponent({
   return (
     <div className="max-w-[1200px]">
       <div className="mb-4 flex items-center justify-end">
-        <div className="text-sm text-muted-foreground">
-          {isLoading ? (
-            <Spinner size="sm" />
-          ) : (
-            `${auditLogs.length} of ${total} logs`
-          )}
+        <div className="text-muted-foreground text-sm">
+          {isLoading ? <Spinner size="sm" /> : `${auditLogs.length} of ${total} logs`}
         </div>
       </div>
 
@@ -121,7 +125,7 @@ export function ProjectAuditLogsComponent({
           <Spinner size="lg" />
         </div>
       ) : auditLogs.length === 0 ? (
-        <div className="flex h-32 items-center justify-center text-muted-foreground">
+        <div className="text-muted-foreground flex h-32 items-center justify-center">
           No audit logs found for this project.
         </div>
       ) : (
@@ -139,11 +143,11 @@ export function ProjectAuditLogsComponent({
                 <TableRow key={record.id}>
                   <TableCell>
                     {!record.userEmail && !record.userName ? (
-                      <span className="inline-block rounded-full bg-muted px-1.5 py-0.5 text-xs font-medium text-muted-foreground">
+                      <span className="bg-muted text-muted-foreground inline-block rounded-full px-1.5 py-0.5 text-xs font-medium">
                         System
                       </span>
                     ) : (
-                      <span className="inline-block rounded-full bg-secondary px-1.5 py-0.5 text-xs font-medium text-secondary-foreground">
+                      <span className="bg-secondary text-secondary-foreground inline-block rounded-full px-1.5 py-0.5 text-xs font-medium">
                         {record.userName
                           ? `${record.userName} (${record.userEmail})`
                           : record.userEmail}
@@ -151,10 +155,10 @@ export function ProjectAuditLogsComponent({
                     )}
                   </TableCell>
                   <TableCell>
-                    <span className="text-xs text-foreground">{record.message}</span>
+                    <span className="text-foreground text-xs">{record.message}</span>
                   </TableCell>
                   <TableCell>
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-muted-foreground text-xs">
                       {(() => {
                         const date = dayjs(record.createdAt);
                         const timeFormat = getUserShortTimeFormat();
@@ -170,12 +174,12 @@ export function ProjectAuditLogsComponent({
           {isLoadingMore && (
             <div className="flex justify-center py-4">
               <Spinner size="sm" />
-              <span className="ml-2 text-sm text-muted-foreground">Loading more logs...</span>
+              <span className="text-muted-foreground ml-2 text-sm">Loading more logs...</span>
             </div>
           )}
 
           {!hasMore && auditLogs.length > 0 && (
-            <div className="py-4 text-center text-sm text-muted-foreground">
+            <div className="text-muted-foreground py-4 text-center text-sm">
               All logs loaded ({total} total)
             </div>
           )}

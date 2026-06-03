@@ -1,8 +1,6 @@
 import dayjs from 'dayjs';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { type LogItem } from '../../../entity/query';
-import { getUserTimeFormatWithMs } from '../../../shared/time';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,6 +15,9 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
+
+import { type LogItem } from '../../../entity/query';
+import { getUserTimeFormatWithMs } from '../../../shared/time';
 
 const STORAGE_KEY = 'tracebull-message-length';
 
@@ -130,13 +131,17 @@ export const QueryResultsComponent = ({
 
   const renderLogLevel = (level: string) => {
     const colors = {
-      ERROR: 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800',
+      ERROR:
+        'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800',
       WARN: 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-800',
       INFO: 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800',
       DEBUG: 'bg-muted text-foreground border-border',
-      TRACE: 'bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-800',
-      FATAL: 'bg-red-200 text-red-900 border-red-300 dark:bg-red-900/50 dark:text-red-200 dark:border-red-700',
-      CRITICAL: 'bg-red-200 text-red-900 border-red-300 dark:bg-red-900/50 dark:text-red-200 dark:border-red-700',
+      TRACE:
+        'bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-800',
+      FATAL:
+        'bg-red-200 text-red-900 border-red-300 dark:bg-red-900/50 dark:text-red-200 dark:border-red-700',
+      CRITICAL:
+        'bg-red-200 text-red-900 border-red-300 dark:bg-red-900/50 dark:text-red-200 dark:border-red-700',
     };
 
     const colorClass = colors[level as keyof typeof colors] || colors.INFO;
@@ -196,7 +201,7 @@ export const QueryResultsComponent = ({
     const fieldKeys = Object.keys(log.fields || {});
 
     if (fieldKeys.length === 0) {
-      return <span className="text-xs text-muted-foreground">-</span>;
+      return <span className="text-muted-foreground text-xs">-</span>;
     }
 
     // Create a string representation of all fields
@@ -207,7 +212,7 @@ export const QueryResultsComponent = ({
       : truncateText(fieldsString, maxLength);
 
     if (fieldsString.length === 0) {
-      return <span className="text-xs text-muted-foreground">-</span>;
+      return <span className="text-muted-foreground text-xs">-</span>;
     }
 
     return (
@@ -227,10 +232,10 @@ export const QueryResultsComponent = ({
               >
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <div className="cursor-pointer rounded px-1 hover:bg-accent">
-                      <span className="!font-mono font-medium text-muted-foreground">{key}:</span>{' '}
+                    <div className="hover:bg-accent cursor-pointer rounded px-1">
+                      <span className="text-muted-foreground !font-mono font-medium">{key}:</span>{' '}
                       <span
-                        className={`!font-mono text-muted-foreground ${
+                        className={`text-muted-foreground !font-mono ${
                           isJson || formatted.includes(' ') ? 'whitespace-pre-wrap' : ''
                         }`}
                       >
@@ -266,9 +271,9 @@ export const QueryResultsComponent = ({
           })
         ) : (
           <div className="text-xs">
-            <span className="!font-mono break-all text-muted-foreground">{displayText}</span>
+            <span className="text-muted-foreground !font-mono break-all">{displayText}</span>
             {isTruncated && (
-              <span className="ml-1 cursor-pointer text-primary hover:text-primary/80">
+              <span className="text-primary hover:text-primary/80 ml-1 cursor-pointer">
                 (expand)
               </span>
             )}
@@ -311,12 +316,12 @@ export const QueryResultsComponent = ({
   }
 
   return (
-    <div ref={containerRef} className="w-full rounded-lg bg-muted/50">
-      <div className="border-b border-border px-4 py-2">
+    <div ref={containerRef} className="bg-muted/50 w-full rounded-lg">
+      <div className="border-border border-b px-4 py-2">
         <div className="flex items-center justify-end">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
-              <label htmlFor="messageLength" className="text-xs font-normal text-muted-foreground">
+              <label htmlFor="messageLength" className="text-muted-foreground text-xs font-normal">
                 Message length:
               </label>
               <Input
@@ -336,11 +341,11 @@ export const QueryResultsComponent = ({
                 onCheckedChange={(checked) => setShowFields(checked === true)}
                 className="text-xs"
               />
-              <label htmlFor="showFields" className="text-xs font-normal text-muted-foreground">
+              <label htmlFor="showFields" className="text-muted-foreground text-xs font-normal">
                 Show fields
               </label>
             </div>
-            <span className="text-xs font-normal text-muted-foreground">
+            <span className="text-muted-foreground text-xs font-normal">
               {isExecuting && queryResults.length === 0 ? (
                 <Spinner size="sm" />
               ) : (
@@ -358,20 +363,20 @@ export const QueryResultsComponent = ({
             <span className="ml-2 text-sm">Executing query...</span>
           </div>
         ) : queryResults.length === 0 ? (
-          <div className="flex h-20 items-center justify-center text-sm text-muted-foreground">
+          <div className="text-muted-foreground flex h-20 items-center justify-center text-sm">
             No logs found matching your query.
           </div>
         ) : (
           <div className="space-y-1">
             {/* Header Row */}
-            <div className="flex gap-2 border-b border-border pb-1 text-xs font-medium text-foreground">
+            <div className="border-border text-foreground flex gap-2 border-b pb-1 text-xs font-medium">
               <div className="w-[150px] shrink-0">Timestamp</div>
               <div className="w-[85px] shrink-0">Level</div>
-              <div className={showFields ? 'flex-1 min-w-0' : 'flex-[2] min-w-0'}>Message</div>
+              <div className={showFields ? 'min-w-0 flex-1' : 'min-w-0 flex-[2]'}>Message</div>
               {showFields && (
                 <>
                   <div className="w-[10px] shrink-0" />
-                  <div className="flex-1 min-w-0">Fields</div>
+                  <div className="min-w-0 flex-1">Fields</div>
                 </>
               )}
             </div>
@@ -386,40 +391,38 @@ export const QueryResultsComponent = ({
               return (
                 <div
                   key={log.id}
-                  className="flex cursor-pointer items-start gap-2 border-b border-border py-1 !font-mono text-xs hover:bg-accent"
+                  className="border-border hover:bg-accent flex cursor-pointer items-start gap-2 border-b py-1 !font-mono text-xs"
                   onClick={() => toggleRowExpansion(log.id)}
                 >
                   <div
-                    className="w-[150px] shrink-0 text-xs text-muted-foreground"
+                    className="text-muted-foreground w-[150px] shrink-0 text-xs"
                     style={{ lineHeight: 1.1 }}
                   >
                     <div className="!font-mono text-[12px]">
                       {dayjs(log.timestamp).format(timeFormat.format)}
                     </div>
-                    <div className="!font-mono text-[10px] text-muted-foreground">
+                    <div className="text-muted-foreground !font-mono text-[10px]">
                       {dayjs(log.timestamp).fromNow()}
                     </div>
                   </div>
 
-                  <div className="w-[85px] shrink-0 !font-mono">
-                    {renderLogLevel(log.level)}
-                  </div>
+                  <div className="w-[85px] shrink-0 !font-mono">{renderLogLevel(log.level)}</div>
 
                   <div
-                    className={`${showFields ? 'flex-1 min-w-0' : 'flex-[2] min-w-0'} !font-mono text-xs break-all text-foreground ${
+                    className={`${showFields ? 'min-w-0 flex-1' : 'min-w-0 flex-[2]'} text-foreground !font-mono text-xs break-all ${
                       isExpanded && displayMessage.includes(' ') ? 'whitespace-pre-wrap' : ''
                     }`}
                   >
                     {displayMessage}
                     {messageIsTruncated && !isExpanded && (
-                      <span className="ml-1 text-primary hover:text-primary/80">(expand)</span>
+                      <span className="text-primary hover:text-primary/80 ml-1">(expand)</span>
                     )}
                   </div>
 
                   {showFields && (
                     <>
                       <div className="w-[10px] shrink-0" />
-                      <div className="flex-1 min-w-0">
+                      <div className="min-w-0 flex-1">
                         {renderCustomFields(log, isExpanded, messageLength)}
                       </div>
                     </>
@@ -432,13 +435,13 @@ export const QueryResultsComponent = ({
             {isExecuting && queryResults.length > 0 && (
               <div className="flex justify-center py-2">
                 <Spinner size="sm" />
-                <span className="ml-2 text-xs text-muted-foreground">Loading more results...</span>
+                <span className="text-muted-foreground ml-2 text-xs">Loading more results...</span>
               </div>
             )}
 
             {/* End of results indicator */}
             {!hasMoreResults && queryResults.length > 0 && (
-              <div className="py-2 text-center text-xs text-muted-foreground">
+              <div className="text-muted-foreground py-2 text-center text-xs">
                 All {totalResults.toLocaleString()} results loaded
               </div>
             )}

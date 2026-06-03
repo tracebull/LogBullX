@@ -1,15 +1,39 @@
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { toastMessage } from '@/shared/lib/toastMessage';
+import dayjs from 'dayjs';
+import { Copy, Edit, Loader2, Plus, Trash2, TriangleAlert } from 'lucide-react';
+import { useEffect, useState } from 'react';
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
 import { Switch } from '@/components/ui/switch';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { toastMessage } from '@/shared/lib/toastMessage';
-import { Copy, Edit, Loader2, Plus, Trash2, TriangleAlert } from 'lucide-react';
-import dayjs from 'dayjs';
-import { useEffect, useState } from 'react';
 
 import {
   type ApiKey,
@@ -112,7 +136,9 @@ export function ProjectApiKeysComponent({ projectResponse, user }: Props) {
           setIsTokenModalOpen(true);
         }, 100);
       } else {
-        toastMessage.error('The API key was created but no token was returned. Please contact support.');
+        toastMessage.error(
+          'The API key was created but no token was returned. Please contact support.',
+        );
       }
 
       setApiKeys((prev) => [newApiKey, ...prev]);
@@ -228,10 +254,7 @@ export function ProjectApiKeysComponent({ projectResponse, user }: Props) {
           <div className="max-w-[850px]">
             <div className="mb-6 flex items-center justify-end">
               {canManageKeys && (
-                <Button
-                  onClick={() => setIsCreateModalOpen(true)}
-                  disabled={isLoading}
-                >
+                <Button onClick={() => setIsCreateModalOpen(true)} disabled={isLoading}>
                   <Plus className="mr-2 size-4" />
                   Create API key
                 </Button>
@@ -263,19 +286,17 @@ export function ProjectApiKeysComponent({ projectResponse, user }: Props) {
               </div>
             ) : (
               <div>
-                <div className="mb-4 text-sm text-muted-foreground">
+                <div className="text-muted-foreground mb-4 text-sm">
                   {apiKeys.length === 0
                     ? 'No API keys found'
                     : `${apiKeys.length} API key${apiKeys.length !== 1 ? 's' : ''}`}
                 </div>
 
                 {apiKeys.length === 0 ? (
-                  <div className="py-8 text-center text-muted-foreground">
+                  <div className="text-muted-foreground py-8 text-center">
                     <div className="mb-2">No API keys created yet</div>
                     {canManageKeys && (
-                      <div className="text-sm">
-                        Click &quot;Create API key&quot; to get started
-                      </div>
+                      <div className="text-sm">Click &quot;Create API key&quot; to get started</div>
                     )}
                   </div>
                 ) : (
@@ -305,7 +326,7 @@ export function ProjectApiKeysComponent({ projectResponse, user }: Props) {
                                     onKeyDown={(e) => {
                                       if (e.key === 'Enter') handleUpdateApiKey();
                                     }}
-                                    className={`w-[200px] h-8 text-sm ${editNameError ? 'border-destructive' : ''}`}
+                                    className={`h-8 w-[200px] text-sm ${editNameError ? 'border-destructive' : ''}`}
                                     placeholder="Enter API key name"
                                     maxLength={100}
                                   />
@@ -315,7 +336,9 @@ export function ProjectApiKeysComponent({ projectResponse, user }: Props) {
                                   onClick={handleUpdateApiKey}
                                   disabled={isUpdating}
                                 >
-                                  {isUpdating ? <Loader2 className="mr-1 size-3 animate-spin" /> : null}
+                                  {isUpdating ? (
+                                    <Loader2 className="mr-1 size-3 animate-spin" />
+                                  ) : null}
                                   Save
                                 </Button>
                                 <Button
@@ -333,7 +356,7 @@ export function ProjectApiKeysComponent({ projectResponse, user }: Props) {
                             )}
                           </TableCell>
                           <TableCell>
-                            <code className="rounded bg-muted px-2 py-1 !font-mono text-sm text-foreground">
+                            <code className="bg-muted text-foreground rounded px-2 py-1 !font-mono text-sm">
                               {record.tokenPrefix}...
                             </code>
                           </TableCell>
@@ -343,17 +366,20 @@ export function ProjectApiKeysComponent({ projectResponse, user }: Props) {
                                 <Switch
                                   size="sm"
                                   checked={record.status === ApiKeyStatus.ACTIVE}
-                                  onCheckedChange={() => handleToggleStatus(record.id, record.status)}
+                                  onCheckedChange={() =>
+                                    handleToggleStatus(record.id, record.status)
+                                  }
                                   disabled={processingKeys.has(record.id)}
                                 />
                               )}
                             </div>
                           </TableCell>
                           <TableCell>
-                            <div className="text-sm text-muted-foreground">
+                            <div className="text-muted-foreground text-sm">
                               <div>{dayjs(record.createdAt).format('MMM D, YYYY')}</div>
-                              <div className="text-xs text-muted-foreground">
-                                {dayjs(record.createdAt).format('HH:mm')} ({dayjs(record.createdAt).fromNow()})
+                              <div className="text-muted-foreground text-xs">
+                                {dayjs(record.createdAt).format('HH:mm')} (
+                                {dayjs(record.createdAt).fromNow()})
                               </div>
                             </div>
                           </TableCell>
@@ -381,12 +407,15 @@ export function ProjectApiKeysComponent({ projectResponse, user }: Props) {
                                         <Button
                                           variant="ghost"
                                           size="icon"
-                                          disabled={deletingKeys.has(record.id) || processingKeys.has(record.id)}
+                                          disabled={
+                                            deletingKeys.has(record.id) ||
+                                            processingKeys.has(record.id)
+                                          }
                                         >
                                           {deletingKeys.has(record.id) ? (
                                             <Loader2 className="size-4 animate-spin" />
                                           ) : (
-                                            <Trash2 className="size-4 text-destructive" />
+                                            <Trash2 className="text-destructive size-4" />
                                           )}
                                         </Button>
                                       </AlertDialogTrigger>
@@ -397,12 +426,16 @@ export function ProjectApiKeysComponent({ projectResponse, user }: Props) {
                                     <AlertDialogHeader>
                                       <AlertDialogTitle>Delete API key</AlertDialogTitle>
                                       <AlertDialogDescription>
-                                        Are you sure you want to delete &quot;{record.name}&quot;? This action cannot be undone.
+                                        Are you sure you want to delete &quot;{record.name}&quot;?
+                                        This action cannot be undone.
                                       </AlertDialogDescription>
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
                                       <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                      <AlertDialogAction variant="destructive" onClick={() => handleDeleteApiKey(record.id, record.name)}>
+                                      <AlertDialogAction
+                                        variant="destructive"
+                                        onClick={() => handleDeleteApiKey(record.id, record.name)}
+                                      >
                                         Delete
                                       </AlertDialogAction>
                                     </AlertDialogFooter>
@@ -428,20 +461,23 @@ export function ProjectApiKeysComponent({ projectResponse, user }: Props) {
               </div>
             )}
 
-            <Dialog open={isCreateModalOpen} onOpenChange={(open) => {
-              if (!open) {
-                setIsCreateModalOpen(false);
-                setCreateForm({ name: '' });
-                setCreateNameError(false);
-              }
-            }}>
+            <Dialog
+              open={isCreateModalOpen}
+              onOpenChange={(open) => {
+                if (!open) {
+                  setIsCreateModalOpen(false);
+                  setCreateForm({ name: '' });
+                  setCreateNameError(false);
+                }
+              }}
+            >
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Create new API key</DialogTitle>
                 </DialogHeader>
                 <div className="py-4">
                   <div className="mb-4">
-                    <div className="mb-2 font-medium text-foreground">API key name</div>
+                    <div className="text-foreground mb-2 font-medium">API key name</div>
                     <Input
                       value={createForm.name}
                       onChange={(e) => {
@@ -452,17 +488,14 @@ export function ProjectApiKeysComponent({ projectResponse, user }: Props) {
                       maxLength={100}
                       className={createNameError ? 'border-destructive' : undefined}
                     />
-                    <div className="mt-1 text-xs text-muted-foreground">
+                    <div className="text-muted-foreground mt-1 text-xs">
                       Choose a name that helps you identify this key&apos;s purpose (e.g.,
                       &quot;Production&quot;, &quot;Development&quot;)
                     </div>
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button
-                    onClick={handleCreateApiKey}
-                    disabled={isCreating}
-                  >
+                  <Button onClick={handleCreateApiKey} disabled={isCreating}>
                     {isCreating ? (
                       <>
                         <Spinner size="sm" className="mr-2" />
@@ -476,12 +509,15 @@ export function ProjectApiKeysComponent({ projectResponse, user }: Props) {
               </DialogContent>
             </Dialog>
 
-            <Dialog open={isTokenModalOpen} onOpenChange={(open) => {
-              if (!open) {
-                setIsTokenModalOpen(false);
-                setCreatedApiKey(null);
-              }
-            }}>
+            <Dialog
+              open={isTokenModalOpen}
+              onOpenChange={(open) => {
+                if (!open) {
+                  setIsTokenModalOpen(false);
+                  setCreatedApiKey(null);
+                }
+              }}
+            >
               <DialogContent className="sm:max-w-[700px]">
                 <DialogHeader>
                   <DialogTitle>
@@ -494,15 +530,15 @@ export function ProjectApiKeysComponent({ projectResponse, user }: Props) {
                 {createdApiKey && (
                   <div className="mt-2">
                     <div className="mb-4">
-                      <div className="mb-2 font-medium text-foreground">API key name:</div>
+                      <div className="text-foreground mb-2 font-medium">API key name:</div>
                       <div className="text-foreground">{createdApiKey.name}</div>
                     </div>
 
                     <div className="mb-4">
-                      <div className="mb-2 font-medium text-foreground">Full API token:</div>
-                      <div className="rounded-lg border-2 border-border bg-muted p-4">
+                      <div className="text-foreground mb-2 font-medium">Full API token:</div>
+                      <div className="border-border bg-muted rounded-lg border-2 p-4">
                         <div className="flex items-center justify-between">
-                          <code className="!font-mono text-sm break-all text-foreground select-all">
+                          <code className="text-foreground !font-mono text-sm break-all select-all">
                             {createdApiKey.token}
                           </code>
                           <Button

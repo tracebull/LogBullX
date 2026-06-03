@@ -8,8 +8,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '../../../components/ui/dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../components/ui/tabs';
 import { Spinner } from '../../../components/ui/spinner';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../components/ui/tabs';
 
 import type { BulkInviteResponse } from '../../../entity/users';
 import { userApi } from '../../../entity/users';
@@ -67,7 +67,12 @@ export function BulkInviteComponent({ open, onClose, onInviteComplete }: Props) 
   const emailCount = parseEmails().length;
 
   return (
-    <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen) handleClose(); }}>
+    <Dialog
+      open={open}
+      onOpenChange={(isOpen) => {
+        if (!isOpen) handleClose();
+      }}
+    >
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>Bulk Invite Users</DialogTitle>
@@ -77,10 +82,10 @@ export function BulkInviteComponent({ open, onClose, onInviteComplete }: Props) 
           <div className="space-y-3">
             {results.invited.length > 0 && (
               <div>
-                <div className="mb-1 text-sm font-semibold text-primary">
+                <div className="text-primary mb-1 text-sm font-semibold">
                   Invited ({results.invited.length})
                 </div>
-                <div className="max-h-40 overflow-y-auto rounded bg-muted p-2 text-sm">
+                <div className="bg-muted max-h-40 overflow-y-auto rounded p-2 text-sm">
                   {results.invited.map((r) => (
                     <div key={r.email}>{r.email}</div>
                   ))}
@@ -109,14 +114,16 @@ export function BulkInviteComponent({ open, onClose, onInviteComplete }: Props) 
             <TabsContent value="text">
               <div>
                 <textarea
-                  className="w-full rounded border p-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                  className="focus:ring-primary w-full rounded border p-2 text-sm focus:ring-1 focus:outline-none"
                   style={{ borderColor: '#d9d9d9', minHeight: 200, resize: 'vertical' }}
-                  placeholder={"Enter emails, one per line or comma-separated:\nuser1@example.com\nuser2@example.com"}
+                  placeholder={
+                    'Enter emails, one per line or comma-separated:\nuser1@example.com\nuser2@example.com'
+                  }
                   value={textValue}
                   onChange={(e) => setTextValue(e.target.value)}
                 />
                 {emailCount > 0 && (
-                  <div className="mt-1 text-xs text-muted-foreground">
+                  <div className="text-muted-foreground mt-1 text-xs">
                     {emailCount} valid email{emailCount !== 1 ? 's' : ''} detected
                     {emailCount >= MAX_EMAILS && ` (max ${MAX_EMAILS})`}
                   </div>
@@ -124,7 +131,7 @@ export function BulkInviteComponent({ open, onClose, onInviteComplete }: Props) 
               </div>
             </TabsContent>
             <TabsContent value="csv">
-              <div className="flex items-center justify-center rounded border-2 border-dashed border-input p-8">
+              <div className="border-input flex items-center justify-center rounded border-2 border-dashed p-8">
                 <input
                   type="file"
                   accept=".csv,.txt"
@@ -148,16 +155,13 @@ export function BulkInviteComponent({ open, onClose, onInviteComplete }: Props) 
 
         <DialogFooter>
           {results ? (
-            <Button onClick={handleClose}>
-              Done
-            </Button>
+            <Button onClick={handleClose}>Done</Button>
           ) : (
             <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={handleClose}>Cancel</Button>
-              <Button
-                disabled={isLoading || emailCount === 0}
-                onClick={handleInvite}
-              >
+              <Button variant="outline" onClick={handleClose}>
+                Cancel
+              </Button>
+              <Button disabled={isLoading || emailCount === 0} onClick={handleInvite}>
                 {isLoading && <Spinner size="sm" className="mr-2" />}
                 Invite {emailCount > 0 ? `(${emailCount})` : ''}
               </Button>

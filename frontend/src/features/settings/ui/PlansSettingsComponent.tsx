@@ -1,11 +1,5 @@
 import { useEffect, useState } from 'react';
 
-import { userPlanApi } from '../../../entity/users/api/userPlanApi';
-import type { CreatePlanRequest } from '../../../entity/users/model/CreatePlanRequest';
-import type { UpdatePlanRequest } from '../../../entity/users/model/UpdatePlanRequest';
-import type { UserPlan } from '../../../entity/users/model/UserPlan';
-import { UserPlanType } from '../../../entity/users/model/UserPlanType';
-import { toastMessage } from '../../../shared/lib/toastMessage';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -34,6 +28,13 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Textarea } from '@/components/ui/textarea';
+
+import { userPlanApi } from '../../../entity/users/api/userPlanApi';
+import type { CreatePlanRequest } from '../../../entity/users/model/CreatePlanRequest';
+import type { UpdatePlanRequest } from '../../../entity/users/model/UpdatePlanRequest';
+import type { UserPlan } from '../../../entity/users/model/UserPlan';
+import { UserPlanType } from '../../../entity/users/model/UserPlanType';
+import { toastMessage } from '../../../shared/lib/toastMessage';
 
 interface FormValues {
   name: string;
@@ -307,7 +308,7 @@ export const PlansSettingsComponent = () => {
   return (
     <div className="my-8 max-w-4xl">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-xl font-bold text-foreground">Plans Management</h2>
+        <h2 className="text-foreground text-xl font-bold">Plans Management</h2>
         <Button
           className="bg-primary text-primary-foreground hover:bg-primary/90"
           onClick={handleCreate}
@@ -319,7 +320,7 @@ export const PlansSettingsComponent = () => {
       {isLoading ? (
         <div className="flex items-center py-4">
           <Spinner />
-          <span className="ml-2 text-sm text-muted-foreground">Loading plans...</span>
+          <span className="text-muted-foreground ml-2 text-sm">Loading plans...</span>
         </div>
       ) : (
         <Table>
@@ -352,11 +353,7 @@ export const PlansSettingsComponent = () => {
                     <Button size="sm" variant="outline" onClick={() => handleEdit(plan)}>
                       Edit
                     </Button>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => handleDelete(plan.id)}
-                    >
+                    <Button size="sm" variant="destructive" onClick={() => handleDelete(plan.id)}>
                       Delete
                     </Button>
                   </div>
@@ -368,7 +365,12 @@ export const PlansSettingsComponent = () => {
       )}
 
       {/* Create/Edit Modal */}
-      <Dialog open={isModalVisible} onOpenChange={(open) => { if (!open) handleModalCancel(); }}>
+      <Dialog
+        open={isModalVisible}
+        onOpenChange={(open) => {
+          if (!open) handleModalCancel();
+        }}
+      >
         <DialogContent className="max-w-[650px]">
           <DialogHeader>
             <DialogTitle>{editingPlan ? 'Edit Plan' : 'Create Plan'}</DialogTitle>
@@ -475,7 +477,7 @@ export const PlansSettingsComponent = () => {
             </div>
 
             {/* Limit Fields */}
-            <div className="rounded border border-border p-3">
+            <div className="border-border rounded border p-3">
               <h3 className="mb-2 text-sm font-semibold">Limits</h3>
 
               <div className="space-y-2 text-sm">
@@ -549,7 +551,15 @@ export const PlansSettingsComponent = () => {
       </Dialog>
 
       {/* Delete Confirmation Modal */}
-      <Dialog open={isDeleteModalVisible} onOpenChange={(open) => { if (!open) { setIsDeleteModalVisible(false); setDeletingPlanId(null); } }}>
+      <Dialog
+        open={isDeleteModalVisible}
+        onOpenChange={(open) => {
+          if (!open) {
+            setIsDeleteModalVisible(false);
+            setDeletingPlanId(null);
+          }
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Delete Plan</DialogTitle>
@@ -600,19 +610,17 @@ function LimitRow({
 }: LimitRowProps) {
   return (
     <div className="flex items-center justify-between">
-      <span className="w-40 text-muted-foreground">{label}</span>
+      <span className="text-muted-foreground w-40">{label}</span>
 
       <div className="flex flex-1 items-center space-x-2">
         <Input
           type="number"
           min={0}
-          className="flex-1 h-7 text-xs"
+          className="h-7 flex-1 text-xs"
           disabled={disabled}
           placeholder="0"
           value={value ?? ''}
-          onChange={(e) =>
-            onValueChange(e.target.value === '' ? null : parseInt(e.target.value))
-          }
+          onChange={(e) => onValueChange(e.target.value === '' ? null : parseInt(e.target.value))}
         />
 
         <div className="flex flex-1 items-center space-x-2 pl-3">
