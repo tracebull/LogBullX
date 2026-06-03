@@ -10,7 +10,7 @@ var env = config.GetEnv()
 var victoriaLogsRepository = newVictoriaLogsStorage(env)
 
 var logCoreService = &LogCoreService{
-	victoriaLogsRepository,
+	logStorage: victoriaLogsRepository,
 }
 
 func GetLogStorage() LogStorage {

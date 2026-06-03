@@ -10,11 +10,11 @@ import (
 
 var auditLogRepository = &audit_logs_repositories.AuditLogRepository{}
 var auditLogService = &audit_logs_services.AuditLogService{
-	auditLogRepository,
-	logger.GetLogger(),
+	AuditLogRepository: auditLogRepository,
+	Logger:             logger.GetLogger(),
 }
 var auditLogController = &audit_logs_controllers.AuditLogController{
-	auditLogService,
+	AuditLogService: auditLogService,
 }
 
 func GetAuditLogService() *audit_logs_services.AuditLogService {

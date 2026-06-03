@@ -16,15 +16,15 @@ import (
 var apiKeyRepository = &api_keys_repositories.ApiKeyRepository{}
 
 var apiKeyService = &api_keys_services.ApiKeyService{
-	apiKeyRepository,
-	projects_services.GetProjectService(),
-	audit_logs.GetAuditLogService(),
-	cache_utils.NewCacheUtil[api_keys_dto.CachedApiKey](cache.GetCache(), "lb_apikey:"),
-	singleflight.Group{},
+	ApiKeyRepository: apiKeyRepository,
+	ProjectService:   projects_services.GetProjectService(),
+	AuditLogService:  audit_logs.GetAuditLogService(),
+	ApiKeyCacheUtil:  cache_utils.NewCacheUtil[api_keys_dto.CachedApiKey](cache.GetCache(), "lb_apikey:"),
+	Singleflight:     singleflight.Group{},
 }
 
 var apiKeyController = &api_keys_controllers.ApiKeyController{
-	apiKeyService,
+	ApiKeyService: apiKeyService,
 }
 
 func GetApiKeyService() *api_keys_services.ApiKeyService {

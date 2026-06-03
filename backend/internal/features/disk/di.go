@@ -14,7 +14,7 @@ func init() {
 	diskService = &disk_services.DiskService{}
 
 	diskController = &disk_controllers.DiskController{
-		diskService,
+		DiskService: diskService,
 	}
 }
 
